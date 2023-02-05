@@ -1,0 +1,75 @@
+
+@import "./utilities/variables";
+
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@900&display=swap');
+
+:root{
+  font-size: 16px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  
+  color: $font-color1;
+  font-family: 'Rubik', sans-serif;
+
+  margin: 0;
+  padding: 0;
+
+  // border: solid 0.5px red;
+}
+
+body {
+  font-size: 100%;
+}
+
+/* id: root */
+#root{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+  background-color: $bg-color1;
+}
+
+button{
+  background-color: $bg-color1;
+  color: $font-color1;
+}
+
+a{
+  text-decoration: none;
+  color: $font-color1;
+}
+
+ul{
+  list-style: none;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button {
+  opacity: 1;
+}
+
+// Scroll Bar
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: $bg-color2; 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  border-radius: 1px;
+  background: $font-color2; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: $font-color1; 
+}

@@ -1,0 +1,22 @@
+{
+  "name": "Website Screen Time &  Block | Pomodoro",
+  "description": 
+"Keep track of screen time and use Pomodoro to be productive",
+  "version": "0.0.1",
+  "manifest_version": 3,
+  "permissions": ["storage", "tabs", "scripting", "nativeMessaging"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+},
+"action": {
+  "default_popup": "index.html"
+},
+"options_page": "index.html",
+"web_accessible_resources": [
+  {
+    "resources": ["/static/*"],
+    "matches": ["<all_urls>"]
+  }
+]
+}

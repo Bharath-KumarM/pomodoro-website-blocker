@@ -1,0 +1,13 @@
+.App {
+    width: min(950px, 95%);
+    min-width: 400px;
+    height: 100vh;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    margin: 0 5px;
+  } 
+  

@@ -1,0 +1,56 @@
+@import '../../utilities/variables';
+
+.progress-cnt{
+    width: min(95%, 450px);
+    .desc{
+        text-align: center;
+        margin-bottom: 20px;
+        //Small Screen
+        @media only screen and (max-width: 650px) {
+            // margin-bottom: 10px;
+        }
+        font-size: 14px;
+        font-weight: 400;
+    }
+    .bar-cnt{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 10px 0;
+ 
+        .bar{ 
+            width: 100%;
+
+            height: 5px;
+            margin: 0 6px;
+            background-color: $bg-color1;
+
+            
+            .progress{
+                border-radius: 2px;
+                background-color: $accent-color1;
+                height: 100%;
+                animation: slide 500ms ease-in;
+                
+                &.active{
+                    animation: glow 500ms infinite alternate-reverse;
+                }
+
+                @keyframes glow {
+                    50%{
+                        box-shadow: 0 0 0px 0px #838782;
+                    }
+                    100%{
+                        box-shadow: 0 0 5px 2px #838782;
+                    }
+                }
+            }
+            
+            @keyframes slide{
+                0%{
+                    width: 0;
+                }
+            }
+        }
+    }
+}

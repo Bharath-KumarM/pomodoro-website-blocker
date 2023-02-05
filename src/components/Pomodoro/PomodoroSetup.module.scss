@@ -1,0 +1,126 @@
+@import '../../utilities/variables';
+
+.SetupCnt{
+    display: flex;
+    flex-direction: column;
+
+    width: max(350px, 95%);
+    height: 100%;
+
+    justify-content: space-evenly;  
+
+}
+
+.desc{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    align-self: center;
+    background-color: $accent-bg-dark-color1;
+    border-radius: 3px;
+
+    width: min(300px, 95%);
+    padding: 5px 0;
+    
+    //Small Screen
+    @media only screen and (max-width: 650px) {
+
+    }
+}
+
+.descText{
+    font-size: 16px;
+    color: $accent-color1;
+    
+    //Small Screen
+    @media only screen and (max-width: 650px) {
+        font-size: 14px;
+    }
+}
+
+.setup {
+    display: flex;
+    flex-direction: column;
+    width: min(400px, 90%);
+    align-self: center; 
+    gap: 5px;
+}
+.entry{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    padding: 25px 0;
+    border-bottom: solid $font-color2 2px;
+    
+    @media only screen and (max-width: 650px) {
+        padding: 15px 0;
+    }
+}
+
+.lastEntry{
+    border-bottom-color: transparent;
+}
+
+
+.inputTitle{
+    align-self: center;
+    font-size: 16px;
+    width: 50%;
+
+    //Small Screen
+    @media only screen and (max-width: 650px) {
+        font-size: 14px;
+    }
+}
+
+.inputEnterCnt{
+    width: 50%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.inputField{
+    width: 60px;
+
+    margin-right: 5px;
+    padding: 5px 0 5px 5px;
+    font-size: 18px;
+    text-align: center;
+
+    color: black;
+
+    border-radius: 5px;
+    border: 0;
+
+    line-height: 40px;
+    height: 35px;
+    
+    //Small Screen
+    @media only screen and (max-width: 650px) {
+        height: 25px;
+        line-height: 30px;
+        
+        font-size: 16px;
+    }
+}
+
+.inputUnit{
+    width: 60%;
+    font-size: 14px;
+    color: $font-color2;
+    
+    //Small Screen
+    @media only screen and (max-width: 650px) {
+        font-size: 12px;
+    }
+}
+
+button.btnStart{
+    background-color: $accent-bg-light-color1; 
+    color: $font-color1;
+    &:hover{
+        background-color: $accent-bg-dark-color1;
+    }
+}

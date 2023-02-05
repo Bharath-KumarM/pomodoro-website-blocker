@@ -1,0 +1,72 @@
+@import '../../utilities/variables';
+
+.Cnt {
+    display: flex;
+    flex-grow: 1;
+    margin: 0 0 10px 0;
+    
+    //Small screen
+    @media only screen and (max-width: 650px) {
+        margin: 0;
+        flex-direction: column-reverse;
+        justify-content: space-between;
+    }
+}
+
+.Nav{
+    display: flex;
+    flex-direction: column;
+    
+    padding: 10px;
+    margin-right: 10px;
+    gap: 30px;
+    
+    background-color: $bg-color2;
+    
+    border-radius: 5px;
+    
+    &:hover{
+        cursor: default;
+    }
+    
+    //small screen
+    @media only screen and (max-width: 650px) {
+        border-radius: 5px 5px 0 0;
+        justify-self: flex-start;
+        flex-direction: row;
+        gap: 0;
+        margin-right: 0px;
+        margin-top: 10px;
+        justify-content: space-evenly;
+        
+    }
+}
+
+.ContentCnt{
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    background-color: $bg-color2;
+    border-radius: 5px;
+
+    align-items: center;
+
+    .Heading{
+        align-self: flex-start;
+        margin: 10px;
+        font-size: 18px;
+        //small screen
+        @media only screen and (max-width: 650px) {
+            font-size: 16px;
+        }
+    }
+}
+
+
+
+
+
+

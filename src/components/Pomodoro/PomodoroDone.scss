@@ -1,0 +1,97 @@
+@import '../../utilities/variables';
+
+.pomodoro-done-cnt{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+
+
+    .inner-cnt{
+        flex-grow: 1;
+        width: 100%;
+
+        overflow-x: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        flex-direction: column;
+
+    
+        .start-cnt{
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+
+            justify-content: space-around;
+
+            width: min(90%, 400px);
+            height: 50%;
+
+            .heading{
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                width: 100%;
+                h3{
+                    text-align: center;
+                    margin-bottom: 10px;
+                }
+                hr{
+                    width: 50%;
+                    border-color: $font-color2;
+                    
+                }
+            }
+            .start-btn{
+                background-color: $accent-bg-light-color1;
+                height: 50px;
+                width: min(60% , 200px);
+                border: 0;
+                border-radius: 10px;
+                color: $font-color1;
+                font-size: 16px;
+                transition: background 250ms;
+                &:hover{
+                    background-color: $accent-bg-dark-color1;
+                }
+        
+            }
+            .skip-btn{
+                text-decoration: underline;
+                font-style: italic;
+                font-size: 14px;
+                color: $font-color2;
+                cursor: pointer;
+            }
+
+        }
+        
+        .today-cnt{
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            width: 100%;
+
+            .desc {
+                text-align: center;
+                margin-bottom: 5px;
+                font-size: 15px;
+            }
+            hr{
+                border-color: $font-color2;
+                width: 40%;
+            }
+
+            .tomatoes{
+                width: 60%;
+                font-size: 20px;
+                text-align: center;
+                margin-top: 15px;
+            }
+        }
+    }
+}

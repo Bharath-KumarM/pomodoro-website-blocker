@@ -1,0 +1,61 @@
+@import '../utilities/variables';
+
+.btn2Cnt{
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+    // wide screen
+    @media only screen and (min-width: 650px) {
+        flex-direction: row;
+        justify-content: space-evenly;
+    }
+
+    // Loader Icon
+    svg {
+        width: 1.7em;
+        height: 1.7em;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        0%{
+            transform:rotate(0deg);
+        } 
+        100%{
+            transform:rotate(360deg);
+        }
+    }
+}
+
+
+.btn{
+    background-color: $bg-color3;
+    color: $font-color1;
+    width: min(90%, 350px);
+    margin-bottom: 10px;
+    
+    height: 35px;
+    border-radius: 5px;
+    
+    border: solid 2px transparent;
+    font-size: 14px;
+    font-weight: 600;
+    
+    transition: background-color 10ms ease-in;
+    // wide screen
+    @media only screen and (min-width: 650px) {
+        width: 200px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    &:hover{
+        background-color: $bg-color2;
+        border: solid 2px $font-color1;
+    }
+}

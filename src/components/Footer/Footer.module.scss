@@ -1,0 +1,36 @@
+@import "../../utilities/variables";
+
+.FooterCnt{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+
+    width: 100%;
+    bottom: 0px;
+
+    background-color: $bg-color1;
+
+    @media (max-width:1000px) {
+        display: none;
+        
+    }
+}
+
+.Footer {
+    
+    padding: 5px 30px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    gap: 3px;
+
+    border: 0;
+
+    svg{
+        width: 20px;
+        height: 20px;
+    }
+
+
+}

@@ -1,0 +1,45 @@
+@import '../../utilities/variables';
+
+.NavOptCnt{
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    padding: 10px 2px;
+    gap: 5px;
+
+    width: 100px;
+
+    border-radius: 5px;
+    border-bottom: 3px solid transparent;
+    
+    &.active{
+        border-color: $accent-bg-light-color1;
+        background-color: $bg-color3;
+    }
+
+    svg{
+        width: 25px;
+        height: 25px;
+    }
+    
+    @media only screen and (max-width: 650px) {        
+        svg{
+            width: 20px;
+            height: 20px;
+        }
+    }
+}
+
+.pomodoro.active{
+    svg{
+        fill: rgb(250, 160, 144);
+    }
+
+}
+
+.desc{
+    font-size: 0.8rem;
+}
