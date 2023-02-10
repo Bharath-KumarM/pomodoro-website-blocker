@@ -28,7 +28,7 @@ const Pomodoro = ({setCntHeading})=>{
         // Pomodoro Data
         if (pomoData){
             // Update the UI
-            setPomoData(pomoData)
+            setPomoData({...pomoData})
         }
     }
 
@@ -42,8 +42,8 @@ const Pomodoro = ({setCntHeading})=>{
         
     }, [])
 
+    //TODO: Get data from message instead of getting from local stograge
     if (pomoData.mode === 'getData'){
-        
         chrome.storage.local.get('pomoData', ({pomoData: storedPomoData})=>{
             if (storedPomoData) {
                 setPomoData(storedPomoData)
@@ -74,7 +74,7 @@ const Pomodoro = ({setCntHeading})=>{
                     setCntHeading={setCntHeading}
                     pomoData={pomoData}
                     /> :
-            <div>Error: Unexpected pomoData</div>
+            <div>Error Message: Unexpected pomoData</div>
 }
 export default Pomodoro
 

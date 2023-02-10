@@ -98,7 +98,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse)=> {
 
       chrome.runtime.sendMessage({pomoData})
 
-      await chrome.storage.local.set({pomoData})
+      chrome.storage.local.set({pomoData})
 
     }
 
@@ -106,19 +106,19 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse)=> {
       clearTimeout(timer)
       chrome.runtime.sendMessage({pomoData})
 
-      await chrome.storage.local.set({pomoData})
+      chrome.storage.local.set({pomoData})
     }
 
     if (msg === 'reset'){
       console.log('reset triggered')
       chrome.runtime.sendMessage({pomoData: {...defaultPomoData}})
 
-      await chrome.storage.local.remove('pomoData')
+      chrome.storage.local.remove('pomoData')
     }
     if (msg === 'stop'){
       console.log('Stop Pomodoro')
-      chrome.runtime.sendMessage({pomoData: {...pomoData}})
-      await chrome.storage.local.remove('pomoData')
+      chrome.runtime.sendMessage({pomoData})
+      chrome.storage.local.remove('pomoData')
     }
 
   }

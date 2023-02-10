@@ -7,9 +7,12 @@ import './PomodoroRun.scss'
 import ProgressBar from './ProgressBar'
 
 const PomodoroRun = ({setCntHeading, pomoData})=>{
-    
     // State Hooks
-    const [runPomoData, setRunPomoData] = useState(pomoData)
+    const [currTime, setCurrTime] = useState(Date.now() / 1000)
+
+    // Set Heading
+    setCntHeading(getHeadingDesc(cycleName))
+    
     // Destructure PomodoroData
     const { 
         focusTime, sortBreakTime, longBreakTime,
@@ -17,26 +20,28 @@ const PomodoroRun = ({setCntHeading, pomoData})=>{
         mode, currCycle, 
         startTime, timeSpent,
         isPaused 
-        } = runPomoData
-
+        } = pomoData
+    
+    
     // Refresh UI every second
-    let localTimeout
+    let intervalId
     useEffect(()=>{
-        localTimeout = setTimeout(()=>{
-            setRunPomoData({...pomoData})
-        }, 1000) 
-
-        return ()=>{
-            clearTimeout(localTimeout)
+        if (!isPaused){
+            intervalId = setInterval(()=>{
+                setCurrTime(Date.now() / 1000)
+            }, 1000) 
         }
-    }, )
+        
+        return ()=>{
+            clearTimeout(intervalId)
+        }
+    }, [pomoData.isPaused])
 
-    // Set Heading
-    setCntHeading(getHeadingDesc(pomoData.cycleName))
+    
 
     // Calculate Reminding Time for the cycle
     const [focusTimeInSec, sortBreakTimeInSec, longBreakTimeInsec] = [focusTime*60, sortBreakTime*60, longBreakTime*60]
-    const currTime = Date.now() / 1000
+    // const currTime = Date.now() / 1000
     let totalTime
     if (cycleName === 'focus') totalTime = focusTimeInSec
     if (cycleName === 'short') totalTime = sortBreakTimeInSec
@@ -45,6 +50,7 @@ const PomodoroRun = ({setCntHeading, pomoData})=>{
     const remainingTime = totalTime - actualTimePassed
     
     const handlePauseClick = ()=>{
+        // clearTimeout(intervalId)
         const clickTime = Date.now() / 1000
         chrome.runtime.sendMessage({
             pomoData: {
@@ -75,7 +81,6 @@ const PomodoroRun = ({setCntHeading, pomoData})=>{
     const btn1Details = {
         desc: isPaused ? `Resume ${cycleDesc}` : `Pause ${cycleDesc}`,
         onClick: ()=>{
-            clearTimeout(localTimeout)
             if (!isPaused) handlePauseClick()
             else handelResumeClick()
         },
@@ -91,11 +96,7 @@ const PomodoroRun = ({setCntHeading, pomoData})=>{
         },
         style: 'btn-stop'
     }
-    const btn2 =  useMemo(()=>{
-        return <Btn2Cnt btn1Details={btn1Details} btn2Details={btn2Details} />
-    }, [isPaused])
                 
-
     return (
         <div className='pomodoro-run-cnt'>
             <div className="inner-cnt">
@@ -116,7 +117,7 @@ const PomodoroRun = ({setCntHeading, pomoData})=>{
                         hr min sec
                     </div>
                 </div>
-                {btn2}
+                <Btn2Cnt btn1Details={btn1Details} btn2Details={btn2Details} />
             </div>
         </div>
     )
@@ -141,5 +142,5 @@ function getHeadingDesc (cycleName){
     if (cycleName === 'focus') return 'Pomodoro Focus'
     if (cycleName === 'short') return 'Pomodoro Short Break'
     if (cycleName === 'long') return 'Pomodoro Long Break'
-    console.log('Problem, cycle name not found: ' + cycleName )
+    console.log('[-] Problem, cycle name not found: ' + cycleName )
 }

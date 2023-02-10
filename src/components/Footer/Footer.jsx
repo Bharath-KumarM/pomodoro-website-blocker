@@ -10,7 +10,7 @@ const Footer = () =>{
                 className={style.Footer}>
                 <AiFillGithub /> 
                 <div className={style.desc}>
-                    Bharath Kumar Murali
+                    Bharath Kumar Murali 😎
                 </div>
             </a>
         </div>

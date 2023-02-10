@@ -37,13 +37,8 @@
             justify-content: center;
             align-items: center;            
             flex-direction: column;
-            // animation: timer-dial 2s alternate infinite ease-in;
-            border-color: red;
+            border-color: $accent-color1;
 
-            @keyframes timer-dial {
-                0% {border-color: red;}
-                100% {border-color: green;}  
-            }
             
             .time{
                 letter-spacing: 2px;
@@ -69,7 +64,7 @@
 
     button.btn-resume{
         background-color: $accent-bg-light-color1; 
-        color: $font-color1;
+        color: $font-color0;
         &:hover{
             background-color: $accent-bg-dark-color1;
         }
