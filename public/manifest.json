@@ -4,7 +4,12 @@
 "Keep track of screen time and use Pomodoro to be productive",
   "version": "0.0.1",
   "manifest_version": 3,
-  "permissions": ["storage", "tabs", "scripting", "nativeMessaging"],
+  "permissions": ["storage", "tabs", "scripting", 
+                  "nativeMessaging", 
+                  "notifications",
+                  "alarms",
+                  "tabs"
+                ],
   "background": {
     "service_worker": "background.js",
     "type": "module"

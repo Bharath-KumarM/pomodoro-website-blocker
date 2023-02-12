@@ -1,8 +1,10 @@
-
-const ScreenTime = (props)=>{
-    const setCntHeading = props.setCntHeading
-    setCntHeading('Screen Time')
-
+import { useEffect } from "react"
+ 
+const ScreenTime = ({setCntHeading})=>{
+    useEffect(()=>{
+        setCntHeading('Screen Time')
+    }, [])
+    
     return (
         <div>
             Screen Time

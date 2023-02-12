@@ -10,9 +10,6 @@ const PomodoroRun = ({setCntHeading, pomoData})=>{
     // State Hooks
     const [currTime, setCurrTime] = useState(Date.now() / 1000)
 
-    // Set Heading
-    setCntHeading(getHeadingDesc(cycleName))
-    
     // Destructure PomodoroData
     const { 
         focusTime, sortBreakTime, longBreakTime,
@@ -22,7 +19,8 @@ const PomodoroRun = ({setCntHeading, pomoData})=>{
         isPaused 
         } = pomoData
     
-    
+    // Set Heading
+    setCntHeading(getHeadingDesc(cycleName))
     // Refresh UI every second
     let intervalId
     useEffect(()=>{
@@ -41,7 +39,6 @@ const PomodoroRun = ({setCntHeading, pomoData})=>{
 
     // Calculate Reminding Time for the cycle
     const [focusTimeInSec, sortBreakTimeInSec, longBreakTimeInsec] = [focusTime*60, sortBreakTime*60, longBreakTime*60]
-    // const currTime = Date.now() / 1000
     let totalTime
     if (cycleName === 'focus') totalTime = focusTimeInSec
     if (cycleName === 'short') totalTime = sortBreakTimeInSec
@@ -50,7 +47,6 @@ const PomodoroRun = ({setCntHeading, pomoData})=>{
     const remainingTime = totalTime - actualTimePassed
     
     const handlePauseClick = ()=>{
-        // clearTimeout(intervalId)
         const clickTime = Date.now() / 1000
         chrome.runtime.sendMessage({
             pomoData: {

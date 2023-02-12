@@ -41,7 +41,7 @@ const Content = (props)=>{
                         navSelect === 'screen-time' ? <ScreenTime setCntHeading={setCntHeading}/> : 
                         navSelect === 'home' ? <div>Home</div> : 
                         navSelect === 'settings' ? <div>Settings</div> : 
-                        null
+                        <div>Loading...</div>
     
     return (
         <div className={styles.Cnt}>

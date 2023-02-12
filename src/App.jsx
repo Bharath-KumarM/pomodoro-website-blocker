@@ -8,7 +8,7 @@ import { useState } from "react"
 
 function App() {
   const [cntHeading, setCntHeading] = useState('')
-  const [navSelect, setNavSelect] = useState('pomodoro')
+  const [navSelect, setNavSelect] = useState('block-site')
 
   return (
     <div className={style.App}> 

@@ -1,9 +1,11 @@
-# 26th 
-1. Right way to setout time in background script
-2. Always refresh the frontend element by geeting message from background script
-   1. This is to sync the different tabs
+# 11th Feb
+- Push notifications
+- In bacgroundscript, consider replacing setTimeout with alarm API    
 
-## to-dos
-1. Replace timeloop in background script with setouttime
-   1. what will happen if BG goes inactive and active executed? would the setouttime be active?
-   2.   
+# 12th Feb
+- Block site
+  - How to get 
+  - how to block a site
+  - how to replace block site with block message
+- cleanup background script, put generic functions in to modules
+- 
