@@ -1,0 +1,103 @@
+@import '../../utilities/variables';
+
+.block-site-cnt{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .icon-cnt{
+
+        .icon{
+            background-color: $bg-color4;
+            border-radius: 10px;
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            padding: 10px;
+            img{
+                width: 30px;
+                height: 30px;
+            }
+        }
+    }
+    .header{
+        height: 80px;
+    }
+    .content{
+        flex-grow: 1;
+        // height: 100%;
+        width: 100%;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        flex-direction: column;
+
+        .host-name{
+            font-size: 20px;
+        }
+        .screen-time-info-cnt{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            flex-direction: column;
+
+            padding: 16px;
+            border-radius: 10px;
+            background-color: $bg-color3;
+            .screen-time-title{
+                font-size: 20px;
+                margin-bottom: 10px;
+            }
+            .screen-time-line{
+                width: 100%;
+                border: solid $bg-color4 1px;
+            }
+            .screen-time-data{
+                margin-top: 10px;
+                font-size: 14px;
+
+            }
+        }
+        
+        .btn{
+            font-size: 16px;
+            background-color: rgb(142, 93, 69);
+            width: min(400px, 90%);
+            height: 35px;
+            border-radius: 10px;
+            border: 0;
+            
+            &:hover{
+                background-color: rgb(96, 63, 47);
+
+            }
+        }
+
+    }
+
+    .footer{
+        height: 30px;
+        width: 100%;
+        
+        .btn-cnt{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            height: 100%;
+            width: 100%;
+            background-color:  $bg-color3;
+            border-radius: 5px;
+            
+            &:hover{
+                background-color:  $bg-color4;
+            }
+        }
+    }
+}
