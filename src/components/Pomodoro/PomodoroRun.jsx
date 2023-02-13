@@ -19,11 +19,12 @@ const PomodoroRun = ({setCntHeading, pomoData})=>{
         isPaused 
         } = pomoData
     
-    // Set Heading
-    setCntHeading(getHeadingDesc(cycleName))
     // Refresh UI every second
     let intervalId
     useEffect(()=>{
+        // Set Heading
+        setCntHeading(getHeadingDesc(cycleName))
+
         if (!isPaused){
             intervalId = setInterval(()=>{
                 setCurrTime(Date.now() / 1000)
@@ -74,13 +75,17 @@ const PomodoroRun = ({setCntHeading, pomoData})=>{
     if (cycleName === 'short') cycleDesc = 'Short Break'
     if (cycleName === 'long') cycleDesc = 'Long Break'
     //Button
-    const btn1Details = {
-        desc: isPaused ? `Resume ${cycleDesc}` : `Pause ${cycleDesc}`,
-        onClick: ()=>{
-            if (!isPaused) handlePauseClick()
-            else handelResumeClick()
-        },
-        style: 'btn-resume'
+    let btn1Details = null
+    if (cycleName === 'focus'){
+        btn1Details = {
+            // desc: isPaused ? `Resume ${cycleDesc}` : `Pause ${cycleDesc}`,
+            desc: isPaused ? `Resume` : `Pause`,
+            onClick: ()=>{
+                if (!isPaused) handlePauseClick()
+                else handelResumeClick()
+            },
+            style: 'btn-resume'
+        }
     }
     const btn2Details = {
         desc: 'Stop Pomodoro',
@@ -105,14 +110,27 @@ const PomodoroRun = ({setCntHeading, pomoData})=>{
                     currCycle={currCycle}
                     cycleName={cycleName}
                     />
-                <div className='time-cnt'>
-                    <div className="time">
-                        {getTimeFormat(remainingTime)}
+                <div className="time-outter-cnt">
+                    <div className='time-cnt'>
+                        <div className="time">
+                            {getTimeFormat(remainingTime)}
+                        </div>
+                        <div className="unit">
+                            hr min sec
+                        </div>
                     </div>
-                    <div className="unit">
-                        hr min sec
-                    </div>
+                    
+                    {
+                        cycleName !== 'focus' ? 
+                            <div className="skip-break-btn">
+                                Skip break
+                            </div> : 
+                            <div className="note">
+                                {getNote(cycleName)}
+                            </div>
+                    }
                 </div>
+
                 <Btn2Cnt btn1Details={btn1Details} btn2Details={btn2Details} />
             </div>
         </div>
@@ -134,9 +152,17 @@ const getTimeFormat = (timeInSec)=>{
     return `${hr}:${min}:${sec}`
 }
 
+
+
 function getHeadingDesc (cycleName){
-    if (cycleName === 'focus') return 'Pomodoro Focus'
-    if (cycleName === 'short') return 'Pomodoro Short Break'
-    if (cycleName === 'long') return 'Pomodoro Long Break'
+    if (cycleName === 'focus') return 'Focus'
+    if (cycleName === 'short') return 'Short Break'
+    if (cycleName === 'long') return 'Long Break'
+    console.log('[-] Problem, cycle name not found: ' + cycleName )
+}
+function getNote(cycleName){
+    if (cycleName === 'focus') return 'Stay focused🔥'
+    if (cycleName === 'short') return 'Relax, break time❄️'
+    if (cycleName === 'long') return 'Relax, break time❄️'
     console.log('[-] Problem, cycle name not found: ' + cycleName )
 }

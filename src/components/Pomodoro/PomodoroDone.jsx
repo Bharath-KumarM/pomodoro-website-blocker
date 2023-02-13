@@ -7,7 +7,7 @@ import './PomodoroDone.scss'
 const PomodoroDone = ({setCntHeading, pomoData}) =>{
     const [todayTomatoes, setTodayTomatoes] = useState(null)
 
-    setCntHeading('Pomodoro Breaks')
+    // setCntHeading('Pomodoro Breaks')
 
     const { 
             focusTime, sortBreakTime, longBreakTime,

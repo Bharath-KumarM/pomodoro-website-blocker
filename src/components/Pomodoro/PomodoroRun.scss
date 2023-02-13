@@ -20,47 +20,65 @@
 
         flex-direction: column;
 
-
-        .time-cnt{
-            height: 100px;
-            width: 225px;
-            border-radius: 10px;
-            border: solid 5px $accent-bg-light-color1;
-            
-            //Small Screen
-            @media only screen and (max-width: 650px) {
-                border: solid 3px $accent-bg-light-color1;
-                border-radius: 5px;
-                height: 75px;
-                width: 175px;
-            }
-
-            // border-radius: 100%;
-    
+        .time-outter-cnt{
             display: flex;
+            align-items: center;
             justify-content: center;
-            align-items: center;            
             flex-direction: column;
 
-            
-            .time{
-                letter-spacing: 2px;
-                font-size: 40px;
+            .time-cnt{
+                height: 100px;
+                width: 225px;
+                border-radius: 10px;
+                border: solid 5px $accent-bg-light-color1;
+                
                 //Small Screen
                 @media only screen and (max-width: 650px) {
-                    font-size: 30px;
+                    border: solid 3px $accent-bg-light-color1;
+                    border-radius: 5px;
+                    height: 75px;
+                    width: 175px;
                 }
+    
+                // border-radius: 100%;
+        
+                display: flex;
+                justify-content: center;
+                align-items: center;            
+                flex-direction: column;
+    
+                
+                .time{
+                    letter-spacing: 2px;
+                    font-size: 40px;
+                    //Small Screen
+                    @media only screen and (max-width: 650px) {
+                        font-size: 30px;
+                    }
+                }
+                .unit{
+                    font-size: 12px;
+                    color: $font-color2;
+                    word-spacing: 30px;
+                    @media only screen and (max-width: 650px) {
+                        word-spacing: 10px;
+                    }
+                }
+    
             }
-            .unit{
-                font-size: 12px;
+            .note{
+                font-size: 14px;
+                margin-top: 20px;
                 color: $font-color2;
-                word-spacing: 30px;
-                @media only screen and (max-width: 650px) {
-                    word-spacing: 10px;
-                }
             }
-
-
+            .skip-break-btn{
+                margin-top: 20px;
+                text-decoration: underline;
+                font-style: italic;
+                font-size: 14px;
+                color: $font-color2;
+                cursor: pointer;
+            }
         }
 
     }

@@ -21,7 +21,7 @@ const defaultPomoData = {
 const Pomodoro = ({setCntHeading})=>{
 
     const [pomoData, setPomoData] = useState({mode: 'getData'})
-
+    
     // Messge from Background Script
     const handleMessage = (data, sender, sendResponse)=>{
         const { pomoData } = data
@@ -41,6 +41,7 @@ const Pomodoro = ({setCntHeading})=>{
         }
         
     }, [])
+
 
     //TODO: Get data from message instead of getting from local stograge
     if (pomoData.mode === 'getData'){

@@ -5,14 +5,14 @@ import styles from './Btn2Cnt.module.scss'
 const Btn2Cnt = ({btn1Details, btn2Details})=>{
     return (
     <div className={styles.btn2Cnt}>
-        <button 
+        {btn1Details !== null ? <button 
             className={[btn1Details.style, styles.btn].join(' ')}
             onClick={()=>{
                 btn1Details.onClick()
             }}
             >
             {btn1Details.desc}
-        </button>
+        </button> : null}
         <button 
             className={styles.btn}
             onClick={()=>{

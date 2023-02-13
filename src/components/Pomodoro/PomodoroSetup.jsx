@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
 
 
 const PomodoroSetup = ({setCntHeading, pomoData})=>{
-    useEffect(()=>setCntHeading('Pomodoro Setup'))
+    useEffect(()=>setCntHeading('Setup'))
 
     // Default time 
     const {
