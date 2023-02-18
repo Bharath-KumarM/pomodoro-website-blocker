@@ -30,11 +30,10 @@
                 height: 100px;
                 width: 225px;
                 border-radius: 10px;
-                border: solid 5px $accent-bg-light-color1;
+                box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.8);
                 
                 //Small Screen
                 @media only screen and (max-width: 650px) {
-                    border: solid 3px $accent-bg-light-color1;
                     border-radius: 5px;
                     height: 75px;
                     width: 175px;

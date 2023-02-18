@@ -3,42 +3,68 @@
 .block-site-cnt{
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
+        .content{
+            height: 94%;
+            width: 100%;
 
-    .icon-cnt{
-
-        .icon{
-            background-color: $bg-color4;
-            border-radius: 10px;
-            
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: space-around;
+
+            flex-direction: column;
+
             
-            padding: 10px;
-            img{
-                width: 30px;
-                height: 30px;
+        .icon-cnt{
+            box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.8);
+            &.block{
+                animation: shake 500ms ease-in normal 5;
+                @keyframes shake {
+                    0% { transform: translate(1px, 1px) rotate(0deg); }
+                    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+                    20% { transform: translate(-3px, 0px) rotate(1deg); }
+                    30% { transform: translate(3px, 2px) rotate(0deg); }
+                    40% { transform: translate(1px, -1px) rotate(1deg); }
+                    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+                    60% { transform: translate(-3px, 1px) rotate(0deg); }
+                    70% { transform: translate(3px, 1px) rotate(-1deg); }
+                    80% { transform: translate(-1px, -1px) rotate(1deg); }
+                    90% { transform: translate(1px, 2px) rotate(0deg); }
+                    100% { transform: translate(1px, -2px) rotate(-1deg); }
+                }
+            }
+            .icon{
+                background-color: $bg-color3;
+                border-radius: 10px;
+                
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                
+                padding: 10px;
+                img{
+                    width: 30px;
+                    height: 30px;
+                    animation: zoom-out 200ms ease-in normal;
+                    @keyframes zoom-out {
+                        0%{
+                            transform: scale(0.5);
+                        }
+                        100%{
+                            transform: scale(1);
+                        }
+                    }
+                }
+                img.block{     
+                    filter: grayscale(100%);
+                }
             }
         }
-    }
-    .header{
-        height: 80px;
-    }
-    .content{
-        flex-grow: 1;
-        // height: 100%;
-        width: 100%;
-
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-
-        flex-direction: column;
 
         .host-name{
             font-size: 20px;
+            &.blocked{
+                text-decoration: line-through;
+            }
         }
         .screen-time-info-cnt{
             display: flex;
@@ -50,6 +76,9 @@
             padding: 16px;
             border-radius: 10px;
             background-color: $bg-color3;
+
+            box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.8);
+
             .screen-time-title{
                 font-size: 20px;
                 margin-bottom: 10px;
@@ -67,37 +96,19 @@
         
         .btn{
             font-size: 16px;
-            background-color: rgb(142, 93, 69);
+            background-color: $accent-bg-light-color1;
             width: min(400px, 90%);
             height: 35px;
             border-radius: 10px;
             border: 0;
+            transition: background-color 200ms ease-in;
+            color: $font-color1;
             
             &:hover{
-                background-color: rgb(96, 63, 47);
-
+                background-color: $accent-bg-dark-color1;
+                
             }
-        }
 
-    }
-
-    .footer{
-        height: 30px;
-        width: 100%;
-        
-        .btn-cnt{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            height: 100%;
-            width: 100%;
-            background-color:  $bg-color3;
-            border-radius: 5px;
-            
-            &:hover{
-                background-color:  $bg-color4;
-            }
         }
     }
 }

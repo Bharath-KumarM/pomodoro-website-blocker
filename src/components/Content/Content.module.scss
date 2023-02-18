@@ -2,8 +2,10 @@
 
 .Cnt {
     display: flex;
-    flex-grow: 1;
+    // flex-grow: 1;
+    height: 93%;
     margin: 0 0 10px 0;
+
     
     //Small screen
     @media only screen and (max-width: 650px) {
@@ -54,6 +56,8 @@
 
     align-items: center;
 
+    overflow-y: scroll;
+
     .Heading{
         align-self: flex-start;
         margin: 10px;
@@ -63,6 +67,10 @@
             font-size: 16px;
         }
     }
+    
+    &::-webkit-scrollbar {
+        width: 1px;
+      }
 }
 
 

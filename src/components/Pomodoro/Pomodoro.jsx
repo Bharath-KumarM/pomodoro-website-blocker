@@ -61,7 +61,7 @@ const Pomodoro = ({setCntHeading})=>{
     
 
     return  pomoData.mode === 'setup' ? 
-                <PomodoroSetup 
+                <PomodoroSetup  
                     setCntHeading={setCntHeading}
                     pomoData={pomoData}
                     /> :

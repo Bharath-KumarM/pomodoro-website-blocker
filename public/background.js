@@ -48,16 +48,77 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse)=> {
   }
 
   else if(blockSitesData){
-    if (msg === 'newBlockSite') handleNewBlockSite(blockSitesData)
+    let isDone
+    if (msg === 'newBlockSite') {
+      // todo: make this responsive
+      sendResponse({responseIsBlocked: true})
+
+      isDone = await handleNewBlockSite(blockSitesData)
+
+      if (!isDone) return 
+      chrome.tabs.query({url: `*://${blockSitesData['hostName']}/*` }, function(tabs){
+        for (const tab of tabs){
+          chrome.tabs.sendMessage(tab.id, {msg: 'block'})
+        }
+      })
+    }
+    else if (msg === 'unBlockSite'){
+      // todo: make this responsive
+      sendResponse({responseIsBlocked: false})
+
+      isDone = await handleUnblockSite(blockSitesData)
+      if (!isDone) return
+
+      chrome.tabs.query({url: `*://${blockSitesData['hostName']}/*` }, function(tabs){
+        for (const tab of tabs){
+          chrome.tabs.sendMessage(tab.id, {msg: 'unblock'})
+        }
+      })
+    }
   }
 
 
-
 });
+
 // Block sites Handles funciton
-async function handleNewBlockSite({hostName, favIconUrl}){
-  console.log(`Request for blocking,  ${hostName}`)
+async function handleUnblockSite({hostName, favIconUrl}){
+  console.log(`Request for unblocking,  ${hostName}`)
+  let {blockedSites} = await chrome.storage.local.get('blockedSites')
+  if (!blockedSites) blockedSites = []
+
+  let isHostRemoved = false
+  const newBlockedSites = []
+  for (const [blockedHostname, blockedFavIconUrl] of blockedSites){
+    if (blockedHostname !== hostName) {
+      newBlockedSites.push([blockedHostname, blockedFavIconUrl])
+    }
+    else isHostRemoved = true
+  }
+  if (isHostRemoved){
+    await chrome.storage.local.set({blockedSites: [...newBlockedSites]})
+  }
+  return isHostRemoved
 }
+
+async function handleNewBlockSite({hostName, favIconUrl}){
+  let {blockedSites} = await chrome.storage.local.get('blockedSites')
+  if (!blockedSites) blockedSites = []
+
+  let isHostFound = false
+  for (const [blockedHostname, blockedFavIconUrl] of blockedSites){
+    if (blockedHostname === hostName) {
+      isHostFound = true
+      break
+    }
+  }
+  // Since Host is not found, add the new site to the list
+  if (!isHostFound){
+    blockedSites.push([hostName, favIconUrl])
+    await chrome.storage.local.set({blockedSites: [...blockedSites]})
+  }
+  return !isHostFound
+}
+
 // Pomodoro Handle functions
 function handlePomoStart(pomoData){
   const remainingTime = calculateReminingTime(pomoData)
@@ -147,10 +208,10 @@ function updatePomoHistory({cycleName, focusTime}){
     })
   })
 }
+
+
+
 // Generic Helper functions - Later moved to seperate module
-
-
-
 function calculateReminingTime(pomoData){
   const { 
     focusTime, sortBreakTime, longBreakTime,
@@ -192,3 +253,24 @@ function getCurrentTime () {
 
   return `${noon}:${hour}:${minute}`
 }
+
+// chrome.tabs.onUpdated.addListener((tabId, {url}, tab)=>{
+
+//   if (!url || !url.startsWith('http')) return
+
+//   const hostname = new URL(location).hostname;
+//   let isHostFound = false
+//   for (const [blockedHostname, blockedFavIconUrl] of blockedSites){
+//     if (blockedHostname === hostname) {
+//       isHostFound = true
+//       break
+//     }
+//   }
+//   if (isHostFound){
+//     chrome.scripting.executeScript(
+//       {
+
+//       }
+//     )
+//   }
+// })

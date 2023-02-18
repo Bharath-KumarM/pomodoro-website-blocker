@@ -21,10 +21,7 @@ const navOptionData = [
     ['screen-time', 'Screen Time', ScreenTimeIcon]
 ] 
 
-const Content = (props)=>{
-    const [cntHeading, setCntHeading] = [props.cntHeading, props.setCntHeading]
-    const [navSelect, setNavSelect] = [props.navSelect, props.setNavSelect]
-
+const Content = ({cntHeading, setCntHeading, navSelect, setNavSelect})=>{
     const navOptElements = navOptionData.map((details, index)=>{
         return (
             <NavOpts 
@@ -49,7 +46,7 @@ const Content = (props)=>{
                 {navOptElements}
             </nav>
             <div className={styles.ContentCnt}>
-                <h2 className={styles.Heading}>{cntHeading}</h2>
+                {/* <h2 className={styles.Heading}>{cntHeading}</h2> */}
                 {contentEle}
             </div>
         </div>

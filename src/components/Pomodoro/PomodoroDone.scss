@@ -60,12 +60,15 @@
                 }
         
             }
-            .skip-btn{
-                text-decoration: underline;
+            .short-desc{
                 font-style: italic;
                 font-size: 14px;
                 color: $font-color2;
                 cursor: pointer;
+            }
+            .skip-btn{
+
+                text-decoration: underline;
             }
 
         }

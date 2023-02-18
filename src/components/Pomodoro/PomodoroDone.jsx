@@ -49,8 +49,8 @@ const PomodoroDone = ({setCntHeading, pomoData}) =>{
         headingDesc = 'Take a Long Break'
     }
     if (cycleName === 'long') {
-        btnDesc = 'Start New Cycle'
-        headingDesc = 'Congratulation! You Completed A Cycle'
+        btnDesc = 'Start A New Session'
+        headingDesc = 'Congratulation!'
     }
 
     // Tomatoes
@@ -86,12 +86,20 @@ const PomodoroDone = ({setCntHeading, pomoData}) =>{
         })
     }
 
-    let skipBreakBtn
+    let sortDesc = null
     if (nextCycleName !== 'focus') {
-        skipBreakBtn = (
+        sortDesc = (
             <span onClick={()=>handleSkipClick()} 
                 className="skip-btn">
                 Skip Break
+            </span>
+        )
+    }
+    if (cycleName === 'long') {
+        sortDesc = (
+            <span 
+                className="short-desc">
+                Completed A Session🔥
             </span>
         )
     }
@@ -120,7 +128,7 @@ const PomodoroDone = ({setCntHeading, pomoData}) =>{
                         {btnDesc}
                     </button>
 
-                    {skipBreakBtn}
+                    {sortDesc}
 
                 </div>
                 <div className="today-cnt">

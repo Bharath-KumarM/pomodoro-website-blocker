@@ -19,9 +19,16 @@
 },
 "options_page": "index.html",
 "web_accessible_resources": [
-  {
-    "resources": ["/static/*"],
-    "matches": ["<all_urls>"]
-  }
-]
+    {
+      "resources": ["/static/*"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["content-script1.js"],
+      "runAt": "document_start"
+    }
+  ]
 }
