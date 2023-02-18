@@ -13,7 +13,7 @@ const BlockSites = ({setCntHeading})=>{
         // Debug start
         setCurrTab(debugTab)
         setIsBlocked(false)
-        return
+        return;
         // Debug End
 
         // Get Current Tab
@@ -55,7 +55,7 @@ const BlockSites = ({setCntHeading})=>{
                     className={"icon-cnt " + (isBlocked ? "block" : " ")}>
                     <div className="icon">
                         <img 
-                            src={currTab.favIconUrl ? currTab.favIconUrl: "./icons/globe.png" } 
+                            src={currTab.favIconUrl ? currTab.favIconUrl: "../../assets/png/globe.png" } 
                             alt="icon" 
                             className={isBlocked ? 'block' : null}
                         />

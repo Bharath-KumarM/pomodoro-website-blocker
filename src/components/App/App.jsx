@@ -1,8 +1,8 @@
 import style from './App.module.scss'
 
-import Header from './components/Header/Header'
-import Content from './components/Content/Content.jsx'
-import Footer from './components/Footer/Footer.jsx'
+import Header from '../Header/Header'
+import Content from '../Content/Content.jsx'
+import Footer from '../Footer/Footer.jsx'
 
 import { useState } from "react"
 

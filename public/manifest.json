@@ -11,13 +11,13 @@
                   "tabs"
                 ],
   "background": {
-    "service_worker": "background.js",
+    "service_worker": "./src/pages/background/background.js",
     "type": "module"
 },
 "action": {
-  "default_popup": "index.html"
+  "default_popup": "./src/pages/popup/popup.html"
 },
-"options_page": "index.html",
+"options_page": "./src/pages/popup/popup.html",
 "web_accessible_resources": [
     {
       "resources": ["/static/*"],
@@ -27,7 +27,7 @@
   "content_scripts": [
     {
       "matches": ["*://*/*"],
-      "js": ["content-script1.js"],
+      "js": ["./src/pages/content/content.js"],
       "runAt": "document_start"
     }
   ]
