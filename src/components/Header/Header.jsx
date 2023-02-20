@@ -28,7 +28,8 @@ const Header = (props)=>{
                     className={style.titleIcon}
                     title={'Screen Time | Site Blocker | Pomodoro'}
                     >
-                    <GiConfirmed />
+                        <img src="../../../png/logo_1.png" alt="icon" />
+                    {/* <GiConfirmed /> */}
                 </div>
                 <button 
                     className={style.iconBtn}

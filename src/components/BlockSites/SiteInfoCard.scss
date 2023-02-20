@@ -1,0 +1,42 @@
+@import '../../utilities/variables';
+
+.site-info-cnt{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    flex-direction: column;
+
+    padding: 25px;
+    border-radius: 10px;
+    background-color: $bg-color3;
+
+    
+    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.8);
+    
+    position: relative;
+
+    .swap-icon-cnt{
+        position: absolute;
+        right: 10px;
+        top: 10px;
+
+        svg{
+            width: 15px;
+            height: 15px;
+        }
+    }
+    .site-info-title{
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+    .site-info-line{
+        width: 100%;
+        border: solid $bg-color4 1px;
+    }
+    .site-info-data{
+        margin-top: 10px;
+        font-size: 14px;
+
+    }
+}

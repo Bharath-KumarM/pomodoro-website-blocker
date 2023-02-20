@@ -1,6 +1,5 @@
 // Block sites Handles funciton
 export async function handleUnblockSite({hostName, favIconUrl}){
-    console.log(`Request for unblocking,  ${hostName}`)
     let {blockedSites} = await chrome.storage.local.get('blockedSites')
     if (!blockedSites) blockedSites = []
   

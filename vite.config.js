@@ -42,6 +42,6 @@ export default defineConfig({
   plugins: [
     react(),
   ],
-  base: '',
+  // base: '/public/',
 
 })

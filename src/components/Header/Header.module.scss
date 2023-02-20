@@ -38,6 +38,10 @@
 
 .titleIcon{
     display: none;
+    img{
+        width: 24px;
+        height: 24px;
+    }
     svg{
         fill: $accent-color1;
     }

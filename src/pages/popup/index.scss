@@ -56,17 +56,18 @@ input[type=number]::-webkit-outer-spin-button {
 // Scroll Bar
 /* width */
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 10px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
   background: $bg-color1; 
+  background: transparent; 
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  border-radius: 1px;
+  border-radius: 10px;
   background: $font-color2; 
 }
 
