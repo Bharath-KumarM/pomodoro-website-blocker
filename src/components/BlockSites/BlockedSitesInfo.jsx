@@ -5,43 +5,32 @@ import "./BlockedSiteInfo.scss"
 import BlockedSitesList from './BlockedSitesList'
 
 
-const BlockedSitesInfo = ()=>{
-    //! Debug Starts
-    const [showBlockedSite, setShowBlockedSite] = useState(false)
+const BlockedSitesInfo = ({setUpdateBlockSiteDetails})=>{
     const [blockedSites, setBlockedSites] = useState(null)
-    //! Debug Ends
 
     useEffect(()=>{
-        if (!showBlockedSite) return
+        if (!blockedSites) return
         const element = document.getElementById('block-site-list-id');
         if (element) {
             element.scrollIntoView({ behavior: 'smooth' });
         }
     })
 
-    const handleShowBtnClick = () =>{
-        if (showBlockedSite){
-            setShowBlockedSite(prevClicked => !prevClicked)
-            setBlockedSites(null)
-        }
-        else {
-            
-            chrome.storage.local.get('blockedSites').then(({blockedSites})=>{
-                if(!blockedSites) return 
-                setBlockedSites(blockedSites)
-                setShowBlockedSite(prevClicked => !prevClicked)
-            })
-            //! Debug Starts
-            // setBlockedSites(blockedSitesArrDebug)
-            // setShowBlockedSite(prevClicked => !prevClicked)
-            //! Debug Ends
-        }
+    const handleShowBtnClick = () =>{ 
+        chrome.storage.local.get('blockedSites').then(({blockedSites})=>{
+            if(!blockedSites) return 
+            setBlockedSites(blockedSites)
+        })
+        //! Debug Starts
+        // setBlockedSites(blockedSitesArrDebug)
+        // setShowBlockedSite(prevClicked => !prevClicked)
+        //! Debug Ends
     }
 
     return(
         <div 
             id="block-site-list-id"
-            className={"block-site-list-cnt " + (showBlockedSite ? 'clicked' : '')}
+            className={"block-site-list-cnt " + (blockedSites ? 'clicked' : '')}
             >
             {
                 !blockedSites ?
@@ -53,6 +42,7 @@ const BlockedSitesInfo = ()=>{
                 </div>
                 : 
                 <BlockedSitesList 
+                    setUpdateBlockSiteDetails={setUpdateBlockSiteDetails}
                     blockedSites={blockedSites}
                 />
             }

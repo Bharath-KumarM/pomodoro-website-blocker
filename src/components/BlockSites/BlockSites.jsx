@@ -4,7 +4,7 @@ import {ImCheckboxUnchecked as BlockIcon} from "react-icons/im"
 import {SlFire as FireIcon} from "react-icons/sl"
 import {BiInfoCircle as InfoIcon} from "react-icons/bi"
 
-import BlockedSitesInfo from "./BlockedSiteInfo"
+import BlockedSitesInfo from "./BlockedSitesInfo"
 import SiteInfoCard from "./SiteInfoCard"
 
 import "./BlockSites.scss"
@@ -13,6 +13,7 @@ import "./BlockSites.scss"
 const BlockSites = ({setCntHeading})=>{
     const [currTab, setCurrTab] = useState(null)
     const [isBlocked, setIsBlocked] = useState(null)
+    const [updateBlockSiteDetails, setUpdateBlockSiteDetails] = useState(0)
     
     useEffect( ()=>{
         //! Debug start
@@ -22,7 +23,24 @@ const BlockSites = ({setCntHeading})=>{
         //! Debug End
 
         // Get Current Tab
-        getCurrTab().then( tempCurrTab =>{
+        getCurrTab().then( async (tempCurrTab) =>{
+            if ((new URL(tempCurrTab.url)).pathname === '/src/pages/blocked-screen/blocked-screen.html'){
+                const {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
+                if (!blockedScreenData[tempCurrTab.id]) {
+                    //todo: Reload the page
+                    return
+                }
+                const [hostname, favIconUrl] = blockedScreenData[tempCurrTab.id]
+
+                const {blockedSites} = await chrome.storage.local.get('blockedSites')
+
+                setCurrTab({hostname, favIconUrl})
+                if (blockedSites[hostname]) setIsBlocked(true)
+                else setIsBlocked(false)
+
+                return
+
+            }
             // Check for current tab domain
             const hostName = (new URL(tempCurrTab.url)).hostname
             // Check whether it is blocked
@@ -32,28 +50,29 @@ const BlockSites = ({setCntHeading})=>{
             })
         })
 
-    }, [])
+    }, [updateBlockSiteDetails])
 
     // wait for current tab details
-    if (!currTab) return <div>Loading...</div>
-    const isValidSite = currTab.url.startsWith('http')
+    if (!currTab) return null
+    const isValidSite = currTab.url ? currTab.url.startsWith('http') : true
 
-    const hostName = (new URL(currTab.url)).hostname
+    const hostname = currTab.url ? (new URL(currTab.url)).hostname : currTab.hostname
     const handleBlockBtnClick = async ()=>{
 
         let message
         if (isBlocked === null ) message = ''
         else if (isBlocked === false) message = 'newBlockSite'
         else message = 'unBlockSite'
-        const {responseIsBlocked} = await chrome.runtime.
+        const response = await chrome.runtime.
                 sendMessage({
                     blockSitesData: {
-                        hostName: hostName,
+                        hostName: hostname,
                         favIconUrl: currTab.favIconUrl
                     }, 
                     msg: message,
                 })
-        setIsBlocked(responseIsBlocked)
+        const responseIsBlocked = await response
+        setUpdateBlockSiteDetails(prevState => prevState+1)
     }
     return (
         <div className='block-site-cnt'>
@@ -62,28 +81,28 @@ const BlockSites = ({setCntHeading})=>{
                 <SiteDetails 
                     isBlocked={isBlocked}
                     currTab={currTab}
-                    hostName={hostName}
+                    hostName={hostname}
                     handleBlockBtnClick={handleBlockBtnClick} 
                 /> : 
                 <InvalidSiteDetails 
-                    hostName={hostName}
+                    hostName={hostname}
                 />
             }
-            <BlockedSitesInfo />
+            {/* Blocked sites in List View  */}
+            <BlockedSitesInfo 
+                setUpdateBlockSiteDetails={setUpdateBlockSiteDetails}
+            />
         </div>
     )
 }
 
 async function getIsBlocked(hostName){
     let {blockedSites} = await chrome.storage.local.get('blockedSites')
-    let isHostFound = false
-    for (const [blockedHostname, blockedFavIconUrl] of blockedSites){
-        if (blockedHostname === hostName) {
-        isHostFound = true
-        break
-        }
+
+    if (!blockedSites){
+        chrome.storage.local.set({'blockedSites': {}})
     }
-    return isHostFound
+    return blockedSites && blockedSites[hostName] ? true : false
 }
 async function getCurrTab(){
     let queryOptions = { active: true, lastFocusedWindow: true }

@@ -2,7 +2,9 @@ import {
   handlePomoStart, handlePomoPause, handlePomoStop, 
   handlePomoReset, pushNotification, updatePomoHistory
 } from './pomoHelper'
-import {handleUnblockSite, handleNewBlockSite} from './blockSiteHelper'
+
+import { handleMsgFromBlockSiteUI } from './blockSiteBG'
+
 
 console.log('Script running from background!!!')
 
@@ -50,56 +52,29 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse)=> {
     )
   }
 
-  else if(blockSitesData){
-    let isDone
-    if (msg === 'newBlockSite') {
-      // todo: make this responsive
-      sendResponse({responseIsBlocked: true})
-
-      isDone = await handleNewBlockSite(blockSitesData)
-
-      if (!isDone) return 
-      chrome.tabs.query({url: `*://${blockSitesData['hostName']}/*` }, function(tabs){
-        for (const tab of tabs){
-          chrome.tabs.sendMessage(tab.id, {msg: 'block'})
-        }
-      })
-    }
-    else if (msg === 'unBlockSite'){
-      // todo: make this responsive
-      sendResponse({responseIsBlocked: false})
-
-      isDone = await handleUnblockSite(blockSitesData)
-      if (!isDone) return
-
-      chrome.tabs.query({url: `*://${blockSitesData['hostName']}/*` }, function(tabs){
-        for (const tab of tabs){
-          chrome.tabs.sendMessage(tab.id, {msg: 'unblock'})
-        }
-      })
-    }
-  }
+  if(blockSitesData) handleMsgFromBlockSiteUI(blockSitesData, msg, sendResponse)
 
 
 });
 
-// chrome.tabs.onUpdated.addListener((tabId, {url}, tab)=>{
+chrome.tabs.onUpdated.addListener( async (tabId, {url}, tab)=>{
 
-//   if (!url || !url.startsWith('http')) return
+  if (!tab.url || !tab.url.startsWith('http') || !tab.favIconUrl) return 
+  
+  const hostname = new URL(tab.url).hostname;
+  const favIconUrl = tab.favIconUrl
+  
+  const {blockedSites} = await chrome.storage.local.get('blockedSites')
+  if (!blockedSites[hostname]) return;
+  
+  let {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
+  if (!blockedScreenData) blockedScreenData = {}
+  
+  blockedScreenData[tabId] = [hostname, favIconUrl]
+  await chrome.storage.local.set({blockedScreenData})
 
-//   const hostname = new URL(location).hostname;
-//   let isHostFound = false
-//   for (const [blockedHostname, blockedFavIconUrl] of blockedSites){
-//     if (blockedHostname === hostname) {
-//       isHostFound = true
-//       break
-//     }
-//   }
-//   if (isHostFound){
-//     chrome.scripting.executeScript(
-//       {
-
-//       }
-//     )
-//   }
-// })
+  chrome.tabs.update(tabId, {
+    url: chrome.runtime.getURL(`/src/pages/blocked-screen/blocked-screen.html`) 
+  })
+  
+})

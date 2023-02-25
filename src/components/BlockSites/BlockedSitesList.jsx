@@ -2,14 +2,16 @@ import { ImCheckboxUnchecked as UncheckedIcon, ImCheckboxChecked as CheckedIcon 
 import { BiMemoryCard as SaveIcon } from "react-icons/bi"
 import { useEffect, useRef,useState } from "react"
 
-const BlockedSitesList = ({blockedSites}) => {
+const BlockedSitesList = ({blockedSites, setUpdateBlockSiteDetails}) => {
 
-    const [saveState, setSaveState] = useState('Save')
+    const [isUnsaved, setIsUnsaved] = useState(false)
     const entryRefArr = []
     const blockedSiteElements = []
-
+    
     // Created entries (row) and reference
-    blockedSites.map(([hostname, favIconUrl], id)=>{
+    Object.keys(blockedSites).map((hostname, id)=>{
+        const favIconUrl = blockedSites[hostname][0]
+
         const [isChecked, setIsChecked ]= useState(true)
         const entryRef = useRef(null)
         const entry = 
@@ -18,7 +20,7 @@ const BlockedSitesList = ({blockedSites}) => {
                 key={id}
                 ref={entryRef} 
                 onClick={e =>{
-                    setSaveState('Save')
+                    setIsUnsaved(true)
                     setIsChecked((prevIsChecked)=> !prevIsChecked)
                 }}
                 >
@@ -36,7 +38,7 @@ const BlockedSitesList = ({blockedSites}) => {
     })
     
     const handleSelectAllClicked = ()=>{
-        setSaveState('Save')
+        setIsUnsaved(true)
 
         for (const entryRef of entryRefArr){
             entryRef.
@@ -47,7 +49,7 @@ const BlockedSitesList = ({blockedSites}) => {
         }
     }
     const handleUnselectAllClicked = ()=>{
-        setSaveState('Save')
+        setIsUnsaved(true)
 
         for (const entryRef of entryRefArr){
             entryRef.
@@ -59,30 +61,32 @@ const BlockedSitesList = ({blockedSites}) => {
     }
     
     const handleSaveClicked = ()=>{
-        setSaveState('Saving...')
-        const saveBlockedSites = []
+        setIsUnsaved(true)
+        const saveBlockedSites = {}
         for (const entryRef of entryRefArr){
             if (entryRef.
                     current.
                     childNodes[0].
                     childNodes[0].
                     checked){
-                saveBlockedSites.push([
-                    //hostname
-                    entryRef.
-                        current.
-                        childNodes[2].
-                        childNodes[0].wholeText.trim(),
-                    // favIcon URL
-                    entryRef.
-                        current.
-                        childNodes[1].
-                        childNodes[0].src
-                    ])
+                const hostName = entryRef.
+                                    current.
+                                    childNodes[2].
+                                    childNodes[0].wholeText.trim()
+                saveBlockedSites[hostName] = 
+                    [
+
+                        // favIcon URL
+                        entryRef.
+                            current.
+                            childNodes[1].
+                            childNodes[0].src
+                    ]
                 }
         }
-        chrome.storage.local.set({blockedSites: saveBlockedSites}, ()=>{
-            setSaveState('Saved')
+        chrome.storage.local.set({'blockedSites': saveBlockedSites}, ()=>{
+            setUpdateBlockSiteDetails(prevSate => prevSate+1)
+            setIsUnsaved(false)
             console.log(saveBlockedSites)
         })
     }
@@ -110,10 +114,11 @@ const BlockedSitesList = ({blockedSites}) => {
                 </button>
                 <button 
                     onClick={()=>handleSaveClicked()}
+                    className={isUnsaved ? 'un-saved' : 'saved'}
                 >
                     <SaveIcon />
                     <div>
-                        {saveState}
+                        {isUnsaved ? 'Not Saved' : 'Saved'}
                     </div>
                 </button>
 

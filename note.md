@@ -1,11 +1,14 @@
-# 11th Feb
-- Push notifications
-- In bacgroundscript, consider replacing setTimeout with alarm API    
+# 23rd Feb
+- fix: blockedSites local storage in all places
+- blocking and unblocking should be responsive
+- why it is loading if blockedSites deleted
 
-# 12th Feb
-- Block site
-  - How to get 
-  - how to block a site
-  - how to replace block site with block message
-- cleanup background script, put generic functions in to modules
-- 
+
+
+
+  // "content_scripts": [
+  //   {
+  //     "matches": ["*://*/*"],
+  //     "js": ["./src/pages/content/content.jsx"]
+  //   }
+  // ]

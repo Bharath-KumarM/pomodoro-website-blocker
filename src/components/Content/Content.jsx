@@ -17,7 +17,7 @@ import BlockSites from "../BlockSites/BlockSites"
 
 const navOptionData = [
     ['block-site', 'Block Site', BlockIcon],
-    ['pomodoro', 'Pomodoro', PomodoroIcon],
+    // ['pomodoro', 'Pomodoro', PomodoroIcon],
     ['screen-time', 'Screen Time', ScreenTimeIcon]
 ] 
 
@@ -33,8 +33,8 @@ const Content = ({cntHeading, setCntHeading, navSelect, setNavSelect})=>{
         )
     })
 
-    const contentEle =  navSelect === 'pomodoro' ? <Pomodoro setCntHeading={setCntHeading}/> :
-                        navSelect === 'block-site' ? <BlockSites setCntHeading={setCntHeading}/> :
+    const contentEle =  navSelect === 'block-site' ? <BlockSites setCntHeading={setCntHeading}/> :
+                        // navSelect === 'pomodoro' ? <Pomodoro setCntHeading={setCntHeading}/> :
                         navSelect === 'screen-time' ? <ScreenTime setCntHeading={setCntHeading}/> : 
                         navSelect === 'home' ? <div>Home</div> : 
                         navSelect === 'settings' ? <div>Settings</div> : 

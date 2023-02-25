@@ -23,12 +23,8 @@
       "resources": ["/static/*"],
       "matches": ["<all_urls>"]
     }
-  ],
-  "content_scripts": [
-    {
-      "matches": ["*://*/*"],
-      "js": ["./src/pages/content/content.js"],
-      "runAt": "document_start"
-    }
   ]
+
 }
+
+
