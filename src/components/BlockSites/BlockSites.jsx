@@ -114,6 +114,15 @@ async function getCurrTab(){
 
 
 function SiteDetails({isBlocked, currTab, hostName, handleBlockBtnClick}){
+    const [count , setCount] = useState(30)
+
+    useEffect(()=>{
+        if (isBlocked && count > 0){
+            setTimeout(()=>{
+                setCount((prevCount)=>prevCount-1)
+            }, 1000)
+        }
+    }, [count])
 
     return (
     <div className="content">
@@ -138,11 +147,14 @@ function SiteDetails({isBlocked, currTab, hostName, handleBlockBtnClick}){
         <button 
             className={'btn '}
             onClick={()=>{
-                handleBlockBtnClick(isBlocked)
+                if (!isBlocked || count <= 0){
+                    handleBlockBtnClick(isBlocked)
+                }
             }}
         >
-            {
+            {   
                 isBlocked === null ? 'Loading...' :
+                isBlocked === true &&  count > 0 ? `Wait for ${count} sec` :
                 isBlocked === true ? 'Unblock this site' :
                 isBlocked === false ? 'Block this site' : null
              }

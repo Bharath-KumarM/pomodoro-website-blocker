@@ -32,12 +32,14 @@ const BlockedScreen = ()=>{
         const queryOptions = { currentWindow: true, active: true }
         const [tab] = await chrome.tabs.query(queryOptions)
         const {id: tabId} = tab
-        console.log(tabId)
+
         if (!blockedScreenData[tabId]) {
             console.log('no blockedScreeendata from BG')
             return
         }
         const [tempHostname, tempFavIcon] = blockedScreenData[tabId]
+
+
 
         const {blockedSites} = await chrome.storage.local.get('blockedSites')
         if (!blockedSites[tempHostname]){
@@ -45,6 +47,16 @@ const BlockedScreen = ()=>{
             chrome.tabs.update(tabId, {url: `http://${tempHostname}`}); 
             return
         }
+
+        // Load FavIcon and title
+        let link = document.querySelector("link[rel~='icon']");
+        if (!link) {
+            link = document.createElement('link');
+            link.rel = 'icon';
+            document.head.appendChild(link);
+        }
+        link.href = tempFavIcon;
+        document.title = `${tempHostname} - 🚫Blocked`
 
         setBlockedSiteData([tempHostname, tempFavIcon])
     }
@@ -54,11 +66,9 @@ const BlockedScreen = ()=>{
     }, [])
 
     useEffect(()=>{
-        if (count >= 0){
-            setTimeout(()=>{
-                setCount((prevCount)=>prevCount-1)
-            }, 1000)
-        }
+        setTimeout(()=>{
+            setCount((prevCount)=>prevCount-1)
+        }, 1000)
     }, [count])
 
     const handleUnblockBtnClick = ()=>{
@@ -71,15 +81,27 @@ const BlockedScreen = ()=>{
                 msg: 'unBlockSite',
             })
     }
+    if (count < -60){
+        chrome.tabs.getCurrent(function(tab) {
+            chrome.tabs.remove(tab.id, function() { 
+                console.log('close the tab')
+            });
+        });
+    }
+
+    const handleCloseTabBtnClick = ()=>{
+        chrome.tabs.getCurrent(function(tab) {
+            chrome.tabs.remove(tab.id, function() { 
+                console.log('close the tab')
+            });
+        });
+    }
     return (
     <div className='blocked-scrn-cnt'>
         <div className="heading">
             <h2>
                 This site has been blocked!
             </h2>
-            <h4>
-                Website Blocker - Extension
-            </h4>
         </div>
         <div className="block-site-card">
             <div className='icon-cnt'>
@@ -91,8 +113,18 @@ const BlockedScreen = ()=>{
                 </h3>
             </div>
             {
-                hostname ? 
+                !hostname ? 
+                <h1>
+                    Loading...
+                </h1>
+                :
                 <div className='btn-cnt'>
+                    <button
+                        className='btn close-tab'
+                        onClick={()=> handleCloseTabBtnClick()}
+                    >
+                        Close this tab
+                    </button>
                     {
                         count <= 0 ? 
                         <button 
@@ -102,17 +134,23 @@ const BlockedScreen = ()=>{
                             Unblock this site
                         </button> :
                         countDownMsg[30-count] ? 
-                        <h1>
+                        <h2>
                             {countDownMsg[30-count]}
-                        </h1> : 
+                        </h2> : 
                         <h2>
                             {`Wait for ${count} sec to unblock...`}
                         </h2>
                     }
-                </div> :
-                <h1>
-                    Loading...
-                </h1>
+                    {
+                        count < -50 ? 
+                        <h2>
+                            No Action taken, closing in few seconds...
+                        </h2> 
+                        :
+                        null
+                    }
+                </div> 
+
             }
         </div>
     </div>
