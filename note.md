@@ -1,14 +1,10 @@
-# 23rd Feb
-- fix: blockedSites local storage in all places
-- blocking and unblocking should be responsive
-- why it is loading if blockedSites deleted
-
-
-
-
-  // "content_scripts": [
-  //   {
-  //     "matches": ["*://*/*"],
-  //     "js": ["./src/pages/content/content.jsx"]
-  //   }
-  // ]
+# 2nd March
+- How to track screen time of each sites
+  - create one object -> screen time tracker
+  - structure of screen time tracker
+    - date: {}
+    - {} -> site : [total spent time, [started, time in milliseconds] ]
+    - trigger points
+      - tab close
+      - click redirect link
+      - 

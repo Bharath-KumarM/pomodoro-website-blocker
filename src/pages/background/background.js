@@ -4,6 +4,7 @@ import {
 } from './pomoHelper'
 
 import { handleMsgFromBlockSiteUI } from './blockSiteBG'
+import { getDateString } from '../../utilities/date'
 
 
 console.log('Script running from background!!!')
@@ -58,6 +59,19 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse)=> {
 });
 
 chrome.tabs.onUpdated.addListener( async (tabId, {url}, tab)=>{
+
+  if (url){
+    const currDateString = getDateString(0)
+    const hostname = new URL(url).hostname;
+
+    let {noOfVisitsTracker} = await chrome.storage.local.get('noOfVisitsTracker')
+    if (!noOfVisitsTracker) noOfVisitsTracker = {}
+    if (!noOfVisitsTracker[currDateString]) noOfVisitsTracker[currDateString] = {}
+    if (!noOfVisitsTracker[currDateString][hostname]) noOfVisitsTracker[currDateString][hostname] = 0
+    noOfVisitsTracker[currDateString][hostname]++
+
+    chrome.storage.local.set({noOfVisitsTracker})
+  }
 
   if (!tab.url || !tab.url.startsWith('http') || !tab.favIconUrl) return 
   

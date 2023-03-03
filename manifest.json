@@ -13,17 +13,28 @@
   "background": {
     "service_worker": "./src/pages/background/background.js",
     "type": "module"
-},
-"action": {
-  "default_popup": "./src/pages/popup/popup.html"
-},
-"options_page": "./src/pages/popup/popup.html",
-"web_accessible_resources": [
+  },
+  "action": {
+    "default_popup": "./src/pages/popup/popup.html"
+  },
+  "options_page": "./src/pages/popup/popup.html",
+  "web_accessible_resources": [
     {
       "resources": ["/static/*"],
       "matches": ["<all_urls>"]
     }
-  ]
+  ],
+  "content_scripts": [
+    {
+        "matches": [
+            "https://*/*",
+            "http://*/*"
+        ],
+        "js": [
+          "./src/pages/content/content.js"
+        ]
+    }
+]
 
 }
 

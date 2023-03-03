@@ -100,7 +100,7 @@ const BlockedScreen = ()=>{
     <div className='blocked-scrn-cnt'>
         <div className="heading">
             <h2>
-                This site has been blocked!
+                This site has been blocked by you!
             </h2>
         </div>
         <div className="block-site-card">
@@ -133,10 +133,11 @@ const BlockedScreen = ()=>{
                         >
                             Unblock this site
                         </button> :
-                        countDownMsg[30-count] ? 
-                        <h2>
-                            {countDownMsg[30-count]}
-                        </h2> : 
+                        // !motivation message
+                        // countDownMsg[30-count] ? 
+                        // <h2>
+                        //     {countDownMsg[30-count]}
+                        // </h2> : 
                         <h2>
                             {`Wait for ${count} sec to unblock...`}
                         </h2>
