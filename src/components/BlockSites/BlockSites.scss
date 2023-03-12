@@ -91,7 +91,13 @@
         }
 
         .host-name{
+            padding: 10px 25px;
+            background-color: $accent-light-color1;
+            border-radius: 20px;
+
+            color: $font-accent-color1;
             font-size: 20px;
+
             &.blocked{
                 text-decoration: line-through;
             }

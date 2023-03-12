@@ -1,0 +1,19 @@
+@import '../../utilities/variables';
+
+
+.screen-time-cnt {
+    .screen-time-graph-cnt{
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        width: 100%;
+        
+        // padding: 5px;
+        margin-bottom: 10px;
+    
+        .screen-time-graph-inner-cnt{
+            width: min(90%, 400px);
+            
+        }
+    }
+}

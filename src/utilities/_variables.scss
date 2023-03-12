@@ -1,23 +1,33 @@
 // font Color
-$font-color0: rgb(255, 255, 255);
-$font-color1: rgb(212, 212, 212);
-$font-color2: rgb(151, 151, 151);
-$font-color3: rgb(100, 100, 100);
-$font-color4: rgb(50, 50, 50);
-$font-color5: rgb(40, 40, 40);
+$font-color0: #ffffff;
+$font-color1: #d4d4d4;
+$font-color2: #979797;
+$font-color3: #646464;
+$font-color4: #323232;
+$font-color5: #282828;
+$font-red1: #ff9b9b;
+$font-green1: #b5ffb7;
+
+$font-accent-color1: #9fffef;
 
 // Icon Color
-$icon-color1: rgb(190, 190, 190);
+$icon-color1: #bebebe;
 
 // Background Color
-$bg-color1: rgb(0, 0, 0);
-$bg-color2: rgb(40, 40, 40);
-$bg-color3: rgb(70, 70, 70);
-$bg-color4: rgb(99, 99, 99);
+$bg-color1: #000000;
+$bg-color2: #282828;
+$bg-color3: #464646;
+$bg-color4: #636363;
 
 
 // Accent Color
-$accent-color1: rgb(175, 227, 255);
-$accent-color2: rgb(142, 182, 203);
-$accent-bg-dark-color1: rgb(45, 75, 72);
-$accent-bg-light-color1: rgb(59, 115, 117);
+$accent-color1: #afe3ff;
+$accent-color2: #8eb6cb;
+$accent-light-color1: #22d4d433;
+$accent-red-color1: #d4222233;
+$accent-bg-dark-color1: #2d4b48;
+$accent-bg-light-color1: #3b7375;
+$accent-bg-bright-color2: #95fbff;
+$accent-bg-dark-color2: #497676;
+
+$dummy: #ffffff;

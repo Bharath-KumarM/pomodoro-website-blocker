@@ -5,7 +5,7 @@ import "./BlockedSiteInfo.scss"
 import BlockedSitesList from './BlockedSitesList'
 
 
-const BlockedSitesInfo = ({setUpdateBlockSiteDetails})=>{
+const BlockedSitesInfo = ()=>{
     const [blockedSites, setBlockedSites] = useState(null)
 
     useEffect(()=>{
@@ -18,6 +18,7 @@ const BlockedSitesInfo = ({setUpdateBlockSiteDetails})=>{
 
     const handleShowBtnClick = () =>{ 
         chrome.storage.local.get('blockedSites').then(({blockedSites})=>{
+            console.log(blockedSites)
             if(!blockedSites) return 
             setBlockedSites(blockedSites)
         })
@@ -42,7 +43,6 @@ const BlockedSitesInfo = ({setUpdateBlockSiteDetails})=>{
                 </div>
                 : 
                 <BlockedSitesList 
-                    setUpdateBlockSiteDetails={setUpdateBlockSiteDetails}
                     blockedSites={blockedSites}
                 />
             }

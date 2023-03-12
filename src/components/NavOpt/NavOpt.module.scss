@@ -7,8 +7,8 @@
     justify-content: center;
     align-items: center;
 
-    padding: 10px 2px;
-    gap: 5px;
+    padding: 5px 2px;
+    gap: 10px;
 
     width: 100px;
 
@@ -18,6 +18,17 @@
     &.active{
         border-color: $accent-bg-light-color1;
         background-color: $bg-color3;
+        animation: expand 300ms ease-in;
+
+        @keyframes expand {
+            0%{
+                background-color: $bg-color2;
+            }
+            100%{
+                background-color: $bg-color3;
+            }
+            
+        }
     }
 
     svg{

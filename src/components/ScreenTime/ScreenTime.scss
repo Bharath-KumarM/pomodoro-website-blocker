@@ -1,0 +1,138 @@
+@import '../../utilities/variables';
+
+.screen-time-cnt {
+    width: 100%;
+    height: 100%;
+    display: flex;
+
+    padding-top: 20px;
+
+    flex-direction: column;
+
+    align-items: center;
+    gap: 10px;
+    
+    &.empty{
+        justify-content: center;
+    }
+
+    .dropdown-cnt{
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        gap: 10px;
+
+        padding: 10px 25px;
+        background-color: $accent-light-color1;
+        border-radius: 20px;
+
+        margin-bottom: 20px;
+
+        p.desc, svg path{
+            color: $font-accent-color1;
+        }
+
+    }
+    .screen-time-details-cnt{
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        gap: 10px;
+
+        flex-direction: column;
+
+        .screen-time-day{
+            display: flex;
+            justify-content: center;
+            align-content: center;
+
+            color: $font-color2;
+
+            font-size: 14px;
+        }
+    }
+
+    .day-cnt{
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+
+        width: min(80%, 400px);
+
+        margin-bottom: 10px;
+
+        .day-arrow {
+            background-color: transparent;
+            border: 0;
+
+            padding: 5px;
+            border-radius: 5px;
+
+            &:hover{
+                background-color: $bg-color3;
+            }
+
+            svg{
+                height: 20px;
+                width: 20px;
+            }
+        }
+    }
+    .site-list-cnt{
+        width: 100%;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        
+
+        ul.site-list {
+            width: min(400px, 90%);
+
+
+            li.site-list-item-empty{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                // height: 100px;
+
+                & h1{
+                   color: $font-color2;
+                }
+            }
+            li.site-list-item{
+
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+
+                gap: 20px;
+                margin-bottom: 20px;
+                
+                .site-itme-icon{
+                    width: 24px;
+
+                }
+                .site-item-info{
+                    display: flex;
+                    align-items: flex-start;
+                    justify-content: flex-start;
+                    flex-direction: column;
+
+                    gap: 5px;
+
+                    .site-item-name{
+
+                        color: $font-color1;
+                        font-size: 17px;
+                    }
+                    .site-item-screen-time{
+                        font-size: 14px;
+                        color: $font-color2;
+                    }
+                }
+            }
+        }
+    }
+}

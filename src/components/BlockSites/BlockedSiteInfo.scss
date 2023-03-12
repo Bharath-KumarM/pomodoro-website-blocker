@@ -2,6 +2,7 @@
 
 .block-site-cnt{
     .block-site-list-cnt{
+
         &.clicked{
             height: auto;
         }
@@ -9,7 +10,7 @@
         width: 100%;
 
         display: flex;
-        justify-content: center;
+        // justify-content: center;
         align-items: center;
         flex-direction: column;
 
@@ -45,24 +46,51 @@
             }
         }
         .hr-line{
-            width: min(600px, 80%);
+            width: min(500px, 60%);
             border-color: $font-color2;
 
         }
-        h2 {
-            margin-top: 50px;
-            margin-bottom: 20px;
+        .heading {
             width: 100%;
-            text-align: center;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+
+            svg{
+                width: 20px;
+                height: 20px;
+                path{
+                    color: red;
+                }
+            }
         }
+        .sticky {
+            width: min(90%, 600px);
+            position: sticky;
+            top: 0;
+            background-color: $bg-color2;
+            z-index: 1;
+
+          }
         .btn-cnt{
             display: flex;
             justify-content: space-around;
             align-items: center;
-            width: min(90%, 600px);
+            width: 100%;
+
 
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+
+            &.sticky {
+                position: sticky;
+                top: 0;
+                background-color: $bg-color2;
+                padding: 10px 0;
+                z-index: 1;
+
+              }
             
             button{
                 height: 30px;
@@ -78,9 +106,12 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 10px;
+                gap: 2px;
 
                 &.un-saved{
+                    path, div{
+                        color: $font-red1;
+                    }
                     animation: shake-us-save 1s ease infinite;
                     @keyframes shake-us-save {
                         0% { transform: translate(1px, 1px) rotate(0deg); }
@@ -99,6 +130,9 @@
                     }
                 }
             }
+        }
+        &:has(.block-site-list-table){
+            min-height: 100%;
         }
         .block-site-list-table{
             height: auto;

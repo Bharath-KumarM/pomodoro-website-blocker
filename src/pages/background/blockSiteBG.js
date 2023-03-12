@@ -48,3 +48,24 @@ export async function handleMsgFromBlockSiteUI(blockSitesData, msg, sendResponse
     return
   }
 }
+
+// Take A Break
+export const handleTakeBreakAlarm = async (name)=>{
+  const [hostname, favIcon] = [name.split(' ')[1], name.split(' ')[2]]
+  // Logic copied from newBlockSite
+  let {blockedSites} = await chrome.storage.local.get('blockedSites')
+  if (!blockedSites) blockedSites = {}
+
+  if (!blockedSites[hostname]){
+    blockedSites[hostname] =  [favIcon]
+
+    chrome.tabs.query({url: `*://${hostname}/*` }, function(tabs){
+      for (const tab of tabs){
+        chrome.tabs.reload(tab.id)
+      }
+    })
+
+    await chrome.storage.local.set({'blockedSites': blockedSites})
+  }
+  return
+}

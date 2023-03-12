@@ -3,7 +3,7 @@ import {
   handlePomoReset, pushNotification, updatePomoHistory
 } from './pomoHelper'
 
-import { handleMsgFromBlockSiteUI } from './blockSiteBG'
+import { handleMsgFromBlockSiteUI, handleTakeBreakAlarm } from './blockSiteBG'
 import { getDateString } from '../../utilities/date'
 
 
@@ -31,7 +31,12 @@ chrome.alarms.onAlarm.addListener(({name})=>{
       })
     })
   }
+  // Take A Break
+  if (name.startsWith('takeABreak')){
+    handleTakeBreakAlarm(name)
+  }
 })
+
 
 
 

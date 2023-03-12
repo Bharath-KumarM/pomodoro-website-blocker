@@ -1,12 +1,11 @@
 import "./SiteInfoCard.scss"
 
-import {AiOutlineSwap as SwapIcon} from "react-icons/ai"
+import { IoMdSwap as  SwapIcon} from "react-icons/io"
 import { useEffect, useState } from "react"
 import { getDateString } from "../../utilities/date"
 
 
 const SiteInfoCard = ({hostname}) =>{
-    const [isScreenTime, setIsScreenTime] = useState(true)
     const [screenTime, setScreenTime] = useState(null)
     const [noOfVisit, setNoOfVisit] = useState(null)
 
@@ -33,20 +32,34 @@ const SiteInfoCard = ({hostname}) =>{
             null
             :
             <div 
-                className="site-info-cnt" 
-                onClick={()=>{
-                    setIsScreenTime((prevIsScreenTime)=>!prevIsScreenTime)
-                }}
+                className="site-info-cnt flip-card" 
                 >
-                    <div className="swap-icon-cnt">
-                        <SwapIcon />
+                
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <div className="swap-icon-cnt">
+                            <SwapIcon />
+                        </div>
+                        <div className="site-info-title">
+                            Screen Time
+                        </div>
+                        <hr className="site-info-line" />
+                        <div className="site-info-data">
+                            {`${getTimeFormat(screenTime)}, Today`}
+                        </div>
                     </div>
-                <div className="site-info-title">
-                    {isScreenTime ? "Screen Time" : "No. of Visits"}
-                </div>
-                <hr className="site-info-line" />
-                <div className="site-info-data">
-                    {isScreenTime ? `${getTimeFormat(screenTime)}, Today` : `${noOfVisit} times, Today`}
+                    <div class="flip-card-back">
+                        <div className="swap-icon-cnt">
+                            <SwapIcon />
+                        </div>
+                        <div className="site-info-title">
+                            No. of Opens
+                        </div>
+                        <hr className="site-info-line" />
+                        <div className="site-info-data">
+                            {`${noOfVisit} times, Today`}
+                        </div>
+                    </div>
                 </div>
             </div>
         }
@@ -58,7 +71,9 @@ export default SiteInfoCard
 
 
 const getTimeFormat = (timeInMinutes)=>{
-    const hr = ("0"+parseInt(timeInMinutes/60)).slice(-2)
+    // const hr = ("0"+parseInt(timeInMinutes/60)).slice(-2)
+    const hr = parseInt(timeInMinutes/60)
 
-    return `${hr === '00' ? '' : hr+'hr '}${timeInMinutes%60}min`
+
+    return `${hr === 0 ? '' : hr+'hr '}${timeInMinutes%60}min`
 }

@@ -89,9 +89,7 @@ const BlockSites = ({setCntHeading})=>{
                 />
             }
             {/* Blocked sites in List View  */}
-            <BlockedSitesInfo 
-                setUpdateBlockSiteDetails={setUpdateBlockSiteDetails}
-            />
+            <BlockedSitesInfo />
         </div>
     )
 }

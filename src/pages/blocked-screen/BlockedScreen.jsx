@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { MdOutlineArrowDropDown as DropDownIcon} from 'react-icons/md';
 import './BlockedScreen.scss';
 
 
@@ -28,7 +29,7 @@ const BlockedScreen = ()=>{
 
         const {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
         console.log(blockedScreenData)
-
+        //! 
         const queryOptions = { currentWindow: true, active: true }
         const [tab] = await chrome.tabs.query(queryOptions)
         const {id: tabId} = tab
@@ -96,6 +97,25 @@ const BlockedScreen = ()=>{
             });
         });
     }
+
+    const handleTakeABreakClick = (timeInMinutes)=>{
+        chrome.runtime.
+            sendMessage({
+                blockSitesData: {
+                    hostName: hostname,
+                    favIconUrl: favIcon
+                }, 
+                msg: 'unBlockSite',
+            })
+
+        chrome.alarms.create(
+            `takeABreak ${hostname} ${favIcon}`,
+            {
+                // when: Date.now() + (timeInMinutes*60*1000),
+                when: Date.now() + (timeInMinutes*60*1000),
+            }
+        ) 
+    }
     return (
     <div className='blocked-scrn-cnt'>
         <div className="heading">
@@ -119,12 +139,38 @@ const BlockedScreen = ()=>{
                 </h1>
                 :
                 <div className='btn-cnt'>
-                    <button
-                        className='btn close-tab'
-                        onClick={()=> handleCloseTabBtnClick()}
-                    >
-                        Close this tab
-                    </button>
+                    <div className='btn-inner-cnt'>
+                        <button
+                            className='btn drop-down take-a-break'
+                        >
+                            <ul>
+                                <li>
+                                    <div className='heading-desc'>
+                                        <p>Take a break</p>
+                                        <DropDownIcon />
+                                    </div>
+                                    <ul>
+                                        <li onClick={()=>handleTakeABreakClick(5)}>
+                                            For 5 minutes
+                                        </li>
+                                        <li onClick={()=>handleTakeABreakClick(15)}>
+                                            For 15 minutes
+                                        </li>
+                                        <li onClick={()=>handleTakeABreakClick(30)}>
+                                            For 30 minutes
+                                        </li>
+                                    </ul> 
+                                </li>
+                            </ul>
+                            
+                        </button>
+                        <button
+                            className='btn close-tab'
+                            onClick={()=> handleCloseTabBtnClick()}
+                        >
+                            Close this tab
+                        </button>
+                    </div>
                     {
                         count <= 0 ? 
                         <button 

@@ -1,0 +1,59 @@
+@import '../../utilities/variables';
+
+.dialog-box{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(6, 6, 6, 0.669);
+    z-index: 2;
+
+    display: flex;
+    justify-content: center;
+    // !Debug
+    .cnt{
+        position: absolute;
+        top: 200px;
+        width: 90%;
+        background-color: $bg-color2;
+        padding: 20px;
+
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+
+        border-radius: 10px;
+        .heading{
+
+        }
+        .desc{
+            font-size: 14px;
+        }
+
+        .btn-cnt{
+            width: 100%;
+
+            display: flex;
+            justify-content: space-around;
+
+            button.btn{
+                width: 40%;
+                padding: 10px;
+                background-color: $bg-color3;
+                border: 0;
+                border-radius: 10px;
+
+                &:hover{
+                    background-color: $bg-color4;
+                }
+
+                &.yes{
+                    color: $font-green1;
+                }
+                &.no{
+                    color: $font-red1;
+                }
+            }
+        }
+
+    }
+}
