@@ -28,7 +28,6 @@ const BlockedScreen = ()=>{
     const handleCompountMounted = async () =>{
 
         const {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
-        console.log(blockedScreenData)
         //! 
         const queryOptions = { currentWindow: true, active: true }
         const [tab] = await chrome.tabs.query(queryOptions)
