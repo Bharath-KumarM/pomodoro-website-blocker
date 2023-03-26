@@ -1,9 +1,10 @@
-# 10th March
-1. Design and create decision screen
-2. Design and create start and end time screen
-3. go through the entire project once
-4. With that understanig, design local storage flow
-5. 
+# 24th March
+1. Schedule
+   1. Make editable
+   2. make text decription more precise 
+   3. Add descision screen before delete
+   4. A generic toast message feature after add and delete schedule
+   5.  
 
 ## Issues | Bugs 
 1. Issues - Make ScreenTime counter logic better

@@ -5,6 +5,7 @@ import {
 
 import { handleMsgFromBlockSiteUI, handleTakeBreakAlarm } from './blockSiteBG'
 import { getDateString } from '../../utilities/date'
+import { localLogMessage } from '../../utilities/localStorage'
 
 
 console.log('Script running from background!!!')
@@ -65,6 +66,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse)=> {
 
 chrome.tabs.onUpdated.addListener( async (tabId, {url}, tab)=>{
 
+  //Track Visits or Opens
   if (url){
     const currDateString = getDateString(0)
     const hostname = new URL(url).hostname;
@@ -78,7 +80,8 @@ chrome.tabs.onUpdated.addListener( async (tabId, {url}, tab)=>{
     chrome.storage.local.set({noOfVisitsTracker})
   }
 
-  if (!tab.url || !tab.url.startsWith('http') || !tab.favIconUrl) return 
+  // handle new site 
+  if (!tab.url || !tab.url.startsWith('http') || !tab.favIconUrl) return;
   
   const hostname = new URL(tab.url).hostname;
   const favIconUrl = tab.favIconUrl
@@ -97,3 +100,17 @@ chrome.tabs.onUpdated.addListener( async (tabId, {url}, tab)=>{
   })
   
 })
+
+chrome.tabs.onRemoved.addListener( async (tabId, removeInfo)=>{
+    //Handle Tab Remove
+    const {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
+
+    if (!blockedScreenData || !blockedScreenData[tabId]) {
+      localLogMessage("[-] @background.js, blocked site's remove tab id is not found in blockedScreenData ")
+      return;
+    }
+
+    delete blockedScreenData[tabId]
+    await chrome.storage.local.set({blockedScreenData})
+  })
+

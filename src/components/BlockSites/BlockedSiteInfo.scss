@@ -130,6 +130,10 @@
                     }
                 }
             }
+
+            div{
+                margin-top: 2px;
+            }
         }
         &:has(.block-site-list-table){
             min-height: 100%;

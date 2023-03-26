@@ -1,21 +1,41 @@
-import BlockedSitesList from '../BlockSites/BlockedSitesList';
 import './FocusMode.scss';
 
-import { ImCheckboxUnchecked as UncheckedIcon, ImCheckboxChecked as CheckedIcon } from "react-icons/im"
+import { PopupFull, PopupToast } from '../../utilities/PopupScreens';
+import DescisionYesNoPopup from '../../utilities/DecisionYesNoPopup';
+import TimeInputPopup from '../../utilities/TimeInputPopup';
+import { useEffect, useState } from 'react';
 
+// Icons
 import { FiPlus } from "react-icons/fi"
-import { BsArrowRight, BsCalendarCheckFill } from "react-icons/bs"
+import { BsCalendarCheckFill } from "react-icons/bs"
 import { RiDeleteBin6Line } from "react-icons/ri"
-import { ImBlocked } from "react-icons/im"
-import { BiMemoryCard as SaveIcon } from "react-icons/bi"
-import { useEffect } from 'react';
+import { HiClock } from "react-icons/hi"
 
-import DescisionYesNoPopup from '../PopupScreen/DecisionYesNoPopup';
+import RestrictedSites from './RestrictedSites';
+
+
 
 const FocusMode = ()=>{
+    const [scheduleData, setScheduleData] = useState([])
+    const [editTimeInputIndex, setEditTimeInputIndex] = useState(-1) //-1 means nothing to edit
+
+    const [decisionScreenData, setDecisionScreenData] = useState(null) //Simple Yes or no decision screen
+
+
+    const [toastMsg, setToastMsg] = useState(null)
+
+    const isTimeInputActive = editTimeInputIndex > -1
+    const isDecisionScreenDataThere = decisionScreenData !== null
+
+    const shouldPopScreenOpen = [isTimeInputActive, isDecisionScreenDataThere].includes(true)
+
+    useEffect(()=>{
+        chrome.storage.local.get('scheduleData', ({scheduleData})=>{
+            if (scheduleData) setScheduleData(scheduleData)
+        })
+    }, [])
     
-    // ! Debug
-    const hostname = 'blog.logrocket.com'
+
 
     const handleSelectAllClicked = () =>{
 
@@ -28,21 +48,41 @@ const FocusMode = ()=>{
 
     }
 
-    const decisionYesNoPopupData = {
-        heading: 'Delete Schedule', 
-        desc: 'Do you want to delete the schedule?',
-        yesBtnTitle: 'Yes',
-        noBtnTitle: 'No'
-    }
-
     return (
         <div className="focus-mode-cnt">
-            
-            <DescisionYesNoPopup 
-                data={decisionYesNoPopupData}
+            <PopupToast 
+                key={'popup-toast'}
+                toastMsg={toastMsg}
             />
+            {
+                shouldPopScreenOpen ? 
+                // Popup Screen
+                <PopupFull 
+                    setClosePopup={()=> setEditTimeInputIndex(-1)}
+                    content={
+                        isTimeInputActive ?
+                        <TimeInputPopup 
+                            setScheduleData={setScheduleData}
+                            editTimeInputIndex={editTimeInputIndex}
+                            setEditTimeInputIndex={setEditTimeInputIndex}
+                            isNewSchedule={(editTimeInputIndex === scheduleData.length)}
+                            setToastMsg={setToastMsg}
+                        /> :
+                        isDecisionScreenDataThere ?
+                        <DescisionYesNoPopup 
+                            data={decisionScreenData}
+                        />
+                        : null
+                    }
+                />
+                : null
+            }
             <div className="start-stop cnt">
-                <button className='start-stop btn'>
+                <button className='start-stop btn'
+                onClick={()=>{
+                    setToastMsg(['start button clicked!'])
+                }}
+                >
                     Start Focus Mode
                 </button>
             </div>
@@ -53,252 +93,104 @@ const FocusMode = ()=>{
                         Schedule
                     </h3>
                 </div>
-                <div className='add-btn-cnt' title='Add new Schedule'>
+                <div className='add-btn-cnt' 
+                    title='Add new Schedule'
+                    onClick={()=>setEditTimeInputIndex(scheduleData.length)}
+                >
                     <FiPlus />
                 </div>
                 <div className="schedule-list">
-                    <div className="schedule-item">
-                        <div className="delete-cnt">
-                            <RiDeleteBin6Line />
-                        </div>
-                        <div className="zero-cnt">
-                            <div className="toggle-cnt">
-                                <input type="checkbox" checked id="switch-1" /><label for="switch-1">Toggle</label>
-                            </div>
-                            <div className="desc">
-                                Schedule - 1
-                            </div>
-                            <div className="status active">
-                                Active Now
-                            </div>
-                        </div>
-                        <div className="first-cnt time-cnt">
-
-                            <div className="inner-cnt start">
-                                <div className="desc">
-                                    Starts At
-                                </div>
-                                <hr className='line'/>
-                                <div className="start time">
-                                    12:00 AM
-                                </div>
-                            </div>
-                            <div className="arrow-cnt">
-                                <BsArrowRight />
-                            </div>
-                            <div className="inner-cnt  end">
-                                <div className="desc">
-                                    Ends At
-                                </div>
-                                <hr className='line'/>
-                                <div className="end time">
-                                    05:00 PM
-                                </div>
-                            </div>
-
-                        </div>
-                        <div className="second-cnt">
-
-                            <div className="day-cnt">
-                                <span className="day">S</span>
-                                <span className="day active">M</span>
-                                <span className="day active">T</span>
-                                <span className="day active">W</span>
-                                <span className="day">T</span>
-                                <span className="day active">F</span>
-                                <span className="day">S</span>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div className="schedule-item deactive">
-                        <div className="delete-cnt">
-                            <RiDeleteBin6Line />
-                        </div>
-                        <div className="zero-cnt">
-                            <div className="toggle-cnt">
-                                <input type="checkbox" id="switch-2" /><label for="switch-2">Toggle</label>
-                            </div>
-                            <div className="desc">
-                                Schedule - 2
-                            </div>
-                            <div className="status inactive">
-                                {/* Inactive */}
-                            </div>
-                        </div>
-                        <div className="first-cnt time-cnt">
-
-                            <div className="inner-cnt start">
-                                <div className="desc">
-                                    Starts At
-                                </div>
-                                <hr className='line'/>
-                                <div className="start time">
-                                    12:00 AM
-                                </div>
-                            </div>
-                            <div className="arrow-cnt">
-                                <BsArrowRight />
-                            </div>
-                            <div className="inner-cnt  end">
-                                <div className="desc">
-                                    Ends At
-                                </div>
-                                <hr className='line'/>
-                                <div className="end time">
-                                    05:00 PM
-                                </div>
-                            </div>
-
-                        </div>
-                        <div className="second-cnt">
-
-                            <div className="day-cnt">
-                                <span className="day">S</span>
-                                <span className="day active">M</span>
-                                <span className="day active">T</span>
-                                <span className="day active">W</span>
-                                <span className="day">T</span>
-                                <span className="day active">F</span>
-                                <span className="day">S</span>
-                            </div>
-
-                        </div>
-                    </div>
+                    {scheduleData.map((scheduleItemData, index)=> {
+                        return (
+                            <ScheduleItem 
+                                scheduleItemData={scheduleItemData} 
+                                index={index} 
+                                setScheduleData={setScheduleData}
+                                setEditTimeInputIndex={setEditTimeInputIndex}
+                                setDecisionScreenData={setDecisionScreenData}
+                                setToastMsg={setToastMsg}
+                            />
+                        ) 
+                    })}
                 </div>
 
             </div>
-            <div className="focus-blocked-sites-cnt">
-                <div className="sticky">
-                    <div className='heading'> 
-                        <ImBlocked />
-                        <h3>Focus Blocked Sites</h3>
-                    </div>
-                    <div className="btn-cnt">
-                        <button
-                            onClick={()=>handleSelectAllClicked()}
-                        >   
-                            <CheckedIcon />
-                            <div>
-                                Select all
-                            </div>
-                        </button>
-                        <button
-                            onClick={()=>handleUnselectAllClicked()}
-                        >
-                            <UncheckedIcon />
-                            <div>
-                                Unselect all
-                            </div>
-                        </button>
-                        <button 
-                            onClick={()=>handleSaveClicked()}
-                            // className={isUnsaved ? 'un-saved' : 'saved'}
-                        >
-                            <SaveIcon />
-                            <div>
-                                {/* {isUnsaved ? 'Not Saved' : 'Saved'} */}
-                                Saved
-                            </div>
-                        </button>
-                    </div>
-                </div>
-                <table className="blocked-site-table">
-                    <tr key={0}>
-                        <td>
-                            <input type="checkbox" checked/>
-                        </td>
-                        <td>
-                            <img src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} alt="icon" />
-                        </td>
-                        <td className="site"> {hostname} </td>
-                    </tr>
-                    <tr key={1}>
-                        <td>
-                            <input type="checkbox" checked/>
-                        </td>
-                        <td>
-                            <img src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} alt="icon" />
-                        </td>
-                        <td className="site"> {hostname} </td>
-                    </tr>
-                    <tr key={2}>
-                        <td>
-                            <input type="checkbox" checked/>
-                        </td>
-                        <td>
-                            <img src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} alt="icon" />
-                        </td>
-                        <td className="site"> {hostname} </td>
-                    </tr>
-                    <tr key={3}>
-                        <td>
-                            <input type="checkbox" checked/>
-                        </td>
-                        <td>
-                            <img src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} alt="icon" />
-                        </td>
-                        <td className="site"> {hostname} </td>
-                    </tr>
-                    <tr key={4}>
-                        <td>
-                            <input type="checkbox" checked/>
-                        </td>
-                        <td>
-                            <img src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} alt="icon" />
-                        </td>
-                        <td className="site"> {hostname} </td>
-                    </tr>
-                    <tr key={5}>
-                        <td>
-                            <input type="checkbox" checked/>
-                        </td>
-                        <td>
-                            <img src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} alt="icon" />
-                        </td>
-                        <td className="site"> {hostname} </td>
-                    </tr>
-                    <tr key={6}>
-                        <td>
-                            <input type="checkbox" checked/>
-                        </td>
-                        <td>
-                            <img src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} alt="icon" />
-                        </td>
-                        <td className="site"> {hostname} </td>
-                    </tr>
-                    <tr key={7}>
-                        <td>
-                            <input type="checkbox" checked/>
-                        </td>
-                        <td>
-                            <img src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} alt="icon" />
-                        </td>
-                        <td className="site"> {hostname} </td>
-                    </tr>
-                    <tr key={8}>
-                        <td>
-                            <input type="checkbox" checked/>
-                        </td>
-                        <td>
-                            <img src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} alt="icon" />
-                        </td>
-                        <td className="site"> {hostname} </td>
-                    </tr>
-                    <tr key={9}>
-                        <td>
-                            <input type="checkbox" checked/>
-                        </td>
-                        <td>
-                            <img src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} alt="icon" />
-                        </td>
-                        <td className="site"> {hostname} </td>
-                    </tr>
-                </table>
-
-            </div>
+            <RestrictedSites />
         </div>
     )
 }
 
 export default FocusMode
+
+
+const ScheduleItem = ({scheduleItemData, index, setScheduleData, setEditTimeInputIndex, setDecisionScreenData, setToastMsg})=>{
+    const [startTime, endTime, days] = scheduleItemData
+    const [startHr, startMin, startAmPM] = startTime.split(':')
+    const [endHr, endMin, endAmPM] = endTime.split(':')
+
+    const daysString3 = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    const getDayDesc = (days)=>{
+        if (!days.includes(false)) return 'everyday'
+        let daysDesc = ''
+        for (let i=0; i<days.length; i++){
+            if (days[i]){
+                daysDesc += (daysString3[i] + ' ')
+            }
+        }
+        return daysDesc
+    }
+
+    const daysDesc = getDayDesc(days)
+
+    const onNoBtnClick = ()=>{
+        setDecisionScreenData(null)
+    }
+
+    const onYesBtnClick = ()=>{
+        chrome.storage.local.get('scheduleData', ({scheduleData})=>{
+            const newScheduleData = scheduleData.filter((val, i)=> i!=index)
+            
+            chrome.storage.local.set({scheduleData: [...newScheduleData]})
+            setScheduleData([...newScheduleData])
+        })
+        setToastMsg(['The schedule has been deleted'])
+        setDecisionScreenData(null)
+    }
+
+    return (
+        <div className="schedule-item compact"
+            title='Edit Schedule'
+            onClick={()=>{
+                setEditTimeInputIndex(index)
+            }}
+        >
+            <div className="clock-icon-cnt style-index-center">
+                <HiClock />
+            </div>
+            <div className="content">
+                <h3 className="content-heading">
+                    {'Schedule '+(index+1)}
+                </h3>
+                <div className="desc">
+                    {`From ${startHr}:${startMin} ${startAmPM} to ${endHr}:${endMin} ${endAmPM} on ${daysDesc}`}
+                </div>
+            </div>
+            <div className="delete-icon-cnt style-index-center"
+                title='Delete Schedule'
+                onClick={(e)=>{
+                    e.stopPropagation()
+                    setDecisionScreenData({
+                        heading: 'Delete Schedule', 
+                        desc: 'Do you want to delete the schedule?',
+                        yesBtnTitle: 'Yes',
+                        noBtnTitle: 'No',
+                        onYesBtnClick,
+                        onNoBtnClick
+                    })
+                }}
+            >
+                <RiDeleteBin6Line />
+            </div>
+        </div>
+    )
+}

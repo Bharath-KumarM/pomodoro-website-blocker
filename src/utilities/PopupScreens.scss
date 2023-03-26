@@ -1,0 +1,58 @@
+@import './variables';
+
+
+.popup-screen{
+    
+    z-index: 2;
+
+    display: flex;
+    justify-content: center;
+
+    &.full{
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        background-color: $bg-transparant;
+    }
+    
+    &.toast{
+        position: fixed;
+        align-items: center;
+
+        background-color: $accent-color1;
+        color: $font-color5;
+        bottom: 100px;
+
+        width: min(300px, 80%);
+        padding: 10px;
+
+        border-radius: 5px;
+        animation-name: fadeoff;
+        animation-duration: 2s;
+        animation-timing-function: ease-in-out;
+        opacity: 0;
+
+        cursor: default;
+        
+        @keyframes fadeoff {
+            0%{
+                opacity: 0;
+                transform: translateY(100px);
+            }
+            
+            20%{
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            85%{
+                opacity: 1;
+            }
+
+            95%{
+                opacity: 0;
+            }
+            
+        }
+    }
+}

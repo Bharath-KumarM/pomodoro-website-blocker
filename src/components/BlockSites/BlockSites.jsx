@@ -8,61 +8,61 @@ import BlockedSitesInfo from "./BlockedSitesInfo"
 import SiteInfoCard from "./SiteInfoCard"
 
 import "./BlockSites.scss"
+import { localLogMessage } from "../../utilities/localStorage"
 
-
+// In popup screen, it creates the UI to block current website.
 const BlockSites = ({setCntHeading})=>{
     const [currTab, setCurrTab] = useState(null)
     const [isBlocked, setIsBlocked] = useState(null)
-    const [updateBlockSiteDetails, setUpdateBlockSiteDetails] = useState(0)
+    const [updateBlockSiteDetails, setUpdateBlockSiteDetails] = useState(0) //TODO Do I realy need this?
     
-    useEffect( ()=>{
-        //! Debug start
-        // setCurrTab(debugTab)
-        // setIsBlocked(false)
-        // return;
-        //! Debug End
+    const handleComponentMount = async ()=>{
+        // Get Current tab opened by user
+        const tempCurrTab = await getCurrTab()
+        const urlPathname = (new URL(tempCurrTab.url)).pathname
+        const hostName = (new URL(tempCurrTab.url)).hostname
 
-        // Get Current Tab
-        getCurrTab().then( async (tempCurrTab) =>{
-            if ((new URL(tempCurrTab.url)).pathname === '/src/pages/blocked-screen/blocked-screen.html'){
-                const {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
-                if (!blockedScreenData[tempCurrTab.id]) {
-                    //todo: Reload the page
-                    return
-                }
-                const [hostname, favIconUrl] = blockedScreenData[tempCurrTab.id]
 
-                const {blockedSites} = await chrome.storage.local.get('blockedSites')
+        // If the current tab is blocked and blocked screen is loaded, then get the site details from blockedScreenData local storage
+        if (urlPathname === '/src/pages/blocked-screen/blocked-screen.html'){
 
-                setCurrTab({hostname, favIconUrl})
-                if (blockedSites[hostname]) setIsBlocked(true)
-                else setIsBlocked(false)
-
+            const {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
+            if (!blockedScreenData[tempCurrTab.id]) {
+                localLogMessage("[-] @BlockedSite.jsx, blocked site's remove tab id is not found in blockedScreenData ")
                 return
-
             }
-            // Check for current tab domain
-            const hostName = (new URL(tempCurrTab.url)).hostname
-            // Check whether it is blocked
-            getIsBlocked(hostName).then((tempIsBlocked)=>{
-                setCurrTab(tempCurrTab)
-                setIsBlocked(tempIsBlocked)
-            })
-        })
+            const [hostname, favIconUrl] = blockedScreenData[tempCurrTab.id]
 
+            const {blockedSites} = await chrome.storage.local.get('blockedSites')
+
+            setCurrTab({hostname, favIconUrl})
+            setIsBlocked(blockedSites[hostname] ? true : false)
+            return
+        }
+
+        // Check whether it is blocked
+        const tempIsBlocked = await getIsBlocked(hostName)
+        if (tempIsBlocked){
+            localLogMessage("[-] @BlockedSite.jsx, blocked site but not blocked screen loaded. BG script is not forcing blocked screen html")
+        }
+        setCurrTab(tempCurrTab)
+        setIsBlocked(tempIsBlocked)
+    }
+    useEffect( ()=>{
+        handleComponentMount()
     }, [updateBlockSiteDetails])
 
     // wait for current tab details
-    if (!currTab) return null
+    if (!currTab) return <div>Loading...</div>
     const isValidSite = currTab.url ? currTab.url.startsWith('http') : true
 
     const hostname = currTab.url ? (new URL(currTab.url)).hostname : currTab.hostname
     const handleBlockBtnClick = async ()=>{
 
-        let message
-        if (isBlocked === null ) message = ''
-        else if (isBlocked === false) message = 'newBlockSite'
-        else message = 'unBlockSite'
+        const message = isBlocked === null ? '' : 
+                        isBlocked === false ? 'newBlockSite' :
+                        'unBlockSite'
+
         const response = await chrome.runtime.
                 sendMessage({
                     blockSitesData: {
@@ -71,14 +71,14 @@ const BlockSites = ({setCntHeading})=>{
                     }, 
                     msg: message,
                 })
-        const responseIsBlocked = await response
+        await response
         setUpdateBlockSiteDetails(prevState => prevState+1)
     }
     return (
         <div className='block-site-cnt'>
             {
                 isValidSite ? 
-                <SiteDetails 
+                <SiteDetails  // Shows Current site info(like blocked or not and screen time) 
                     isBlocked={isBlocked}
                     currTab={currTab}
                     hostName={hostname}
@@ -88,18 +88,15 @@ const BlockSites = ({setCntHeading})=>{
                     hostName={hostname}
                 />
             }
-            {/* Blocked sites in List View  */}
-            <BlockedSitesInfo />
+            <BlockedSitesInfo // Blocked sites in List View 
+            
+            />
         </div>
     )
 }
 
 async function getIsBlocked(hostName){
     let {blockedSites} = await chrome.storage.local.get('blockedSites')
-
-    if (!blockedSites){
-        chrome.storage.local.set({'blockedSites': {}})
-    }
     return blockedSites && blockedSites[hostName] ? true : false
 }
 async function getCurrTab(){
@@ -112,7 +109,7 @@ async function getCurrTab(){
 
 
 function SiteDetails({isBlocked, currTab, hostName, handleBlockBtnClick}){
-    const [count , setCount] = useState(30)
+    const [count , setCount] = useState(30) // wait time to unblock site
 
     useEffect(()=>{
         if (isBlocked && count > 0){

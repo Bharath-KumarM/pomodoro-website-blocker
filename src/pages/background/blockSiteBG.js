@@ -1,8 +1,9 @@
 export async function handleMsgFromBlockSiteUI(blockSitesData, msg, sendResponse){
   const  {hostName, favIconUrl} = blockSitesData
+  // Handle new block site request from user
   if (msg === 'newBlockSite') {
     let resolve
-    const response = new Promise((res, rej)=>resolve=res)
+    const response = new Promise((res, rej) => resolve = res)
     sendResponse(response)
 
     let {blockedSites} = await chrome.storage.local.get('blockedSites')
@@ -20,19 +21,22 @@ export async function handleMsgFromBlockSiteUI(blockSitesData, msg, sendResponse
       await chrome.storage.local.set({'blockedSites': blockedSites})
       resolve(true)
     }
-    resolve(false)
+    else{
+      resolve(false)
+    }
     return
   }
+  // Handle unblock site request from user
   if (msg === 'unBlockSite'){
     let resolve
-    const response = new Promise((res, rej)=>resolve=res)
+    const response = new Promise((res, rej) => resolve = res)
     sendResponse(response)
 
     let {blockedSites} = await chrome.storage.local.get('blockedSites')
 
     if (blockedSites && blockedSites[hostName]){
-      // Removed
-      delete blockedSites[hostName]
+      
+      // Forcefully refreshing all blocked screens
       const blockedScreenUrl = 'src/pages/blocked-screen/blocked-screen.html'
       chrome.tabs.query({url: 'chrome-extension://*/' + blockedScreenUrl }, 
         function(tabs){
@@ -41,10 +45,15 @@ export async function handleMsgFromBlockSiteUI(blockSitesData, msg, sendResponse
           }
       })
 
+      // Blocked Site has been Removed
+      delete blockedSites[hostName]
       await chrome.storage.local.set({'blockedSites': blockedSites})
+
       resolve(false)
     }
-    resolve(true)
+    else{
+      resolve(true)
+    }
     return
   }
 }

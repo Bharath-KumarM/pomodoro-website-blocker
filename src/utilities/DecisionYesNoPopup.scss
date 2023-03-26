@@ -1,0 +1,48 @@
+@import './variables';
+
+.descision-yes-no-popup-cnt{
+    position: absolute;
+    top: 200px;
+    width: min(90%, 500px);
+    background-color: $bg-color2;
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    border-radius: 10px;
+    .heading{
+
+    }
+    .desc{
+        font-size: 14px;
+    }
+
+    .btn-cnt{
+        width: 100%;
+
+        display: flex;
+        justify-content: space-around;
+
+        button.btn{
+            width: 40%;
+            padding: 10px;
+            background-color: $bg-color3;
+            border: 0;
+            border-radius: 10px;
+
+            &:hover{
+                background-color: $bg-color4;
+            }
+
+            &.yes{
+                color: $font-green1;
+            }
+            &.no{
+                color: $font-red1;
+            }
+        }
+    }
+
+}

@@ -10,7 +10,7 @@
 
     gap: 20px;
     position: relative;
-    &:has(.dialog-box){
+    &:has(.popup-box){
         overflow: hidden;
     }
 
@@ -95,340 +95,68 @@
             flex-direction: column;
             gap: 10px;
             .schedule-item{
-                position: relative;
-                .delete-cnt{
-                    padding: 5px;
-                    
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    
-                    border-radius: 5px;
-                    &:hover{
-                        background-color: $bg-color4;
-                    }
-                    path{
-                        color: $font-red1;;
-                    }
-                }
                 width: min(90%,600px);
                 padding: 10px 5px;
-
-                background-color: $bg-color3;
-                &.deactive{
-                    background-color: $accent-red-color1;
-                }
                 border-radius: 10px;
-
-                .zero-cnt{
-                    display: flex;
-                    width: 100%;
-                    gap: 20px;
-                    align-items: center;
-                    
-
-                    margin-bottom: 20px;
-
-                    .desc{
-                        flex-grow: 1;
-                        font-size: 14px;
-                    }
-                    
-                    .status{
-                        font-size: 12px;
-                        padding: 5px;
-                        border: solid 2px transparent;
-                        border-radius: 5px;
-
-                        &.active{
-                            color: $font-green1;
-                            border-color: #b5ffb862;
-                        }
-                        &.inactive{
-                            color: $font-red1;
-                        }
-
-                        margin-right: 30px;
-
-                    }
-                    
-                    .toggle-cnt{
-                        display: flex;
-                        align-self: flex-start;
-                        justify-self: flex-start;
-
-                        input[type=checkbox]{
-                            height: 0;
-                            width: 0;
-                            visibility: hidden;
-                        }
-                        
-                        label {
-                            cursor: pointer;
-                            text-indent: -9999px;
-                            width: 40px;
-                            height: 20px;
-                            background: $bg-color2;
-                            display: block;
-                            border-radius: 10px;
-                            position: relative;
-                        }
-                        
-                        label:after {
-                            content: '';
-                            position: absolute;
-                            top: 2.5px;
-                            left: 2px;
-                            width: 15px;
-                            height: 15px;
-                            background: $bg-color4;
-                            border-radius: 100%;
-                            transition: 0.3s;
-                        }
-                        
-                        input:checked + label {
-                            background: $font-accent-color1;
-                        }
-                        
-                        input:checked + label:after {
-                            left: calc(100% - 3px);
-                            transform: translateX(-100%);
-                        }
-                        
-                        label:active:after {
-                            width: 25px;
-                        }
-                    }
-                }
-
-                .time-cnt{
-                    
-                    margin-bottom: 20px;
-
-                    width: 100%;
-                    display: flex;
-                    justify-content: space-evenly;
-                    align-items: center;
-
-                    .inner-cnt{
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        flex-direction: column;
-                        
-                        padding: 5px;
-                        gap: 5px;
-
-                        cursor: pointer;
-                        border: solid 2px $bg-color4;
-                        border-radius: 5px;
-                        
-                        .desc{
-                            font-size: 12px;
-                            font-style: italic;
-                        }
-                        .time{
-                            font-size: 16px;
-                        }
-                        .line{
-                            width: 80%;
-                            border: solid 1px  $bg-color4;
-
-                        }
-                   } 
-                    .arrow-cnt{
-                        svg{
-                            width: 30px;
-                            height: 30px;
-                        }
-                    }
-                }
-                .second-cnt{
-                    width: 100%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-evenly;
-
-                    gap: 10px;
-                    
-                    flex-direction: row;
-                    margin-bottom: 5px;
-                    
-                    .day-cnt{
-                        width: 100%;
-                        display: flex;
-                        justify-content: space-evenly;
-
-                        .day{
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-
-                            width: 35px;
-                            height: 35px;
-
-                            border-radius: 100%;
-
-                            border: solid 2px $bg-color4;
-                            font-size: 12px;
-
-                            &.active{
-                                background-color: $accent-bg-light-color1;
-                            }
-                        }
-                    }
-
-                }
-                .third-cnt{
-                    width: 100%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-around;
-
-                    flex-direction: row;
-                }
-            }
-        }
-    }
-    .focus-blocked-sites-cnt{      
-        width: min(90%,600px);
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-
-        flex-direction: column;
-        .sticky {
-            background-color: $bg-color2;
-            width: 100%;
-            position: sticky;
-            top: 0;
-          }
-        .heading{
-            margin: 10px auto;
-            width: 100%;
-            background-color: $bg-color2;
-            padding: 5px 0;
-
-            display: flex;
-            gap: 10px;
-            svg {
-                width: 20px;
-                height: 20px;
-                path{
-                    color: red;
-                }
-            }
-        }
-        .btn-cnt{
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            width: 100%;  
-
-    
-            gap: 10px;
-            margin-bottom: 20px;
-            
-            button{
-                height: 30px;
                 background-color: $bg-color3;
-                border: 0;
-                flex-grow: 1;
-    
-                border-radius: 10px;
-    
-                color: $font-color0;
-                font-size: 14px;
-    
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 10px;
 
                 &:hover{
                     background-color: $bg-color4;
                 }
-    
-                &.un-saved{
-                    animation: shake-us-save 1s ease infinite;
-                    @keyframes shake-us-save {
-                        0% { transform: translate(1px, 1px) rotate(0deg); }
-                        5% { transform: translate(-1px, -2px) rotate(-1deg); }
-                        10% { transform: translate(-3px, 0px) rotate(1deg); }
-                        15% { transform: translate(3px, 2px) rotate(0deg); }
-                        20% { transform: translate(1px, -1px) rotate(1deg); }
-                        25% { transform: translate(-1px, 2px) rotate(-1deg); }
-                        30% { transform: translate(-3px, 1px) rotate(0deg); }
-                        35% { transform: translate(3px, 1px) rotate(-1deg); }
-                        40% { transform: translate(-1px, -1px) rotate(1deg); }
-                        45% { transform: translate(1px, 2px) rotate(0deg); }
-                        50% { transform: translate(1px, -2px) rotate(-1deg); }
-                        55% { transform: translate(0, 0); }
-                        100% { transform: translate(0, 0); }
-                    }
-                }
             }
-        }
-        .blocked-site-table{
-            height: auto;
-            border-collapse: collapse;
-            width: min(90%, 500px);
-            margin-bottom: 20px;
+            .schedule-item.compact{
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
 
-            tr{
-                cursor: pointer;
+                cursor: default;
 
 
-                td{
-                    border-bottom: 1px solid $font-color2;
-                    padding: 10px 8px;
-                    text-align: center;
-                    input[type="checkbox"] {
+                .clock-icon-cnt{
+                    flex: 0 0 15%;
+                    svg{
                         width: 20px;
                         height: 20px;
-                        accent-color: $accent-color1;
                     }
-                    .plus-icon-cnt{
-                        padding: 5px;
-                        
-                        background-color: $bg-color3;
-                        border-radius: 5px;
-                        &:hover{
-                            background-color: $bg-color4;
-                        }
-                        svg{
-                            width: 20px;
-                            height: 20px;
-                        }
-                    }
-                    
-                    img{
-                        width: 25px;
-                        height: 25px;
-                    }
-                    input.site-input{
-                        width: 90%;
-                        height: 30px;
-
-                        padding: 5%;
-
-                        background-color: $bg-color3;
-                        color: $font-color0;
-
-                        border: solid 2px $font-color2;
-                        border-radius: 5px;
-
-                        font-size: 16px;
-                    }
-                    
-                    
                 }
+                .content{
+                    flex: 0 0 70%;
+                    padding-right: 10px;
+                    border-right: solid 2px $font-color2;
 
-                td:nth-child(3){
-                    text-align: left;
+                    h3.content-heading{
+                        font-size: 14px;
+                        margin-bottom: 5px;
+                        color: $font-color1;
+
+                    }
+                    .desc{
+                        font-size: 12px;
+                        line-height: 1.5;
+                    }
+                }
+                .delete-icon-cnt{
+                    flex: 0 0 15%;
+                    // border-left: solid $font-color1 2px;
+
+                    svg{
+                        width: 20px;
+                        height: 20px;
+                        path{
+                            color: $icon-red1;
+                        }
+                    }
+
+                    &:hover{
+                        path{
+                            color: $icon-red2;
+                        }
+                    }
                 }
             }
+
         }
     }
+
 
 }

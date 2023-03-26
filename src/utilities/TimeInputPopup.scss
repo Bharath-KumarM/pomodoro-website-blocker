@@ -1,0 +1,182 @@
+@import './variables';
+
+.time-input-popup-cnt{
+    position: absolute;
+    top: 20px;
+    width: min(80%, 450px);
+    background-color: $bg-color2;
+    padding: 10px;
+
+    display: flex;
+    flex-direction: column;
+
+    border-radius: 10px;
+
+    justify-content: center;
+    align-items: center;
+    .close.btn{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+
+        padding: 5px;
+        margin: 5px;
+
+        position: absolute;
+        right: 0;
+        top: 0;
+
+        background-color: transparent;
+        border-radius: 5px;
+        
+        &:hover{
+            background-color: $bg-color3;
+
+            svg{
+                path{
+                    color: $bg-color-red1;
+                }
+            }
+        }
+
+        svg{
+            width: 25px;
+            height: 25px;
+            path{
+                
+           }
+        }
+    }
+    .heading{
+        margin: 10px;
+        align-self: flex-start;
+        justify-self: flex-start;
+        font-size: 16px;
+
+        color: $font-color1;
+    }
+    .time-input-cnt{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 5px;
+        border: solid $font-color2 2px;
+
+        border-radius: 5px;
+
+        margin-bottom: 10px;
+
+        select.time-input{
+            background-color: transparent;
+            font-size: 16px;
+            border: 0;
+            -webkit-appearance: none;
+
+            padding: 5px;
+            
+            option{
+                background-color: $bg-color3;
+                color: $font-color1;
+
+
+                &:hover{
+                    color: $font-color4;  
+                }
+            }
+        }
+        .colon{
+            font-size: 16px;
+        }
+
+        svg{ //Clock Icon
+
+            margin: 0 10px;
+        }
+    }
+
+
+    .day-cnt{
+        width: 100%;
+        display: flex;
+        justify-content: space-evenly;
+        margin-bottom: 20px;
+
+
+        .day{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 30px;
+            height: 30px;
+
+            border-radius: 100%;
+
+            border: solid 2px $bg-color4;
+            font-size: 12px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            &.active{
+                background-color: $accent-bg-bright-color3;
+                color: $font-color4;
+            }
+        }
+    }
+    .note-cnt{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+
+        margin-bottom: 20px;
+
+        svg{
+            height: 20px;
+            width: 20px;
+        }
+        p{
+            font-size: 13px;
+            font-style: italic;
+            color: $font-color2;
+
+            &.user-input-valid{
+                color: $font-red1;
+            }
+        }
+    }
+
+    // .set-cnt{
+    .set-input{
+        width: 60%;
+        color: $font-color4;
+        padding: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        background-color: $bg-color4;
+
+        margin-bottom: 10px;
+
+        &.active{
+            background-color: $accent-color2;
+            &:hover {
+                background-color: $accent-color1;
+            }
+        }
+
+        border-radius: 10px;
+        border: 0;
+    }
+
+    .cancel-cnt{
+        font-size: 14px;
+        color: $font-color1;
+        text-decoration: underline;
+        cursor: pointer;
+
+    }
+
+}
+

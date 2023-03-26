@@ -28,7 +28,7 @@ const BlockedScreen = ()=>{
     const handleCompountMounted = async () =>{
 
         const {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
-        //! 
+        
         const queryOptions = { currentWindow: true, active: true }
         const [tab] = await chrome.tabs.query(queryOptions)
         const {id: tabId} = tab
@@ -38,8 +38,6 @@ const BlockedScreen = ()=>{
             return
         }
         const [tempHostname, tempFavIcon] = blockedScreenData[tabId]
-
-
 
         const {blockedSites} = await chrome.storage.local.get('blockedSites')
         if (!blockedSites[tempHostname]){

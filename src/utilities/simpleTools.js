@@ -43,4 +43,14 @@ export function getAverageRGB(imgEl) {
     return rgb;
 
 }
+export function pad2(number) {
+    return (number < 10 ? '0' : '') + number
+}
 
+export function isUrlValid(userInput) {
+    var res = userInput.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+    if(res == null)
+        return false;
+    else
+        return true;
+}

@@ -35,6 +35,7 @@ body {
 }
 
 button{
+  border: 0;
   background-color: $bg-color1;
   color: $font-color1;
 }
@@ -74,4 +75,16 @@ input[type=number]::-webkit-outer-spin-button {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: $font-color1; 
+}
+
+.style-index-center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.prevent-select {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
 }

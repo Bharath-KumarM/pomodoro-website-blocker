@@ -4,6 +4,7 @@ import style from './Header.module.scss'
 import { IconContext } from "react-icons";
 import {AiTwotoneHome} from 'react-icons/ai'  
 import { MdSettingsSuggest } from 'react-icons/md' 
+import { SiFireship } from 'react-icons/si' 
 import { GiConfirmed } from 'react-icons/gi'
 
 
@@ -14,7 +15,7 @@ const Header = (props)=>{
     <IconContext.Provider value={{className: style.icon}}>
         <div className={style.header}>
             <div className={style.headerCnt}>
-                <button 
+                {/* <button 
                     className={style.iconBtn}
                     onClick={()=>{
                         setNavSelect('home')
@@ -22,16 +23,17 @@ const Header = (props)=>{
                         }}
                     >
                     <AiTwotoneHome />
-                </button>
+                </button> */}
                 <h3 className={style.title}>Screen Time | Site Blocker | Pomodoro</h3>
                 <div 
                     className={style.titleIcon}
                     title={'Screen Time | Site Blocker | Pomodoro'}
                     >
-                        <img src="../../../png/logo_1.png" alt="icon" />
+                        {/* <img src="../../../png/logo_1.png" alt="icon" /> */}
+                        <SiFireship />
                     {/* <GiConfirmed /> */}
                 </div>
-                <button 
+                {/* <button 
                     className={style.iconBtn}
                     onClick={()=>{
                         setNavSelect('settings')
@@ -39,7 +41,7 @@ const Header = (props)=>{
                     }}
                     >
                     <MdSettingsSuggest />
-                </button>
+                </button> */}
             </div>
         </div>
     </IconContext.Provider>

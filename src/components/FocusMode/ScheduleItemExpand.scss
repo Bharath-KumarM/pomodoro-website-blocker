@@ -1,0 +1,200 @@
+.schedule-item.expand{
+    position: relative;
+    .delete-cnt{
+        padding: 5px;
+        
+        position: absolute;
+        top: 0;
+        right: 0;
+        
+        border-radius: 5px;
+        &:hover{
+            background-color: $bg-color4;
+        }
+        path{
+            color: $font-red1;;
+        }
+    }
+
+    &.deactive{
+        background-color: $accent-red-color1;
+    }
+
+    .zero-cnt{
+        display: flex;
+        width: 100%;
+        gap: 20px;
+        align-items: center;
+        
+
+        margin-bottom: 20px;
+
+        .desc{
+            flex-grow: 1;
+            font-size: 14px;
+        }
+        
+        .status{
+            font-size: 12px;
+            padding: 5px;
+            border: solid 2px transparent;
+            border-radius: 5px;
+
+            &.active{
+                color: $font-green1;
+                border-color: #b5ffb862;
+            }
+            &.inactive{
+                color: $font-red1;
+            }
+
+            margin-right: 30px;
+
+        }
+        
+        .toggle-cnt{
+            display: flex;
+            align-self: flex-start;
+            justify-self: flex-start;
+
+            input[type=checkbox]{
+                height: 0;
+                width: 0;
+                visibility: hidden;
+            }
+            
+            label {
+                cursor: pointer;
+                text-indent: -9999px;
+                width: 40px;
+                height: 20px;
+                background: $bg-color2;
+                display: block;
+                border-radius: 10px;
+                position: relative;
+            }
+            
+            label:after {
+                content: '';
+                position: absolute;
+                top: 2.5px;
+                left: 2px;
+                width: 15px;
+                height: 15px;
+                background: $bg-color4;
+                border-radius: 100%;
+                transition: 0.3s;
+            }
+            
+            input:checked + label {
+                background: $font-accent-color1;
+            }
+            
+            input:checked + label:after {
+                left: calc(100% - 3px);
+                transform: translateX(-100%);
+            }
+            
+            label:active:after {
+                width: 25px;
+            }
+        }
+    }
+
+    .time-cnt{
+        
+        margin-bottom: 20px;
+
+        width: 100%;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+
+        .inner-cnt{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            
+            padding: 5px;
+            gap: 5px;
+
+            cursor: pointer;
+            border: solid 2px $bg-color4;
+            border-radius: 5px;
+            
+            .desc{
+                // color: $accent-bg-bright-color3;
+                font-size: 12px;
+                font-style: italic;
+            }
+            .time{
+                display: flex;
+                gap: 10px;
+                justify-content: center;
+                align-items: center;
+                
+                .text{
+                    font-size: 16px;
+                }
+            }
+            .line{
+                width: 80%;
+                border: solid 1px  $bg-color4;
+
+            }
+       } 
+        .arrow-cnt{
+            svg{
+                width: 30px;
+                height: 30px;
+            }
+        }
+    }
+    .second-cnt{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+
+        gap: 10px;
+        
+        flex-direction: row;
+        margin-bottom: 5px;
+        
+        .day-cnt{
+            width: 100%;
+            display: flex;
+            justify-content: space-evenly;
+
+            .day{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                width: 35px;
+                height: 35px;
+
+                border-radius: 100%;
+
+                border: solid 2px $bg-color4;
+                font-size: 12px;
+                font-weight: bold;
+
+                &.active{
+                    background-color: $accent-bg-bright-color3;
+                    color: $font-color3;
+                }
+            }
+        }
+
+    }
+    .third-cnt{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        flex-direction: row;
+    }
+}
