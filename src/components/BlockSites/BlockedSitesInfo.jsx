@@ -5,7 +5,7 @@ import "./BlockedSiteInfo.scss"
 import BlockedSitesList from './BlockedSitesList'
 
 
-const BlockedSitesInfo = ()=>{
+const BlockedSitesInfo = ({setToastMsg})=>{
     const [blockedSites, setBlockedSites] = useState(null)
 
     useEffect(()=>{
@@ -16,18 +16,12 @@ const BlockedSitesInfo = ()=>{
         }
     })
 
-    const handleShowBtnClick = () =>{ 
-        chrome.storage.local.get('blockedSites').then(({blockedSites})=>{
-            console.log(blockedSites)
+    const handleShowBtnClick = async () =>{ 
+        return chrome.storage.local.get('blockedSites').then(({blockedSites})=>{
             if(!blockedSites) return 
             setBlockedSites(blockedSites)
         })
-        //! Debug Starts
-        // setBlockedSites(blockedSitesArrDebug)
-        // setShowBlockedSite(prevClicked => !prevClicked)
-        //! Debug Ends
     }
-
     return(
         <div 
             id="block-site-list-id"
@@ -38,12 +32,15 @@ const BlockedSitesInfo = ()=>{
                 <div 
                     className="block-site-show-btn" 
                     onClick={()=>{handleShowBtnClick()}}
+                    onWheel={e=>console.log(e)}
                     >
                     <DownIcon />
                 </div>
                 : 
                 <BlockedSitesList 
+                    setToastMsg={setToastMsg}
                     blockedSites={blockedSites}
+                    handleShowBtnClick={handleShowBtnClick}
                 />
             }
         </div>

@@ -7,12 +7,15 @@
 
     display: flex;
     justify-content: center;
-
+    align-items: center;
+    
     &.full{
-        position: absolute;
+        position: fixed;
         height: 100%;
         width: 100%;
         background-color: $bg-transparant;
+        top: 0;
+        left: 0;
     }
     
     &.toast{
@@ -21,15 +24,17 @@
 
         background-color: $accent-color1;
         color: $font-color5;
-        bottom: 100px;
+        bottom: 125px;
 
-        width: min(300px, 80%);
+        max-width: min(300px, 80%);
+        min-width: 200px;
         padding: 10px;
 
-        border-radius: 5px;
-        animation-name: fadeoff;
-        animation-duration: 2s;
+        border-radius: 2px;
+        animation-duration: 2.5s;
         animation-timing-function: ease-in-out;
+
+        animation-name: fadeoff;
         opacity: 0;
 
         cursor: default;
@@ -37,19 +42,21 @@
         @keyframes fadeoff {
             0%{
                 opacity: 0;
-                transform: translateY(100px);
+                transform: translateY(75px);
             }
             
-            20%{
+            5%{
                 opacity: 1;
                 transform: translateY(0);
             }
-
-            85%{
+            
+            95%{
+                transform: translateY(0);
                 opacity: 1;
             }
-
-            95%{
+            
+            100%{
+                transform: translateY(75px);
                 opacity: 0;
             }
             

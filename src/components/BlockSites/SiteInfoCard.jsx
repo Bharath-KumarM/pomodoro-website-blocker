@@ -14,11 +14,11 @@ const SiteInfoCard = ({hostname}) =>{
 
         let {screenTimeTracker} = await chrome.storage.local.get('screenTimeTracker')
         let {noOfVisitsTracker} = await chrome.storage.local.get('noOfVisitsTracker')
-        
-        const screenTimeInMinutes = screenTimeTracker[dateString][hostname]
-        const noOfVisit = noOfVisitsTracker[dateString][hostname]
 
-        setScreenTime(screenTimeInMinutes ? screenTimeInMinutes : 0)
+        const screenTimeInMinutes = screenTimeTracker[dateString][hostname]
+        const noOfVisit = noOfVisitsTracker[dateString][hostname][1]
+
+        setScreenTime(screenTimeInMinutes ? Math.round(screenTimeInMinutes) : 0)
         setNoOfVisit(noOfVisit ? noOfVisit : 0)
     }
 

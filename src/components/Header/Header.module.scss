@@ -1,10 +1,11 @@
 @import "../../utilities/variables";
 
 .header{
-    height: 7%;
     display: flex;
     justify-content: space-around;
     align-items: center;
+
+    margin: 5px 0;
 }
 
 .headerCnt{
@@ -12,11 +13,9 @@
     align-items: center;
     justify-content: center;
 
-
     width: 80%;
     
-    margin: 0 0 10px 0;
-    border-bottom: 2px solid $bg-color2;
+    // border-bottom: 2px solid $bg-color2;
     
     // background-color: $bg-color2;
     //Small Screen
@@ -29,14 +28,14 @@
 }
 
 .title {
-    font-size: 16px;
-    font-weight: 500;
+    font-size: 20px;
+    font-weight: 900;
 
-    margin: 10px 0;
+    // margin: 10px 0;
     //Small Screen
-    @media only screen and (max-width: 650px) {
-        display: none;
-    }
+    // @media only screen and (max-width: 650px) {
+    //     display: none;
+    // }
 }
 
 .titleIcon{

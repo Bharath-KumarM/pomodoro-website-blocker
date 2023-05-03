@@ -6,26 +6,28 @@ import {BiInfoCircle as InfoIcon} from "react-icons/bi"
 
 import BlockedSitesInfo from "./BlockedSitesInfo"
 import SiteInfoCard from "./SiteInfoCard"
+import { localLogMessage } from "../../utilities/localStorage"
+import { blockOrUnblockSite, getCurrTab } from "../../utilities/chromeApiTools"
 
 import "./BlockSites.scss"
-import { localLogMessage } from "../../utilities/localStorage"
+import { PopupToast } from "../../utilities/PopupScreens"
+
 
 // In popup screen, it creates the UI to block current website.
 const BlockSites = ({setCntHeading})=>{
     const [currTab, setCurrTab] = useState(null)
     const [isBlocked, setIsBlocked] = useState(null)
-    const [updateBlockSiteDetails, setUpdateBlockSiteDetails] = useState(0) //TODO Do I realy need this?
+    const [toastMsg, setToastMsg] = useState(null) //* Toast Message from bottom
+
     
     const handleComponentMount = async ()=>{
-        // Get Current tab opened by user
+        // *Get Current tab opened by user
         const tempCurrTab = await getCurrTab()
         const urlPathname = (new URL(tempCurrTab.url)).pathname
         const hostName = (new URL(tempCurrTab.url)).hostname
 
-
-        // If the current tab is blocked and blocked screen is loaded, then get the site details from blockedScreenData local storage
+        // *If the current tab is blocked and blocked screen is loaded, then get the site details from blockedScreenData local storage
         if (urlPathname === '/src/pages/blocked-screen/blocked-screen.html'){
-
             const {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
             if (!blockedScreenData[tempCurrTab.id]) {
                 localLogMessage("[-] @BlockedSite.jsx, blocked site's remove tab id is not found in blockedScreenData ")
@@ -37,10 +39,10 @@ const BlockSites = ({setCntHeading})=>{
 
             setCurrTab({hostname, favIconUrl})
             setIsBlocked(blockedSites[hostname] ? true : false)
-            return
+            return null;
         }
 
-        // Check whether it is blocked
+        // *Check whether it is blocked
         const tempIsBlocked = await getIsBlocked(hostName)
         if (tempIsBlocked){
             localLogMessage("[-] @BlockedSite.jsx, blocked site but not blocked screen loaded. BG script is not forcing blocked screen html")
@@ -50,48 +52,54 @@ const BlockSites = ({setCntHeading})=>{
     }
     useEffect( ()=>{
         handleComponentMount()
-    }, [updateBlockSiteDetails])
+    }, [])
 
-    // wait for current tab details
+    // *waits for current tab details
     if (!currTab) return <div>Loading...</div>
     const isValidSite = currTab.url ? currTab.url.startsWith('http') : true
 
-    const hostname = currTab.url ? (new URL(currTab.url)).hostname : currTab.hostname
+    const hostname = currTab.url ? (new URL(currTab.url)).hostname : currTab.hostname // todo: what does it do?
     const handleBlockBtnClick = async ()=>{
-
-        const message = isBlocked === null ? '' : 
-                        isBlocked === false ? 'newBlockSite' :
-                        'unBlockSite'
-
-        const response = await chrome.runtime.
-                sendMessage({
-                    blockSitesData: {
-                        hostName: hostname,
-                        favIconUrl: currTab.favIconUrl
-                    }, 
-                    msg: message,
-                })
-        await response
-        setUpdateBlockSiteDetails(prevState => prevState+1)
+        const res = await blockOrUnblockSite(!isBlocked, hostname, currTab.favIconUrl)
+        if (res){
+            setIsBlocked(prevIsBlocked=>!prevIsBlocked)
+            if (isBlocked) setToastMsg('Unblocked Successfully!')
+            else setToastMsg('Blocked Successfully!')
+        }
+        else{
+            if (isBlocked) setToastMsg('Error on unblocking the site')
+            else setToastMsg('Error on blocking the site')
+        }
     }
     return (
-        <div className='block-site-cnt'>
+        <>
             {
-                isValidSite ? 
-                <SiteDetails  // Shows Current site info(like blocked or not and screen time) 
-                    isBlocked={isBlocked}
-                    currTab={currTab}
-                    hostName={hostname}
-                    handleBlockBtnClick={handleBlockBtnClick} 
-                /> : 
-                <InvalidSiteDetails 
-                    hostName={hostname}
-                />
+                toastMsg ? 
+                <PopupToast 
+                    key={'popup-toast'}
+                    toastMsg={toastMsg}
+                    setToastMsg={setToastMsg}
+                /> : null 
             }
-            <BlockedSitesInfo // Blocked sites in List View 
-            
-            />
-        </div>
+            <div className='block-site-cnt'>
+                {
+                    isValidSite ? 
+                    <SiteDetails  // Shows Current site info(like blocked or not and screen time) 
+                        isBlocked={isBlocked}
+                        currTab={currTab}
+                        hostName={hostname}
+                        handleBlockBtnClick={handleBlockBtnClick} 
+                    /> : 
+                    <InvalidSiteDetails 
+                        hostName={hostname}
+                    />
+                }
+                {/* Blocked sites list view */}
+                <BlockedSitesInfo 
+                    setToastMsg={setToastMsg}
+                /> 
+            </div>
+        </>
     )
 }
 
@@ -99,12 +107,7 @@ async function getIsBlocked(hostName){
     let {blockedSites} = await chrome.storage.local.get('blockedSites')
     return blockedSites && blockedSites[hostName] ? true : false
 }
-async function getCurrTab(){
-    let queryOptions = { active: true, lastFocusedWindow: true }
-    
-    let [currTab] = await chrome.tabs.query(queryOptions)
-    return currTab
-}
+
 
 
 
@@ -137,7 +140,6 @@ function SiteDetails({isBlocked, currTab, hostName, handleBlockBtnClick}){
         </div>
         <SiteInfoCard 
             hostname={hostName}
-        
         />
         <button 
             className={'btn '}
@@ -181,7 +183,7 @@ function InvalidSiteDetails({hostName}){
 }
 export default BlockSites
 
-//! To debug purpose
+//! debug purpose
 const debugTab = {
     "active": true,
     "audible": false,

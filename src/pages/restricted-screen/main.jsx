@@ -1,13 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import BlockedScreen from './BlockedScreen'
+import RestrictedScreen from './RestrictedScreen'
 
 import "./index.scss";
 
 
+
 ReactDOM.render(
   <React.StrictMode>
-    <BlockedScreen />
+    <RestrictedScreen />
   </React.StrictMode>,
   document.getElementById('root')
 )

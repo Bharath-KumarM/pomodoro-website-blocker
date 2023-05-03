@@ -1,22 +1,15 @@
-# 24th March
-1. Schedule
-   1. Make editable
-   2. make text decription more precise 
-   3. Add descision screen before delete
-   4. A generic toast message feature after add and delete schedule
-   5.  
+# 28th Aprill
 
-## Issues | Bugs 
-1. Issues - Make ScreenTime counter logic better
-   1. Why the Screen time not reflecting
-2. Issue - Why open link in new tab of block site is always "loading..."
-3. Why is unblock time not running in popup screen just after blocking the site.
-4. 
+# Bugs
+1. what is causing unnecessary occational reload?[later]
+   1. Note: might be loading the package
+2. 
 
+# New feature
+1. 
 
-# Idea
-1. Are HOME & Settings really needed?
-   1. if it is just a showcase purpose, then remove it.
-   2. Think about it.
-2. In Blocked Site list
-   1. Try adding a import and export options
+# Ideas
+1. reflect site select and unselect then and there and remove annoying save button
+2. Auto suggest sites to add
+3. think about dedicated button to set screen time
+   1. Make select and unselct reative and remove save/unsave button

@@ -2,11 +2,9 @@
 
 .Cnt {
     display: flex;
-    // flex-grow: 1;
-    height: 93%;
     margin: 0 0 10px 0;
-
-    
+    overflow: hidden;
+    flex-grow: 1;
     //Small screen
     @media only screen and (max-width: 650px) {
         margin: 0;

@@ -1,13 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import BlockedScreen from './BlockedScreen'
+import TimeLimitScreen from './TimeLimitScreen'
 
 import "./index.scss";
 
 
+
 ReactDOM.render(
   <React.StrictMode>
-    <BlockedScreen />
+    <TimeLimitScreen />
   </React.StrictMode>,
   document.getElementById('root')
 )

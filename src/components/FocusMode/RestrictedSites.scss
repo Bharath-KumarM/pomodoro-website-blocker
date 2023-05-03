@@ -62,6 +62,9 @@
             }
 
             &.un-saved{
+                path, div{
+                    color: $font-red1;
+                }
                 animation: shake-us-save 1s ease infinite;
                 @keyframes shake-us-save {
                     0% { transform: translate(1px, 1px) rotate(0deg); }
@@ -81,63 +84,91 @@
             }
         }
     }
-    .restricted-site-table{
-        height: auto;
-        border-collapse: collapse;
+    .add-curr-site-to-restrited-site{
+        // min-width: 250px;
+        width: min(90%, 500px);
+        margin-bottom: 10px;
+
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        border-radius: 10px;
+        // padding: 10px;
+        background-color: $accent-bg-dark-color1;
+
+        > div{
+            padding: 10px;
+            color: $font-color0;
+        }
+
+        .icon-cnt{
+            img{
+                width: 25px;
+                height: 25px;
+            }
+        }
+        .site-cnt{
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            align-items: flex-start;
+            justify-content: flex-start;
+
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+
+            .site{
+                color: $font-color0;
+                font-size: 14px;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+                width:100%;
+
+            }
+            .desc{
+                color: $font-color1;
+                font-size: 14px;
+                text-decoration: underline;
+                cursor: pointer;
+                font-style: italic;
+            }
+
+        }
+
+
+    }
+    .no-restricted-sites-cnt{
+        width: min(90%, 500px);
+        height: 100px;
+        color: $font-color1;
+
+    }
+    .restricted-site-table{     
         width: min(90%, 500px);
         margin-bottom: 20px;
+        
+        border-collapse: collapse;   
 
-        tr{
+        .item{
             cursor: pointer;
+            width: 100%;
+            justify-content: flex-start;
+            border-bottom: 1px solid $font-color2;
 
-
-            td{
-                border-bottom: 1px solid $font-color2;
-                padding: 10px 8px;
-                text-align: center;
+            div{
+                padding: 10px;
                 input[type="checkbox"] {
                     width: 20px;
                     height: 20px;
                     accent-color: $accent-color1;
                 }
-                .plus-icon-cnt{
-                    padding: 5px;
-                    
-                    background-color: $bg-color3;
-                    border-radius: 5px;
-                    &:hover{
-                        background-color: $bg-color4;
-                    }
-                    svg{
-                        width: 20px;
-                        height: 20px;
-                    }
-                }
-                
                 img{
                     width: 25px;
                     height: 25px;
                 }
-                input.site-input{
-                    width: 90%;
-                    height: 30px;
-
-                    padding: 5%;
-
-                    background-color: $bg-color3;
-                    color: $font-color0;
-
-                    border: solid 2px $font-color2;
-                    border-radius: 5px;
-
-                    font-size: 16px;
-                }
-                
-                
-            }
-
-            td:nth-child(3){
-                text-align: left;
             }
         }
     }

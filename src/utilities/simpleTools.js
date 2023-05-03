@@ -47,10 +47,24 @@ export function pad2(number) {
     return (number < 10 ? '0' : '') + number
 }
 
-export function isUrlValid(userInput) {
-    var res = userInput.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
-    if(res == null)
-        return false;
-    else
-        return true;
+export function isValidUrl(urlString){
+    let tempUrl = urlString
+    if (!urlString.startsWith('http')){
+        tempUrl = 'https://' + urlString
+    }
+
+    try{
+        new URL(tempUrl)
+        return true
+    } catch(error){
+        return false
+    }
+}
+
+export function getHost(url){
+    let tempUrl = url
+    if (!url.startsWith('http')){
+        tempUrl = 'https://' + url
+    }
+    return (new URL(tempUrl)).hostname
 }

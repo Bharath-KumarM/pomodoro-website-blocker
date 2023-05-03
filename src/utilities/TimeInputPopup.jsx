@@ -55,6 +55,7 @@ const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, setScheduleD
             >
                 <RiCloseLine />
             </button>
+
             <h3 className="heading">
                 Start Time
             </h3>
@@ -62,7 +63,7 @@ const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, setScheduleD
                 <select 
                     id="time-hr" 
                     className='time-input hr'
-                    defaultValue={'10'}
+                    defaultValue={startTime.split(":")[0]}
                     onChange={(e)=> {
                         let [hr, min, amPm] = startTime.split(":")
                         hr = e.target.value //new hour
@@ -81,7 +82,7 @@ const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, setScheduleD
                 <select 
                     id="time-min" 
                     className='time-input min'
-                    defaultValue={'00'}
+                    defaultValue={startTime.split(":")[1]}
                     onChange={(e)=> {
                         let [hr, min, amPm] = startTime.split(":")
                         min = e.target.value //new hour
@@ -97,7 +98,7 @@ const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, setScheduleD
                 <select 
                     id="time-am-pm" 
                     className='time-input am-pm'
-                    defaultValue={'AM'}
+                    defaultValue={startTime.split(":")[2]}
                     onChange={(e)=> {
                         let [hr, min, amPm] = startTime.split(":")
                         amPm = e.target.value //new hour
@@ -119,7 +120,7 @@ const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, setScheduleD
                 <select 
                     id="time-hr" 
                     className='time-input hr'
-                    defaultValue={'05'}
+                    defaultValue={endTime.split(":")[0]}
                     onChange={(e)=> {
                         let [hr, min, amPm] = endTime.split(":")
                         hr = e.target.value //new hour
@@ -138,7 +139,7 @@ const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, setScheduleD
                 <select 
                     id="time-min" 
                     className='time-input min'
-                    defaultValue={'00'}
+                    defaultValue={endTime.split(":")[1]}
                     onChange={(e)=> {
                         let [hr, min, amPm] = endTime.split(":")
                         min = e.target.value //new hour
@@ -154,7 +155,7 @@ const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, setScheduleD
                 <select 
                     id="time-am-pm" 
                     className='time-input am-pm'
-                    defaultValue={'PM'}
+                    defaultValue={endTime.split(":")[2]}
                     onChange={(e)=> {
                         let [hr, min, amPm] = endTime.split(":")
                         amPm = e.target.value //new hour
@@ -207,6 +208,7 @@ const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, setScheduleD
                 type="submit" 
                 onClick={(e)=>{
                     chrome.storage.local.get('scheduleData', ({scheduleData})=>{
+                        console.log('scheduleData: ', scheduleData, 'editTimeInputIndex:', editTimeInputIndex)
                         const isNewSchedule = editTimeInputIndex > scheduleData.length-1
                         const newScheduleItem = [startTime, endTime, daysActiveArr]
 

@@ -11,19 +11,13 @@
                   "tabs"
                 ],
   "background": {
-    "service_worker": "./src/pages/background/background.js",
+    "service_worker": "src/pages/background/background.js",
     "type": "module"
   },
   "action": {
-    "default_popup": "./src/pages/popup/popup.html"
+    "default_popup": "src/pages/popup/popup.html"
   },
-  "options_page": "./src/pages/popup/popup.html",
-  "web_accessible_resources": [
-    {
-      "resources": ["/static/*"],
-      "matches": ["<all_urls>"]
-    }
-  ],
+  "options_page": "src/pages/popup/popup.html",
   "content_scripts": [
     {
         "matches": [
@@ -31,10 +25,13 @@
             "http://*/*"
         ],
         "js": [
-          "./src/pages/content/content.js"
+          "src/pages/content/content.js"
         ]
     }
-]
+  ],
+  "icons": {
+    "16": "logo_1.png"
+  }
 
 }
 

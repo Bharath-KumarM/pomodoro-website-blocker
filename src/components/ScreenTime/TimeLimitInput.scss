@@ -1,10 +1,10 @@
-@import './variables';
+@import '../../utilities/variables';
 
-.time-input-popup-cnt{
+.time-limit-input-popup-cnt{
     position: relative;
     width: min(80%, 450px);
     background-color: $bg-color2;
-    padding: 10px;
+    padding: 25px;
 
     display: flex;
     flex-direction: column;
@@ -13,7 +13,6 @@
 
     justify-content: center;
     align-items: center;
-
     .close.btn{
         display: flex;
         justify-content: center;
@@ -50,9 +49,12 @@
     }
     .heading{
         margin: 10px;
-        align-self: flex-start;
-        justify-self: flex-start;
-        font-size: 16px;
+        margin-bottom: 40px;
+
+        align-self: center;
+        justify-self: center;
+
+        font-size: 18px;
 
         color: $font-color1;
     }
@@ -65,7 +67,7 @@
 
         border-radius: 5px;
 
-        margin-bottom: 10px;
+        margin-bottom: 30px;
 
         select.time-input{
             background-color: transparent;
@@ -96,57 +98,8 @@
     }
 
 
-    .day-cnt{
-        width: 100%;
-        display: flex;
-        justify-content: space-evenly;
-        margin-bottom: 20px;
 
 
-        .day{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            width: 30px;
-            height: 30px;
-
-            border-radius: 100%;
-
-            border: solid 2px $bg-color4;
-            font-size: 12px;
-            font-weight: bold;
-
-            cursor: pointer;
-
-            &.active{
-                background-color: $accent-bg-bright-color3;
-                color: $font-color4;
-            }
-        }
-    }
-    .note-cnt{
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-
-        margin-bottom: 20px;
-
-        svg{
-            height: 20px;
-            width: 20px;
-        }
-        p{
-            font-size: 13px;
-            font-style: italic;
-            color: $font-color2;
-
-            &.user-input-valid{
-                color: $font-red1;
-            }
-        }
-    }
 
     // .set-cnt{
     .set-input{
@@ -157,7 +110,7 @@
         font-weight: bold;
         background-color: $bg-color4;
 
-        margin-bottom: 10px;
+        margin-bottom: 20px;
 
         &.active{
             background-color: $accent-color2;
@@ -166,8 +119,24 @@
             }
         }
 
-        border-radius: 10px;
+        border-radius: 40px;
         border: 0;
+    }
+
+    .remove-cnt{
+        padding: 10px;
+        font-size: 14px;
+
+        border-radius: 10px;
+
+        background-color: $accent-red-color1;
+        color: $bg-color-red1;
+
+        text-decoration: underline;
+        cursor: pointer;
+
+        margin-bottom: 20px;
+
     }
 
     .cancel-cnt{
@@ -179,4 +148,3 @@
     }
 
 }
-

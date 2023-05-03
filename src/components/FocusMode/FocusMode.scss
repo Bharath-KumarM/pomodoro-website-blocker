@@ -1,162 +1,238 @@
 @import '../../utilities/variables';
-
-.focus-mode-cnt{
+.focus-mode-outer-cnt{
     width: 100%;
-
-    display: flex;
-    align-items: center;
-
-    flex-direction: column;
-
-    gap: 20px;
-    position: relative;
-    &:has(.popup-box){
-        overflow: hidden;
-    }
-
-    .start-stop.cnt{
-        margin-top: 20px;
-        width: min(300px, 60%);
-        .start-stop.btn{
+    height: 100%;
+    .focus-mode-cnt{
+        width: 100%;
+        height: 100%;
+    
+        display: flex;
+        align-items: center;
+    
+        flex-direction: column;
+    
+        gap: 20px;
+        position: relative;
+        &:has(.popup-box){
+            overflow: hidden;
+        }
+    
+        .start-stop.cnt{
+            flex-direction: column;
+            margin-top: 10px;
             width: 100%;
-            font-size: 16px;
-            background-color: $accent-bg-light-color1;
-            height: 35px;
-            border-radius: 10px;
-            border: 0;
-            transition: background-color 200ms ease-in;
-            color: $font-color1;
-            
-            &:hover{
-                background-color: $accent-bg-dark-color1;
+    
+            .start-stop.btn{
+                width: min(300px, 60%);
+                font-size: 16px;
+                background-color: $accent-bg-light-color1;
+                height: 35px;
+                border-radius: 10px;
+                border: 0;
+                transition: background-color 200ms ease-in;
+                color: $font-color1;
+                margin: 20px;
+    
+                &:hover{
+                    background-color: $accent-bg-dark-color1;
+                    
+                }
+                &.focus-break-active{
+                    background-color: $bg-color4;
+                }
                 
             }
     
-        }
-    }
-    .schedule-cnt{
-        width: 100%;
-        
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        
-        flex-direction: column;
-        
-        gap: 10px;
-        
-        position: relative; 
-        .heading{
-            width: min(90%,600px);
-            background-color: $bg-color2;
-            padding: 10px 0;
-
-            display: flex;
-            gap: 10px;
-
-            z-index: 1;
-            svg {
-                width: 20px;
-                height: 20px;
+            .resume-cnt{
+                color: $accent-bg-bright-color3;
+                &:hover{
+                    color: $accent-bg-bright-color2;
+                }
+                font-size: 14px;
+                text-decoration: underline;
+                cursor: pointer;
+                margin-bottom: 10px;
             }
-            &.sticky {
-                position: sticky;
-                top: 0;
-              }
-        }
-        .add-btn-cnt{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            width: min(90%,600px);
-            padding: 2px 5px;
-
-            background-color: $bg-color3;
-            &:hover{
-                background-color: $bg-color4;
-
+    
+            .break-cnt{
+                flex: 0 0 0;
+                gap: 10px;
+                .info-icon-cnt{
+                    flex-basis: 20px;
+                    svg{
+                        width: 20px;
+                        height: 20px;
+                        path{
+                            color: $font-color2;
+                        }
+                    }
+                }
+                .desc{
+                    color: $font-color2;
+                    font-size: 14px;
+                }
             }
-            border-radius: 5px;
-            margin: 0 10px;
-
-            //Plus icon
-            svg{
-                width: 20px;
-                height: 20px;
-            }
+    
         }
-        .schedule-list{
+        .schedule-cnt{
             width: 100%;
+            
             display: flex;
-            justify-content: center;
             align-items: center;
-
+            justify-content: center;
+            
             flex-direction: column;
+            
             gap: 10px;
-            .schedule-item{
+            
+            position: relative; 
+            .heading{
                 width: min(90%,600px);
-                padding: 10px 5px;
-                border-radius: 10px;
+                background-color: $bg-color2;
+                padding: 10px 0;
+    
+                display: flex;
+                gap: 10px;
+    
+                z-index: 1;
+                svg {
+                    width: 20px;
+                    height: 20px;
+                }
+                &.sticky {
+                    position: sticky;
+                    top: 0;
+                  }
+            }
+            .add-btn-cnt{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+    
+                width: min(90%,600px);
+                padding: 2px 5px;
+    
                 background-color: $bg-color3;
-
                 &:hover{
                     background-color: $bg-color4;
+    
+                }
+                border-radius: 5px;
+                margin: 0 10px;
+    
+                //Plus icon
+                svg{
+                    width: 20px;
+                    height: 20px;
                 }
             }
-            .schedule-item.compact{
+            .schedule-list{
+                width: 100%;
                 display: flex;
-                justify-content: space-around;
+                justify-content: center;
                 align-items: center;
-
-                cursor: default;
-
-
-                .clock-icon-cnt{
-                    flex: 0 0 15%;
-                    svg{
-                        width: 20px;
-                        height: 20px;
-                    }
-                }
-                .content{
-                    flex: 0 0 70%;
-                    padding-right: 10px;
-                    border-right: solid 2px $font-color2;
-
-                    h3.content-heading{
-                        font-size: 14px;
-                        margin-bottom: 5px;
-                        color: $font-color1;
-
-                    }
-                    .desc{
-                        font-size: 12px;
-                        line-height: 1.5;
-                    }
-                }
-                .delete-icon-cnt{
-                    flex: 0 0 15%;
-                    // border-left: solid $font-color1 2px;
-
-                    svg{
-                        width: 20px;
-                        height: 20px;
-                        path{
-                            color: $icon-red1;
-                        }
-                    }
-
+    
+                flex-direction: column;
+                gap: 10px;
+                .schedule-item{
+                    width: min(90%,600px);
+                    padding: 10px 5px;
+                    border-radius: 10px;
+                    background-color: $bg-color3;
+    
                     &:hover{
-                        path{
-                            color: $icon-red2;
+                        background-color: $bg-color4;
+                    }
+                }
+                .schedule-item.compact{
+                    display: flex;
+                    justify-content: space-around;
+                    align-items: center;
+    
+                    cursor: default;
+                    position: relative;
+                    
+                    .clock-icon-cnt{
+                        flex: 0 0 15%;
+                        svg{
+                            width: 20px;
+                            height: 20px;
+                        }
+                    }
+                    .content{
+                        flex: 0 0 70%;
+                        padding-right: 10px;
+                        border-right: solid 2px $font-color2;
+
+                        .content-heading-cnt{
+                            display: flex;
+                            align-items: center;
+                            
+                            margin-bottom: 5px;
+                            gap: 10px;
+
+                            h3.content-heading{
+                                font-size: 14px;
+                                color: $font-color1;
+        
+                            }
+
+                            .active-indicator{
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                        
+                                padding: 5px;
+                        
+                                background-color: $font-green1;
+                                border-radius: 100%;
+                        
+                                width: 5px;
+                                height: 5px;
+                                animation: blink-animation 1s steps(5, start) infinite;
+        
+                                @keyframes blink-animation {
+                                    to {
+                                      visibility: hidden;
+                                    }
+                                  }
+                                  @-webkit-keyframes blink-animation {
+                                    to {
+                                      visibility: hidden;
+                                    }
+                                  }
+                            }
+
+                        }
+    
+                        .desc{
+                            font-size: 12px;
+                            line-height: 1.5;
+                        }
+                    }
+                    .delete-icon-cnt{
+                        flex: 0 0 15%;
+                        // border-left: solid $font-color1 2px;
+    
+                        svg{
+                            width: 20px;
+                            height: 20px;
+                            path{
+                                color: $icon-red1;
+                            }
+                        }
+    
+                        &:hover{
+                            path{
+                                color: $icon-red2;
+                            }
                         }
                     }
                 }
+    
             }
-
         }
+    
+    
     }
-
-
 }

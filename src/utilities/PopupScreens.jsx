@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './PopupScreens.scss'
 
 
@@ -12,35 +12,15 @@ export const PopupFull = ({content, setClosePopup})=>{
     )
 }
 
-export const PopupToast = ({toastMsg})=>{
-    const [message, setMessage] = useState(toastMsg ? toastMsg[0] : null)
-    let timeoutId
-
-    useEffect(()=>{
-        clearTimeout(timeoutId)
-
-        if (message){
-            timeoutId = setTimeout(()=>{
-                setMessage(null)
-            }, 1900)
-        }
-    }, [message])
-
-    useEffect(()=>{
-        setMessage(toastMsg)
-    }, [toastMsg])
-
+export const PopupToast = ({toastMsg, setToastMsg})=>{
     return (
-        <>
-        {
-            message === null ?
-            null:
-            <div className='prevent-select popup-screen toast ' 
-            >
-                {message}
-            </div> 
-        }
-        </>
+        <div className='prevent-select popup-screen toast ' 
+            onAnimationEnd={()=>{
+                setToastMsg(null)
+            }}
+        >
+            {toastMsg}
+        </div> 
     )
 }
 

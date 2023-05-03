@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { MdOutlineArrowDropDown as DropDownIcon} from 'react-icons/md';
-import './BlockedScreen.scss';
-import { blockOrUnblockSite } from '../../utilities/chromeApiTools';
+import './TimeLimitScreen.scss';
+import { turnOffFocusMode } from '../background/restrictSiteBG';
+import { getIsScreenTimeSurpassedLimit, refreshAllTimeLimitTabs } from '../../utilities/chromeApiTools';
 
 
 const countDownMsg = [
@@ -20,31 +21,32 @@ const countDownMsg = [
     'Go Head...',
     'Go Head...'
 ]
-const BlockedScreen = ()=>{
-    const [blockedSiteData, setBlockedSiteData] = useState(null)
+const TimeLimitScreen = ()=>{
+    const [currSiteData, setCurrSiteData] = useState(null)
     const [count, setCount] = useState(30)
 
-    const [hostname, favIcon] = blockedSiteData ? blockedSiteData : [null, null]
+    const [hostname, favIcon] = currSiteData ? currSiteData : [null, null]
     
     const handleCompountMounted = async () =>{
 
-        const {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
+        const {timeLimitScreenData} = await chrome.storage.local.get('timeLimitScreenData')
         
         const {tabId} = await chrome.runtime.sendMessage({getTabId: true})
 
-
-        if (!blockedScreenData[tabId]) {
-            console.log('Issue: no blockedScreeendata from BG')
+        if (!timeLimitScreenData[tabId]) {
+            console.log('Issue: no timeLimitScreenData from BG')
             return null;
         }
-        const [tempHostname, tempFavIcon, tempUrl] = blockedScreenData[tabId]
+        const [tempHostname, tempFavIcon, tempUrl] = timeLimitScreenData[tabId]
 
-        const {blockedSites} = await chrome.storage.local.get('blockedSites')
-        if (!blockedSites[tempHostname]){
-            // *Got unblocked - refresh with a blocked url
-            chrome.tabs.update(tabId, {url: tempUrl})
+        
+        // * checks whether timi limit increased or removed
+        const isScreenTimeSurpassedLimit = await getIsScreenTimeSurpassedLimit(tempHostname)
+        console.log({tempHostname, isScreenTimeSurpassedLimit})
+        if (!isScreenTimeSurpassedLimit){
+            chrome.tabs.update(tabId, {url: tempUrl}); 
             return null;
-        }
+        }   
 
         // Load FavIcon and title
         let link = document.querySelector("link[rel~='icon']");
@@ -54,9 +56,9 @@ const BlockedScreen = ()=>{
             document.head.appendChild(link);
         }
         link.href = tempFavIcon;
-        document.title = `${tempHostname} - 🚫Blocked`
+        document.title = `${tempHostname} - Time Limit`
 
-        setBlockedSiteData([tempHostname, tempFavIcon])
+        setCurrSiteData([tempHostname, tempFavIcon])
     }
     
     useEffect(()=>{
@@ -69,15 +71,7 @@ const BlockedScreen = ()=>{
         }, 1000)
     }, [count])
 
-    const handleUnblockBtnClick = async ()=>{
-        const res = await blockOrUnblockSite(false, hostname, favIcon)
-        if (res){
-            location.reload()
-        }else{
-
-            return res
-        }
-    }
+    // *To automatically close tab
     if (count < -60){
         chrome.tabs.getCurrent(function(tab) {
             chrome.tabs.remove(tab.id, function() { 
@@ -93,11 +87,20 @@ const BlockedScreen = ()=>{
             });
         });
     }
+
+    const handleUnpauseSite = async ()=>{
+        let {screenTimeLimit} = await chrome.storage.local.get('screenTimeLimit')
+        if (!screenTimeLimit) screenTimeLimit = {}
+
+        delete screenTimeLimit[hostname]
+        await chrome.storage.local.set({screenTimeLimit})
+        refreshAllTimeLimitTabs()
+    }
     return (
     <div className='blocked-scrn-cnt'>
         <div className="heading">
             <h2>
-                This site has been blocked by you
+                You have exceeded the daily time limit
             </h2>
         </div>
         <div className="block-site-card">
@@ -127,18 +130,18 @@ const BlockedScreen = ()=>{
                     {
                         count <= 0 ? 
                         <button 
-                            className='btn unblock'
-                            onClick={()=>handleUnblockBtnClick()}
+                            className='btn remove-time-limit'
+                            onClick={()=>handleUnpauseSite()}
                         >
-                            Unblock this site
+                            Remove Time Limit
                         </button> :
-                        // !motivation message
+                        // !motivation message, maybe added later
                         // countDownMsg[30-count] ? 
                         // <h2>
                         //     {countDownMsg[30-count]}
                         // </h2> : 
                         <h2>
-                            {`Wait for ${count} sec to unblock...`}
+                            {`Wait for ${count} sec to remove time limit...`}
                         </h2>
                     }
                     {
@@ -157,33 +160,7 @@ const BlockedScreen = ()=>{
     )
 }
 
-export default BlockedScreen
+export default TimeLimitScreen
 
-const BlockBtn = ()=>{
-    const [leftTime, setLeftTime] = useState(60)
-    const [isBtnActive, setIsBtnAtive] = useState(false)
-    useEffect(()=>{
-        if (leftTime > 1){
-            setTimeout(()=>{
-                setLeftTime(prevLeftTime => prevLeftTime-1)
-            }, 1000)
-        }
-        else {
-            setIsBtnAtive(true)
-        }
-    }, [leftTime, isBtnActive])
-    return (
-        <button 
-            className="btn"
-            onClick={async ()=>{
-                if (isBtnActive){
-                    const {blockedSites} = await chrome.storage.local.get('blockedSites')
 
-                }
-            }}
-        >
-            {isBtnActive ? `Cooling Time (${leftTime}sec)` : 'Unblock Site'} 
-        </button>
-    )
-}
 
