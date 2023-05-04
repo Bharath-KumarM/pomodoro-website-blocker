@@ -4,7 +4,7 @@ import Header from '../Header/Header'
 import Content from '../Content/Content.jsx'
 import Footer from '../Footer/Footer.jsx'
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 function App() {
   const [cntHeading, setCntHeading] = useState('')
@@ -12,6 +12,41 @@ function App() {
   // const [navSelect, setNavSelect] = useState('focus-mode')
   // const [navSelect, setNavSelect] = useState('screen-time')
   // const [navSelect, setNavSelect] = useState('pomodoro')
+
+  useEffect(()=>{
+    const getNavSelect = async ()=>{
+      
+      // todo: check this query behaviour
+      const [{id: tabId}] = await chrome.tabs.query({ currentWindow: true, active: true })
+      
+      // *Blocked Site
+      const {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
+      if (tabId && blockedScreenData[tabId]) {
+        setNavSelect('block-site')
+        return null;
+      }
+      // *Blocked Site
+      const {restrictedScreenData} = await chrome.storage.local.get('restrictedScreenData')
+      if (tabId && restrictedScreenData[tabId]) {
+        setNavSelect('focus-mode')
+        return null;
+      }
+      // *Screen time limit
+      const {timeLimitScreenData} = await chrome.storage.local.get('timeLimitScreenData')
+      if (tabId && timeLimitScreenData[tabId]) {
+        setNavSelect('screen-time')
+        return null;
+      }
+
+      // * Default Nav select
+      setNavSelect('block-site')
+
+
+    }
+
+    getNavSelect()
+
+  }, [])
 
   return (
     <div className={style.App}> 
