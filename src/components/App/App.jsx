@@ -5,11 +5,12 @@ import Content from '../Content/Content.jsx'
 import Footer from '../Footer/Footer.jsx'
 
 import { useEffect, useState } from "react"
+import { getCurrTab } from '../../utilities/chromeApiTools'
 
 function App() {
   const [cntHeading, setCntHeading] = useState('')
-  const [navSelect, setNavSelect] = useState('block-site')
-  // const [navSelect, setNavSelect] = useState('focus-mode')
+  // const [navSelect, setNavSelect] = useState('block-site')
+  const [navSelect, setNavSelect] = useState('focus-mode')
   // const [navSelect, setNavSelect] = useState('screen-time')
   // const [navSelect, setNavSelect] = useState('pomodoro')
 
@@ -17,7 +18,7 @@ function App() {
     const getNavSelect = async ()=>{
       
       // todo: check this query behaviour
-      const [{id: tabId}] = await chrome.tabs.query({ currentWindow: true, active: true })
+      const {id: tabId} = await getCurrTab()
       
       // *Blocked Site
       const {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')

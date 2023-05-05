@@ -132,14 +132,19 @@ const BlockedScreen = ()=>{
                         >
                             Unblock this site
                         </button> :
+                        <>
+                                                    {
+                            count < 25 ?
+                            <h2>
+                                {`Wait for ${count} sec to unblock...`}
+                            </h2> : null
+                        }
+                        </>
                         // !motivation message
                         // countDownMsg[30-count] ? 
                         // <h2>
                         //     {countDownMsg[30-count]}
                         // </h2> : 
-                        <h2>
-                            {`Wait for ${count} sec to unblock...`}
-                        </h2>
                     }
                     {
                         count < -50 ? 

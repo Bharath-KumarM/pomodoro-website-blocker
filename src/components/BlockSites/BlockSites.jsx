@@ -22,33 +22,45 @@ const BlockSites = ({setCntHeading})=>{
     
     const handleComponentMount = async ()=>{
         // *Get Current tab opened by user
-        const tempCurrTab = await getCurrTab()
-        const urlPathname = (new URL(tempCurrTab.url)).pathname
-        const hostName = (new URL(tempCurrTab.url)).hostname
+        let tempCurrTab = await getCurrTab()
+        let urlPathname = (new URL(tempCurrTab.url)).pathname
+        let hostname = (new URL(tempCurrTab.url)).hostname
+        let favIconUrl = tempCurrTab.favIconUrl
 
         // *If the current tab is blocked and blocked screen is loaded, then get the site details from blockedScreenData local storage
         if (urlPathname === '/src/pages/blocked-screen/blocked-screen.html'){
             const {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
             if (!blockedScreenData[tempCurrTab.id]) {
-                localLogMessage("[-] @BlockedSite.jsx, blocked site's remove tab id is not found in blockedScreenData ")
+                localLogMessage("[-] @BlockedSite.jsx, blocked site's tab id is not found in blockedScreenData ")
                 return
             }
-            const [hostname, favIconUrl] = blockedScreenData[tempCurrTab.id]
 
-            const {blockedSites} = await chrome.storage.local.get('blockedSites')
+            [hostname, favIconUrl] = blockedScreenData[tempCurrTab.id]
+            tempCurrTab = {hostname, favIconUrl}
+        }
+        if (urlPathname === '/src/pages/restricted-screen/restricted-screen.html'){
+            const {restrictedScreenData} = await chrome.storage.local.get('restrictedScreenData')
+            if (!restrictedScreenData[tempCurrTab.id]) {
+                localLogMessage("[-] @BlockedSite.jsx, restricted site's tab id is not found in restrictedScreenData ")
+                return
+            }
 
-            setCurrTab({hostname, favIconUrl})
-            setIsBlocked(blockedSites[hostname] ? true : false)
-            return null;
+            [hostname, favIconUrl] = restrictedScreenData[tempCurrTab.id]
+            tempCurrTab = {hostname, favIconUrl}
+        }
+        if (urlPathname === '/src/pages/time-limit-screen/time-limit-screen.html'){
+            const {timeLimitScreenData} = await chrome.storage.local.get('timeLimitScreenData')
+            if (!timeLimitScreenData[tempCurrTab.id]) {
+                localLogMessage("[-] @BlockedSite.jsx, time limit site's tab id is not found in timeLimitScreenData ")
+                return
+            }
+
+            [hostname, favIconUrl] = timeLimitScreenData[tempCurrTab.id]
+            tempCurrTab = {hostname, favIconUrl}
         }
 
-        // *Check whether it is blocked
-        const tempIsBlocked = await getIsBlocked(hostName)
-        if (tempIsBlocked){
-            localLogMessage("[-] @BlockedSite.jsx, blocked site but not blocked screen loaded. BG script is not forcing blocked screen html")
-        }
         setCurrTab(tempCurrTab)
-        setIsBlocked(tempIsBlocked)
+        setIsBlocked(await getIsBlocked(hostname))
     }
     useEffect( ()=>{
         handleComponentMount()

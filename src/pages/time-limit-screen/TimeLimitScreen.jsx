@@ -140,9 +140,14 @@ const TimeLimitScreen = ()=>{
                         // <h2>
                         //     {countDownMsg[30-count]}
                         // </h2> : 
-                        <h2>
-                            {`Wait for ${count} sec to remove time limit...`}
-                        </h2>
+                        <>
+                            {
+                                count < 25 ?
+                                <h2>
+                                    {`Wait for ${count} sec to remove time limit...`}
+                                </h2> : null
+                            }
+                        </>
                     }
                     {
                         count < -50 ? 

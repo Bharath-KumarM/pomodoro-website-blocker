@@ -98,7 +98,14 @@ const FocusMode = ()=>{
                     shouldPopScreenOpen ? 
                     // Popup Screen
                     <PopupFull 
-                        setClosePopup={()=> setEditTimeInputIndex(-1)}
+                        setClosePopup={()=> {
+                            if (decisionScreenData){
+                                const {onNoBtnClick} = decisionScreenData
+                                onNoBtnClick()
+                            }else{
+                                setEditTimeInputIndex(-1)
+                            }
+                        }}
                         content={
                             isTimeInputActive ?
                             <TimeInputPopup 

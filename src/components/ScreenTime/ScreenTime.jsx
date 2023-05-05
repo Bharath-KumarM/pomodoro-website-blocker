@@ -17,6 +17,8 @@ const ScreenTime = ()=>{
     const [day, setDay] = useState(0)
     const [showTimeLimitInput, setShowTimeLimitInput] = useState(false) 
 
+    const [toastMsg, setToastMsg] = useState(null) //* Toast Message from bottom
+
     const [screenTimeLimit, setScreenTimeLimit] = useState(null)
 
     const getInfo = async (day)=>{
@@ -76,6 +78,14 @@ const ScreenTime = ()=>{
     return (
         <div className="screen-time-cnt">
             {
+                toastMsg ?
+                <PopupToast 
+                    key={'popup-toast'}
+                    toastMsg={toastMsg}
+                    setToastMsg={setToastMsg}
+                /> : null
+            }
+            {
                 showTimeLimitInput ?
                 <PopupFull 
                     setClosePopup={()=>{
@@ -86,6 +96,7 @@ const ScreenTime = ()=>{
                             showTimeLimitInput={showTimeLimitInput}
                             setShowTimeLimitInput={setShowTimeLimitInput}
                             setScreenTimeLimit={setScreenTimeLimit}
+                            setToastMsg={setToastMsg}
                         />
                     }
                 /> :

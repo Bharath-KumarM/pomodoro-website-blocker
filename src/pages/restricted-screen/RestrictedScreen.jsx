@@ -233,13 +233,19 @@ const RestrictedScreen = ()=>{
                         // <h2>
                         //     {countDownMsg[30-count]}
                         // </h2> : 
-                        <h2>
+                        <>
                             {
-                                scheduleTimeBtwNos ? 
-                                `Wait for ${count} sec to remove the schedule...`:
-                                `Wait for ${count} sec to turn off focus mode...`
+                                count < 25 ? 
+                                <h2>
+                                    {
+                                        scheduleTimeBtwNos ? 
+                                        `Wait for ${count} sec to remove the schedule...`:
+                                        `Wait for ${count} sec to turn off focus mode...`
+                                    }
+                                </h2> : null
+
                             }
-                        </h2>
+                        </>
                     }
                     {
                         count < -50 ? 
