@@ -56,19 +56,40 @@ export const getScheduleItemDesc = (scheduleItemData)=>{
         for (let i=0; i<days.length; i++){
             if (days[i]){
                 daysDescArr.push(daysString3[i])
+            }else{
+                daysDescArr.push(null)
+            }
+        }
+
+        let daysDescArr2 = []
+        for (let i=0; i<daysDescArr.length; i++){
+            if (!daysDescArr[i]) continue;
+
+            const clubedDays = []
+
+            for (let j=i+1; j<daysDescArr.length; j++){
+                if (!daysDescArr[j]) break
+                clubedDays.push(daysDescArr[j])
+            }
+
+            if (clubedDays.length < 2){
+                daysDescArr2.push(daysDescArr[i])
+            }else{
+                daysDescArr2.push(`${daysDescArr[i]} to ${clubedDays[clubedDays.length-1]}`)
+                i += clubedDays.length
             }
         }
 
 
         let daysDesc = ''
-        for (let i=0; i<daysDescArr.length; i++){
-            if (i === daysDescArr.length-2){
-                daysDesc += (daysDescArr[i] + ' and ')
-            } else if (i === daysDescArr.length-1){
-                daysDesc += (daysDescArr[i])
+        for (let i=0; i<daysDescArr2.length; i++){
+            if (i === daysDescArr2.length-2){
+                daysDesc += (daysDescArr2[i] + ' and ')
+            } else if (i === daysDescArr2.length-1){
+                daysDesc += (daysDescArr2[i])
             }
             else{
-                daysDesc += (daysDescArr[i] + ', ')
+                daysDesc += (daysDescArr2[i] + ', ')
             }
         }
         return daysDesc

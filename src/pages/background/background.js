@@ -82,7 +82,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
 chrome.tabs.onUpdated.addListener( async (tabId, {url}, tab)=>{
 
   //Track Visits or Opens
-  if (url){
+  if (url && url.startsWith('http')){
     const currDateString = getDateString(0)
     const hostname = new URL(url).hostname;
 
@@ -104,7 +104,7 @@ chrome.tabs.onUpdated.addListener( async (tabId, {url}, tab)=>{
   }
 
   // handle new site 
-  // todo: waiting for favIconurl can slow down a bit
+  // todo: waiting for favIconurl can slow down forcing screen a bit
   if (!tab.url || !tab.url.startsWith('http') || !tab.favIconUrl) return;
   
   const hostname = new URL(tab.url).hostname;

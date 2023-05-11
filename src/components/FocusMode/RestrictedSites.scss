@@ -2,18 +2,20 @@
 
 
 
-.focus-restricted-sites-cnt{      
+.focus-restricted-sites-cnt{   
     width: min(90%,600px);
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: flex-start;
 
     flex-direction: column;
+
     .sticky {
         background-color: $bg-color2;
         width: 100%;
         position: sticky;
         top: 0;
+        z-index: 1;
       }
     .heading{
         margin: 10px auto;
@@ -130,10 +132,10 @@
             }
             .desc{
                 color: $font-color1;
-                font-size: 14px;
+                font-size: 12px;
                 text-decoration: underline;
                 cursor: pointer;
-                font-style: italic;
+                // font-style: italic;
             }
 
         }
@@ -146,11 +148,27 @@
         color: $font-color1;
 
     }
+    .site-table-heading{
+        margin: 5px 0;
+        padding: 10px 0;
+        color: $accent-color1;
+        font-size: 16px;
+        &.sticky{
+            position: sticky;
+
+            &.restricted{
+            }
+            &.more{
+            }
+        }
+    }
     .restricted-site-table{     
         width: min(90%, 500px);
         margin-bottom: 20px;
         
-        border-collapse: collapse;   
+        border-collapse: collapse; 
+        position: relative;  
+
 
         .item{
             cursor: pointer;
@@ -169,6 +187,15 @@
                     width: 25px;
                     height: 25px;
                 }
+            }
+            .site{
+                color: $font-color0;
+                font-size: 14px;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+                width:100%;
+
             }
         }
     }

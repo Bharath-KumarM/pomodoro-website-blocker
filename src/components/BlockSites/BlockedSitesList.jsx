@@ -8,7 +8,7 @@ import { useEffect, useState, useRef } from "react"
 import { getHost, isValidUrl } from "../../utilities/simpleTools"
 import { blockOrUnblockSite, getCurrTab } from "../../utilities/chromeApiTools"
 
-const BlockedSitesList = ({blockedSites, handleShowBtnClick, setToastMsg}) => {
+const BlockedSitesList = ({blockedSites, handleShowBtnClick, setToastData}) => {
     const [isUnsaved, setIsUnsaved] = useState(false)
     const [isSelectArr, setIsSelectArr] = useState(Object.keys(blockedSites).map(()=>true))
 
@@ -58,7 +58,7 @@ const BlockedSitesList = ({blockedSites, handleShowBtnClick, setToastMsg}) => {
         chrome.storage.local.set({'blockedSites': tempBlockedSites}, ()=>{
             setIsUnsaved(false)
         })
-        setToastMsg('Saved')
+        setToastData(['Saved', 'green'])
 
     }
 
@@ -100,12 +100,12 @@ const BlockedSitesList = ({blockedSites, handleShowBtnClick, setToastMsg}) => {
                 </div>
             </div>
             <AddCurrSiteToBlockedSite 
-                setToastMsg={setToastMsg}
+                setToastData={setToastData}
                 blockedSites={blockedSites}
                 handleShowBtnClick={handleShowBtnClick}
             />
             <AddSiteToBlockedSite 
-                setToastMsg={setToastMsg}
+                setToastData={setToastData}
                 handleShowBtnClick={handleShowBtnClick}
             />
             <table class="block-site-list-table">
@@ -118,7 +118,7 @@ const BlockedSitesList = ({blockedSites, handleShowBtnClick, setToastMsg}) => {
 
 export default BlockedSitesList
 
-const AddSiteToBlockedSite = ({handleShowBtnClick, setToastMsg})=>{
+const AddSiteToBlockedSite = ({handleShowBtnClick, setToastData})=>{
     const [userInput, setUserInput] = useState('')
     const inputRef = useRef(null)
 
@@ -127,15 +127,15 @@ const AddSiteToBlockedSite = ({handleShowBtnClick, setToastMsg})=>{
     const handleAddBtnClick = async ()=>{
         // Add Block clicked
         if (!isUserInputValidUrl){
-            setToastMsg('Invalid site')
+            setToastData(['Invalid site', 'red'])
             return null;
         }
         const res = await blockOrUnblockSite(true, getHost(userInput), null)
         if (res){
-            setToastMsg('Blocked Site')
+            setToastData(['Blocked Site', 'green'])
         }
         else{
-            setToastMsg('Error on adding Blocked Site')
+            setToastData(['Error on adding Blocked Site', 'red'])
         }
         inputRef.current.value = ''
         setUserInput('')
@@ -224,7 +224,7 @@ const BlockSiteEntry = ({id, hostname, favIconUrl, isSelectArr, setIsSelectArr, 
     )
 }
 
-const AddCurrSiteToBlockedSite = ({blockedSites,handleShowBtnClick, setToastMsg})=>{
+const AddCurrSiteToBlockedSite = ({blockedSites,handleShowBtnClick, setToastData})=>{
     const [currSiteDetails, setCurrSiteDetails] = useState([null, null])
 
     useEffect(()=>{
@@ -258,10 +258,10 @@ const AddCurrSiteToBlockedSite = ({blockedSites,handleShowBtnClick, setToastMsg}
                     onClick={async ()=>{
                         const res = await blockOrUnblockSite(true, currSiteHostname, currSiteFavIconUrl)
                         if (res){
-                            setToastMsg('Blocked site')
+                            setToastData(['Blocked site', 'green'])
                             setCurrSiteDetails([null, null])
                         } else{
-                            setToastMsg('Error on blocking the site')
+                            setToastData(['Error on blocking the site', 'red'])
                         }
                         handleShowBtnClick()
                     }}

@@ -38,6 +38,14 @@
         opacity: 0;
 
         cursor: default;
+
+        &.red{
+            background-color: $font-red1;
+        }
+
+        &.green{
+            background-color: #b5ffb7;
+        }
         
         @keyframes fadeoff {
             0%{

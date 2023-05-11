@@ -24,22 +24,35 @@ const FocusMode = ()=>{
     const [foucsModeBreakTimeDiff, setFoucsModeBreakTimeDiff] = useState(false)
     const [editTimeInputIndex, setEditTimeInputIndex] = useState(-1) //-1 means nothing to edit
 
-    const [decisionScreenData, setDecisionScreenData] = useState(null) //Simple Yes or no decision screen
-    const [toastMsg, setToastMsg] = useState(null) //* Toast Message from bottom
+    const [decisionScreenData, setDecisionScreenData] = useState(null) // *Simple Yes or no decision screen
+    const [toastData, setToastData] = useState([null, null]) //* Toast Message from bottom
+
+    const [scheduleTimeBtwNos, setScheduleTimeBtwNos] = useState(null)
 
     const isTimeInputActive = editTimeInputIndex > -1
     const isDecisionScreenDataThere = decisionScreenData !== null
 
     const shouldPopScreenOpen = [isTimeInputActive, isDecisionScreenDataThere].includes(true)
 
+    const [toastMsg, toastColorCode] = toastData
 
-    useEffect(()=>{
+    const getScheduleTimeBtwNos = () =>{
+        getIsTimeBtwFocusSchedule().then((tempScheduleTimeBtwNos)=>setScheduleTimeBtwNos(tempScheduleTimeBtwNos))
+    }
+
+    const getScheduleData = ()=>{
         //* Get schedule data
         chrome.storage.local.get('scheduleData', ({scheduleData: tempScheduleData})=>{
             if (tempScheduleData) setScheduleData(tempScheduleData)
             else chrome.storage.local.set({'scheduleData': []})
         })
 
+        // *  Updates 
+        getScheduleTimeBtwNos()
+    }
+    useEffect(()=>{
+        getScheduleData()
+        
         //* Take a break
         chrome.storage.local.get('focusModeTakeABreakTracker', ({focusModeTakeABreakTracker})=>{
             if (focusModeTakeABreakTracker !== undefined){
@@ -61,20 +74,23 @@ const FocusMode = ()=>{
             }
         })
 
+
+
     }, [])
+
 
     const handleFocusModeBtnClick = ()=>{
         if (!foucsModeBreakTimeDiff){ 
             const isCurrFocusModeOn = !isFocusModeOn
             if (isCurrFocusModeOn) {
                 turnOnFocusMode().then(()=>{
-                    setToastMsg('Focus Mode Started')
+                    setToastData(['Focus Mode Started', 'green'])
                     setIsFocusModeOn(isCurrFocusModeOn)
                 })
             }
             else {
                 turnOffFocusMode().then(()=>{
-                    setToastMsg('Focud Mode Stoped')
+                    setToastData(['Focud Mode Stoped', 'red'])
                     setIsFocusModeOn(isCurrFocusModeOn)
                 })
             }
@@ -87,11 +103,12 @@ const FocusMode = ()=>{
         <div className="focus-mode-outer-cnt">
             <div className="focus-mode-cnt">
                 {
-                    toastMsg ?
+                    toastData[0] ?
                     <PopupToast 
                         key={'popup-toast'}
                         toastMsg={toastMsg}
-                        setToastMsg={setToastMsg}
+                        toastColorCode={toastColorCode}
+                        setToastData={setToastData}
                     /> : null
                 }
                 {
@@ -109,11 +126,11 @@ const FocusMode = ()=>{
                         content={
                             isTimeInputActive ?
                             <TimeInputPopup 
-                                setScheduleData={setScheduleData}
+                                getScheduleData={getScheduleData}
                                 editTimeInputIndex={editTimeInputIndex}
                                 setEditTimeInputIndex={setEditTimeInputIndex}
                                 isNewSchedule={(editTimeInputIndex === scheduleData.length)}
-                                setToastMsg={setToastMsg}
+                                setToastData={setToastData}
                             /> :
                             isDecisionScreenDataThere ?
                             <DescisionYesNoPopup 
@@ -129,15 +146,15 @@ const FocusMode = ()=>{
                     onClick={()=>handleFocusModeBtnClick()}
                     >
                         {
-                            foucsModeBreakTimeDiff ? "💤You're on a break"  :
+                            foucsModeBreakTimeDiff ? "💤You took a break"  :
                             isFocusModeOn === false ? '🏃🏼‍♂️Start Focus Mode': 
                             isFocusModeOn === true ? '🚫Stop Focus Mode' :
                             'Loading'
                         }
                     </button>
-                    {
-                        foucsModeBreakTimeDiff ?
-                        <>
+                    <>
+                        {
+                            !foucsModeBreakTimeDiff ? null :
                             <div className="resume-cnt"
                                 onClick={()=>{
                                     
@@ -153,23 +170,31 @@ const FocusMode = ()=>{
                                         console.log('break alarm cleared!!!')
                                     })
 
-                                    setToastMsg('Focus Mode resumed')
+                                    setToastData(['Focus Mode resumed', 'green'])
                                 }}
                             >
                                 Resume now
                             </div>
+                        }
+                        {
+                            !foucsModeBreakTimeDiff && !scheduleTimeBtwNos ? null :
                             <div className='break-cnt flex-center'>
                                 <div className="info-icon-cnt">
                                     <BiInfoCircle />
                                 </div>
                                 <div className="desc">
-                                    {`Focus Mode resume in ${foucsModeBreakTimeDiff} minutes`}
+                                    {   
+                                        !foucsModeBreakTimeDiff && scheduleTimeBtwNos ?
+                                        `Scheduled focus is active now` :
+                                        scheduleTimeBtwNos ? 
+                                        `Schedule resumes in ${foucsModeBreakTimeDiff} minutes` :
+                                        `Focus Mode resumes in ${foucsModeBreakTimeDiff} minutes`
+                                    }
                                 </div>
                             </div>
+                        }
 
-                        </>
-                        : null
-                    }
+                    </>
                 </div>
                 <div className="schedule-cnt">
                     <div className='heading sticky'>
@@ -190,11 +215,12 @@ const FocusMode = ()=>{
                                 <ScheduleItem 
                                     scheduleItemData={scheduleItemData} 
                                     index={index} 
-                                    setScheduleData={setScheduleData}
+                                    getScheduleData={getScheduleData}
                                     setEditTimeInputIndex={setEditTimeInputIndex}
                                     setDecisionScreenData={setDecisionScreenData}
-                                    setToastMsg={setToastMsg}
+                                    setToastData={setToastData}
                                     key={index}
+                                    scheduleTimeBtwNos={scheduleTimeBtwNos}
                                 />
                             ) 
                         })}
@@ -202,7 +228,7 @@ const FocusMode = ()=>{
 
                 </div>
                 <RestrictedSites 
-                    setToastMsg={setToastMsg}
+                    setToastData={setToastData}
                 />
             </div>
         </div>
@@ -212,33 +238,30 @@ const FocusMode = ()=>{
 export default FocusMode
 
 
-const ScheduleItem = ({scheduleItemData, index, setScheduleData, setEditTimeInputIndex, setDecisionScreenData, setToastMsg})=>{
+const ScheduleItem = ({scheduleItemData, index, getScheduleData, setEditTimeInputIndex, setDecisionScreenData, setToastData, scheduleTimeBtwNos})=>{
     const [isScheduleItemAtive, setIsScheduleItemAtive] = useState(false)
 
     useEffect(()=>{
-        getIsTimeBtwFocusSchedule().then((tempScheduleTimeBtwNos)=>{
-            if (tempScheduleTimeBtwNos && tempScheduleTimeBtwNos.includes(index)){
+            if (scheduleTimeBtwNos && scheduleTimeBtwNos.includes(index)){
                 setIsScheduleItemAtive(true)
             }
             else{
                 setIsScheduleItemAtive(false)
             }
-        })
     }, [scheduleItemData])
-
 
     const onNoBtnClick = ()=>{
         setDecisionScreenData(null)
     }
 
-    const onYesBtnClick = ()=>{
-        chrome.storage.local.get('scheduleData', ({scheduleData})=>{
-            const newScheduleData = scheduleData.filter((val, i)=> i!=index)
-            
-            chrome.storage.local.set({scheduleData: [...newScheduleData]})
-            setScheduleData([...newScheduleData])
-        })
-        setToastMsg(['The schedule has been deleted'])
+    const onYesBtnClick = async ()=>{
+        const {scheduleData} =  chrome.storage.local.get('scheduleData')
+        const newScheduleData = scheduleData.filter((val, i)=> i!=index)
+
+        await chrome.storage.local.set({scheduleData: [...newScheduleData]})
+
+        getScheduleData()
+        setToastData(['The schedule has been deleted', 'red'])
         setDecisionScreenData(null)
     }
 

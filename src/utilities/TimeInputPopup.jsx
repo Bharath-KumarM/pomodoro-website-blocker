@@ -13,7 +13,7 @@ const amPmValues = ['AM', 'PM']
 const defaultDaysActiveArr = [false, true, true, true, true, true, false]
 const daysLetterArr = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 
-const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, setScheduleData, isNewSchedule, setToastMsg})=>{
+const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, getScheduleData, isNewSchedule, setToastData})=>{
     const [startTime, setStartTime] = useState(isNewSchedule ? '10:00:AM' : null);
     const [endTime, setEndTime] = useState(isNewSchedule ? '05:00:PM' : null);
     const [daysActiveArr, setDaysActiveArr] = useState(isNewSchedule ? [...defaultDaysActiveArr] : null)
@@ -183,6 +183,7 @@ const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, setScheduleD
                                 index={index}
                                 daysActiveArr={daysActiveArr}
                                 setDaysActiveArr={setDaysActiveArr}
+                                key={index}
                             />
                         )
                     })
@@ -207,35 +208,35 @@ const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, setScheduleD
                 className={isUserInputValid ? 'set-input active' : 'set-input'}
                 type="submit" 
                 onClick={(e)=>{
-                    chrome.storage.local.get('scheduleData', ({scheduleData})=>{
-                        console.log('scheduleData: ', scheduleData, 'editTimeInputIndex:', editTimeInputIndex)
+                    chrome.storage.local.get('scheduleData', async ({scheduleData})=>{
+                        // console.log('scheduleData: ', scheduleData, 'editTimeInputIndex:', editTimeInputIndex)
                         const isNewSchedule = editTimeInputIndex > scheduleData.length-1
                         const newScheduleItem = [startTime, endTime, daysActiveArr]
 
                         // Duplicate Schedule
                         const isNeweScheduleItemDuplicate = getIsNeweScheduleItemDuplicate(scheduleData, newScheduleItem)
                         if (isNeweScheduleItemDuplicate !== true){
-                            setToastMsg([`Duplicate of Schedule ${isNeweScheduleItemDuplicate}`])
+                            setToastData([`Duplicate of Schedule ${isNeweScheduleItemDuplicate}`, 'red'])
                             setEditTimeInputIndex(-1) // Closes the pop screen
                             return 
                         }
 
 
-                        let newScheduleData 
-                        if (isNewSchedule){ //New schedule
-                            newScheduleData = [newScheduleItem, ...scheduleData]
+                        let newScheduleData = scheduleData.map(val=>val)
+                        if (isNewSchedule){ // *New schedule
+                            newScheduleData.unshift(newScheduleItem)
                         }
-                        else{ //Modify existing Schedule
-                            scheduleData[editTimeInputIndex] = newScheduleItem
-                            newScheduleData = scheduleData
+                        else{ // *Modify existing Schedule
+                            newScheduleData[editTimeInputIndex] = newScheduleItem
                         }
 
-                        chrome.storage.local.set({scheduleData: [...newScheduleData]})
+                        await chrome.storage.local.set({scheduleData: newScheduleData})
 
-                        setScheduleData([...newScheduleData])
+                        getScheduleData()
+
                         setEditTimeInputIndex(-1) // Closes the pop screen
-                        if (isNewSchedule) setToastMsg(['A new schedule has been added'])
-                        else setToastMsg(['The Schedule has been modified'])
+                        if (isNewSchedule) setToastData(['A new schedule has been added', 'green'])
+                        else setToastData(['Schedule has been modified'])
                     })
                 }}
 

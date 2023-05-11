@@ -42,6 +42,8 @@ export async function blockOrUnblockSite(shouldBlock, hostname, favIconUrl){
 
 export async function addOrRemoveRestrictSite(shouldRestrict, hostname, favIconUrl){
 
+    if (!favIconUrl) favIconUrl = null
+
     let {restrictedSites} = await chrome.storage.local.get('restrictedSites')
     if (!restrictedSites) restrictedSites = {}
 
@@ -50,6 +52,7 @@ export async function addOrRemoveRestrictSite(shouldRestrict, hostname, favIconU
 
     let refreshUrlPattern
     if (shouldRestrict){
+        if (restrictedSites[hostname] ) return false; // already added
         restrictedSites[hostname] =  [favIconUrl]
         refreshUrlPattern = `*://${hostname}/*` 
     } else {
@@ -112,4 +115,26 @@ export async function getIsScreenTimeSurpassedLimit(hostname){
 
     console.log({totalScreenTimeLimitInMinutes, totalScreenTimeTrackerInMinutes })
     return totalScreenTimeLimitInMinutes < totalScreenTimeTrackerInMinutes
+}
+
+
+export const getRecnetSitesFromNoOfVisitsTracker = async (n)=>{
+    // *Defaults for last 3 days
+    if (n > 0) return []
+    if (n === undefined) n = -2
+    const recentSites = []
+    // *takeing recent sites from noOfVisitsTracker for last 3 days
+    let {noOfVisitsTracker} = await chrome.storage.local.get('noOfVisitsTracker')
+
+    for (let i=n; i<=0; i++){
+        const date = getDateString(i)
+        if (!noOfVisitsTracker[date]) continue;
+        for (const hostname in noOfVisitsTracker[date]){
+            if(!recentSites.includes(hostname)){
+                recentSites.push(hostname)
+            }
+        }
+    }
+    
+    return recentSites
 }

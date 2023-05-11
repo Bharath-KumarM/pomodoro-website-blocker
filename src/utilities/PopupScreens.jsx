@@ -12,11 +12,14 @@ export const PopupFull = ({content, setClosePopup})=>{
     )
 }
 
-export const PopupToast = ({toastMsg, setToastMsg})=>{
+export const PopupToast = ({toastMsg, setToastMsg, toastColorCode, setToastData})=>{
+
+    toastColorCode = toastColorCode ?? null
+
     return (
-        <div className='prevent-select popup-screen toast ' 
+        <div className={`prevent-select popup-screen toast ${toastColorCode}`}
             onAnimationEnd={()=>{
-                setToastMsg(null)
+                setToastData([null, null])
             }}
         >
             {toastMsg}

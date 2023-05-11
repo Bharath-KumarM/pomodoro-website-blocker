@@ -17,9 +17,10 @@ import { PopupToast } from "../../utilities/PopupScreens"
 const BlockSites = ({setCntHeading})=>{
     const [currTab, setCurrTab] = useState(null)
     const [isBlocked, setIsBlocked] = useState(null)
-    const [toastMsg, setToastMsg] = useState(null) //* Toast Message from bottom
+    const [toastData, setToastData] = useState(null) //* Toast Message from bottom
 
-    
+    const [toastMsg, toasColorCode] = toastData
+
     const handleComponentMount = async ()=>{
         // *Get Current tab opened by user
         let tempCurrTab = await getCurrTab()
@@ -75,12 +76,12 @@ const BlockSites = ({setCntHeading})=>{
         const res = await blockOrUnblockSite(!isBlocked, hostname, currTab.favIconUrl)
         if (res){
             setIsBlocked(prevIsBlocked=>!prevIsBlocked)
-            if (isBlocked) setToastMsg('Unblocked Successfully!')
-            else setToastMsg('Blocked Successfully!')
+            if (isBlocked) setToastData(['Unblocked Successfully!', 'red'])
+            else setToastData(['Blocked Successfully!', 'green'])
         }
         else{
-            if (isBlocked) setToastMsg('Error on unblocking the site')
-            else setToastMsg('Error on blocking the site')
+            if (isBlocked) setToastData(['Error on unblocking the site', 'red'])
+            else setToastData(['Error on blocking the site', 'red'])
         }
     }
     return (
@@ -90,7 +91,8 @@ const BlockSites = ({setCntHeading})=>{
                 <PopupToast 
                     key={'popup-toast'}
                     toastMsg={toastMsg}
-                    setToastMsg={setToastMsg}
+                    toastColorCode={toasColorCode}
+                    setToastData={setToastData}
                 /> : null 
             }
             <div className='block-site-cnt'>
@@ -108,7 +110,7 @@ const BlockSites = ({setCntHeading})=>{
                 }
                 {/* Blocked sites list view */}
                 <BlockedSitesInfo 
-                    setToastMsg={setToastMsg}
+                    setToastData={setToastData}
                 /> 
             </div>
         </>

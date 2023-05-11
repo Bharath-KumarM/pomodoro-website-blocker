@@ -44,8 +44,8 @@ function App() {
 
 
     }
-
-    getNavSelect()
+    // !to debug
+    // getNavSelect()
 
   }, [])
 

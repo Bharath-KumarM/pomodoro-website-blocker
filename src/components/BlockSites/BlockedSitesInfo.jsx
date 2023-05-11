@@ -5,7 +5,7 @@ import "./BlockedSiteInfo.scss"
 import BlockedSitesList from './BlockedSitesList'
 
 
-const BlockedSitesInfo = ({setToastMsg})=>{
+const BlockedSitesInfo = ({setToastData})=>{
     const [blockedSites, setBlockedSites] = useState(null)
 
     useEffect(()=>{
@@ -38,7 +38,7 @@ const BlockedSitesInfo = ({setToastMsg})=>{
                 </div>
                 : 
                 <BlockedSitesList 
-                    setToastMsg={setToastMsg}
+                    setToastMsg={setToastData}
                     blockedSites={blockedSites}
                     handleShowBtnClick={handleShowBtnClick}
                 />
