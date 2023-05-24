@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import './PopupScreens.scss'
+import {RiTimerFill} from "react-icons/ri";
 
 
-export const PopupFull = ({content, setClosePopup})=>{
+export const PopupFull = ({setClosePopup, children})=>{
     return (
         <div className='popup-screen full' 
             onClick={()=>setClosePopup(true)}
         >
-            {content}
+            {children}
         </div>
     )
 }
@@ -26,4 +27,5 @@ export const PopupToast = ({toastMsg, setToastMsg, toastColorCode, setToastData}
         </div> 
     )
 }
+
 

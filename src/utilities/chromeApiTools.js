@@ -13,6 +13,11 @@ export async function blockOrUnblockSite(shouldBlock, hostname, favIconUrl){
     let {blockedSites} = await chrome.storage.local.get('blockedSites')
     if (!blockedSites) blockedSites = {}
 
+    if ((shouldBlock && blockedSites[hostname]) || (!shouldBlock && !blockedSites[hostname])){
+        // *Not expected this request
+        return false
+    }
+
     let refreshUrlPattern 
     if (shouldBlock && !blockedSites[hostname]){
         blockedSites[hostname] =  [favIconUrl]

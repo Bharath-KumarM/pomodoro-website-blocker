@@ -1,6 +1,6 @@
 @import '../../utilities/variables';
 
-
+// *copied from AddRestrictedSites
 .add-restricted-site-cnt{
     height: auto;
     border-collapse: collapse;
@@ -125,7 +125,7 @@
             cursor: pointer;
 
             &:hover{
-                background-color: $bg-color5;
+                background-color: $bg-color4;
             }
             
             &.select{

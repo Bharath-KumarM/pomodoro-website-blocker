@@ -2,13 +2,14 @@ import Graph from './Graph';
 import "./ScreenTime.scss";
 
 import { AiFillCaretDown as DropDownIcon} from "react-icons/ai";
-import { FaHourglass, FaRegHourglass } from "react-icons/fa";
+import { FaHourglass, FaRegHourglass, FaHourglassHalf } from "react-icons/fa";
 import { AiOutlineLeft as LeftArrowIcon} from "react-icons/ai";
 import { AiOutlineRight as RightArrowIcon} from "react-icons/ai";
 import { useEffect, useState } from 'react';
 import { getDateString, getDayNumber, getDayString, getFullDate, getHrMinString } from '../../utilities/date';
 import { PopupFull, PopupToast } from '../../utilities/PopupScreens';
 import TimeLimitInput from './TimeLimitInput';
+import SiteTimeLimitScreen from './SitesTimeLimitScreen';
 
 
 const ScreenTime = ()=>{
@@ -16,6 +17,8 @@ const ScreenTime = ()=>{
     const [screenTimeData, setScreenTimeData] = useState(null)
     const [day, setDay] = useState(0)
     const [showTimeLimitInput, setShowTimeLimitInput] = useState(false) 
+
+    const [showSitesTimeLimitScreen, setShowSitesTimeLimitScreen] = useState(false)
 
     const [toastMsg, setToastMsg] = useState(null) //* Toast Message from bottom
 
@@ -61,7 +64,7 @@ const ScreenTime = ()=>{
         if (screenTimeLimit === null){
             getData()
         }
-    }, screenTimeLimit)
+    }, [screenTimeLimit])
 
     if (screenTimeData===null) return (
         <h3 className='screen-time-cnt empty'>
@@ -76,78 +79,104 @@ const ScreenTime = ()=>{
 
 
     return (
-        <div className="screen-time-cnt">
-            {
-                toastMsg ?
-                <PopupToast 
-                    key={'popup-toast'}
-                    toastMsg={toastMsg}
-                    setToastMsg={setToastMsg}
-                /> : null
-            }
-            {
-                showTimeLimitInput ?
-                <PopupFull 
-                    setClosePopup={()=>{
-                        setShowTimeLimitInput(false)
-                    }}
-                    content={
+        <>
+            <div className='floating-btn'
+                onClick={()=>{
+                    setShowSitesTimeLimitScreen(true)
+                }}
+            >
+                <FaHourglassHalf />
+            </div>
+            <div className="screen-time-cnt">
+
+                {
+                    toastMsg ?
+                    <PopupToast 
+                        key={'popup-toast'}
+                        toastMsg={toastMsg}
+                        setToastMsg={setToastMsg}
+                    /> : null
+                }
+                {
+                    showTimeLimitInput ?
+                    <PopupFull
+                        setClosePopup={()=>{
+                            setShowTimeLimitInput(false)
+                        }}
+                    >
                         <TimeLimitInput 
                             showTimeLimitInput={showTimeLimitInput}
                             setShowTimeLimitInput={setShowTimeLimitInput}
-                            setScreenTimeLimit={setScreenTimeLimit}
                             setToastMsg={setToastMsg}
+                            setScreenTimeLimit={setScreenTimeLimit}
                         />
-                    }
-                /> :
-                null
-            }
-            <div className="screen-time-details-cnt">
-                <h2 className="screen-time-detail">
-                    {totalTimeSpentDesc ? totalTimeSpentDesc : '0 minutes'}
-                </h2>
-                <p className="screen-time-day">
-                    {getDayAgo(day)}
-                </p>
-            </div>
-            <Graph 
-                totalScreenTimeWeekly={totalScreenTimeWeekly}
-                weekDayNum={getDayNumber(day)}
-                day={day}
-                setDay={setDay}
-            />
-            <div className="day-cnt">
-                <button 
-                    className="day-arrow left"
-                    onClick={()=>{
-                        setDay(prevDay => prevDay-1)
-                    }}
+                    </PopupFull> :
+                    showSitesTimeLimitScreen ?
+                    <PopupFull
+                        setClosePopup={()=>{
+                            setShowSitesTimeLimitScreen(false)
+                        }}
                     >
-                    <LeftArrowIcon />
-                </button>
-                <div className="day-details">
-                    {fullDate}
+                        <SiteTimeLimitScreen 
+                            showTimeLimitInput={(hostname)=>{
+                                setShowTimeLimitInput(hostname)
+                            }}
+                            toastMsg={toastMsg}
+                            setClosePopup={()=>{
+                                setShowSitesTimeLimitScreen(false)
+                            }}
+                            screenTimeLimit={screenTimeLimit}
+                        />
+                    </PopupFull> : null
+                }
+                <div className="screen-time-details-cnt">
+                    <h2 className="screen-time-detail">
+                        {totalTimeSpentDesc ? totalTimeSpentDesc : '0 minutes'}
+                    </h2>
+                    <p className="screen-time-day">
+                        {getDayAgo(day)}
+                    </p>
                 </div>
-                <button 
-                    className="day-arrow right"
-                    onClick={()=>{
-                        setDay(prevDay => prevDay+1)
-                    }}
-                >
-                    <RightArrowIcon />
-                </button>
+                <Graph 
+                    totalScreenTimeWeekly={totalScreenTimeWeekly}
+                    weekDayNum={getDayNumber(day)}
+                    day={day}
+                    setDay={setDay}
+                />
+                <div className="day-cnt">
+                    <button 
+                        className="day-arrow left"
+                        onClick={()=>{
+                            setDay(prevDay => prevDay-1)
+                        }}
+                        >
+                        <LeftArrowIcon />
+                    </button>
+                    <div className="day-details">
+                        {fullDate}
+                    </div>
+                    <button 
+                        className="day-arrow right"
+                        onClick={()=>{
+                            setDay(prevDay => prevDay+1)
+                        }}
+                    >
+                        <RightArrowIcon />
+                    </button>
+                </div>
+                <div className="site-list-cnt">
+                    <ul className='site-list'>
+                        <SiteList 
+                            dayScreenTimeTracker={dayScreenTimeTracker}
+                            dayNoOfVisitsTracker={dayNoOfVisitsTracker}
+                            setShowTimeLimitInput={setShowTimeLimitInput}
+                            screenTimeLimit={screenTimeLimit}
+                        />
+                    </ul>
+                </div>
+
             </div>
-            <div className="site-list-cnt">
-                <ul className='site-list'>
-                    <SiteList 
-                        dayScreenTimeTracker={dayScreenTimeTracker}
-                        dayNoOfVisitsTracker={dayNoOfVisitsTracker}
-                        setShowTimeLimitInput={setShowTimeLimitInput}
-                        screenTimeLimit={screenTimeLimit}
-                    />
-                </ul>
-            </div>
-        </div>
+        </>
     )
 }
 
@@ -176,7 +205,9 @@ const SiteList = ({dayScreenTimeTracker, dayNoOfVisitsTracker, setShowTimeLimitI
     for (const [site, minutesSpent] of dayScreenTimeTrackerArr){
         const visitTimesDesc = dayNoOfVisitsTracker[site] ? `• ${dayNoOfVisitsTracker[site][1]} opens` : ''
         const item = (
-            <li className='site-list-item'>
+            <li className='site-list-item'
+                key={site}
+            >
                 <div className="site-list-item-details">
                     <img className='site-item-icon' src={`http://www.google.com/s2/favicons?domain=${site}&sz=${128}`} alt="icon" />
                     <div className="site-item-info">

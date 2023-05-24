@@ -1,124 +1,159 @@
-import { ImCheckboxUnchecked as UncheckedIcon, ImCheckboxChecked as CheckedIcon } from "react-icons/im"
-import { BiMemoryCard as SaveIcon } from "react-icons/bi"
 import {ImBlocked} from "react-icons/im"
 import { FiPlus } from "react-icons/fi"
 
 import { useEffect, useState, useRef } from "react"
 
 import { getHost, isValidUrl } from "../../utilities/simpleTools"
-import { blockOrUnblockSite, getCurrTab } from "../../utilities/chromeApiTools"
+import { blockOrUnblockSite, getCurrTab, getRecnetSitesFromNoOfVisitsTracker } from "../../utilities/chromeApiTools"
+import AddSiteToBlockedSite from "./AddSiteToBlockedSite"
 
-const BlockedSitesList = ({blockedSites, handleShowBtnClick, setToastData}) => {
-    const [isUnsaved, setIsUnsaved] = useState(false)
-    const [isSelectArr, setIsSelectArr] = useState(Object.keys(blockedSites).map(()=>true))
+const BlockedSitesList = ({setToastData}) => {
+
+    const [blockedSites, setBlockedSites] = useState({})
+    const [recentSites, setRecentSites] = useState([])
+
+    const getUpdatedBlockedSites = async () =>{ 
+        const {blockedSites} = await chrome.storage.local.get('blockedSites') 
+        if(!blockedSites) {
+            return false;
+        } 
+        setBlockedSites(blockedSites)
+        return true;
+    }
 
     useEffect(()=>{
-        // Initialize this two state
-        setIsSelectArr(Object.keys(blockedSites).map(()=>true))
-        setIsUnsaved(false)
-    }, [blockedSites])
+        // *For scroll up animation
+        const element = document.getElementById('block-site-list-id');
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
 
-    const blockedSiteElements = []
-    const hostFavArr = []
-    Object.keys(blockedSites).map((hostname, id)=>{
-        const favIconUrl = blockedSites[hostname][0]
-        hostFavArr.push([hostname, favIconUrl])
-        
-        blockedSiteElements.push(
-            <BlockSiteEntry 
-                id={id}
-                hostname={hostname}
-                favIconUrl={favIconUrl}
-                isSelectArr={isSelectArr}
-                setIsSelectArr={setIsSelectArr}
-                setIsUnsaved={setIsUnsaved}
-            />
-        )
-    })
+        getUpdatedBlockedSites()
+        getRecnetSitesFromNoOfVisitsTracker(-2).then(tempRecentSites=>setRecentSites(tempRecentSites))
+    }, [])
 
-    const handleSelectAllClicked = ()=>{
-        setIsSelectArr(Object.keys(blockedSites).map(()=>true))
-        setIsUnsaved(true)
+    const blockedSitesArr = Object.keys(blockedSites) 
+    const validMoreSitesToRestrict = recentSites.filter((recentSite)=>!blockedSitesArr.includes(recentSite))
 
-    }
-    const handleUnselectAllClicked = ()=>{
-        setIsSelectArr(Object.keys(blockedSites).map(()=>false))
-        setIsUnsaved(true)
-
-    }
-    
-    const handleSaveClicked = ()=>{
-        const tempBlockedSites = {}
-        isSelectArr.map((isSelected, index)=>{
-            if (isSelected){
-                const [entryHost, entryFav] = hostFavArr[index]
-                tempBlockedSites[entryHost] = [entryFav]
-            }
-        })
-        chrome.storage.local.set({'blockedSites': tempBlockedSites}, ()=>{
-            setIsUnsaved(false)
-        })
-        setToastData(['Saved', 'green'])
-
-    }
 
     return (
-        <>
-            <hr class="hr-line"></hr>
-            <div className="sticky">
-                <div className="heading">
-                    <ImBlocked />
-                    <h3> Blocked Sites </h3>
-                </div>
-                <div className="btn-cnt">
-                    <button
-                        onClick={()=>handleSelectAllClicked()}
-                    >   
-                        <CheckedIcon />
-                        <div>
-                            Select all
-                        </div>
-                    </button>
-                    <button
-                        onClick={()=>handleUnselectAllClicked()}
-                    >
-                        <UncheckedIcon />
-                        <div>
-                            Unselect all
-                        </div>
-                    </button>
-                    <button 
-                        onClick={()=>handleSaveClicked()}
-                        className={isUnsaved ? 'un-saved' : 'saved'}
-                    >
-                        <SaveIcon />
-                        <div>
-                            {isUnsaved ? 'Not Saved' : 'Saved'}
-                        </div>
-                    </button>
-
-                </div>
+    <>
+        {/* Inside the container */}
+        <hr className="hr-line"></hr>
+        <div className="sticky">
+            <div className="heading">
+                <ImBlocked />
+                <h3> Blocked Sites </h3>
             </div>
-            <AddCurrSiteToBlockedSite 
-                setToastData={setToastData}
-                blockedSites={blockedSites}
-                handleShowBtnClick={handleShowBtnClick}
-            />
-            <AddSiteToBlockedSite 
-                setToastData={setToastData}
-                handleShowBtnClick={handleShowBtnClick}
-            />
-            <table class="block-site-list-table">
-                {blockedSiteElements}
-            </table>
-        </>
+        </div>
+        <AddCurrSiteToBlockedSite 
+            setToastData={setToastData}
+            blockedSites={blockedSites}
+            getUpdatedBlockedSites={getUpdatedBlockedSites}
+        />
+        <AddSiteToBlockedSite
+            setToastData={setToastData}
+            getUpdatedBlockedSites={getUpdatedBlockedSites}
+            recentSites={recentSites}
+        />
+        <h3 className='site-table-heading restricted sticky'>
+            Blocked sites
+        </h3>
+        {   
+            blockedSitesArr.length ?
+            <div className="restricted-site-table">
+                {
+                    blockedSitesArr.map((tempHostname, index)=>{
+                        const tempFavIconUrl = blockedSites[tempHostname][0]
+                        return (
+                        <div key={tempHostname} className="item flex-center">
+                            <CheckBox 
+                                key={tempHostname}
+                                hostname={tempHostname}
+                                getUpdatedBlockedSites={getUpdatedBlockedSites} 
+                                setToastData={setToastData}
+                                favIconUrl={tempFavIconUrl}
+                                isBlocked={true}
+                            />
+                            <div className='site-icon'>
+                                <img src={tempFavIconUrl ? tempFavIconUrl : `http://www.google.com/s2/favicons?domain=${tempHostname}&sz=${128}`} alt="icon" />
+                            </div>
+                            <div className="site"> {tempHostname} </div>
+                        </div>
+                        )
+                    })
+                }
+            </div> 
+            :
+            <div className="no-restricted-sites-cnt flex-center">
+                No Sites
+            </div>
+        }
+        <h3 className='site-table-heading more sticky'>
+            More sites to block
+        </h3>
+        {
+            recentSites.length > 0 ? 
+            <div className="restricted-site-table more">
+                {
+                    validMoreSitesToRestrict.map((tempHostname, index)=>{
+                        return (
+                            <div key={tempHostname} className="item flex-center">
+                                <CheckBox 
+                                    key={tempHostname}
+                                    hostname={tempHostname}
+                                    getUpdatedBlockedSites={getUpdatedBlockedSites} 
+                                    setToastData={setToastData}
+                                    favIconUrl={null}
+                                    isBlocked={false}
+                                />
+                                <div className='site-icon'>
+                                    <img src={`http://www.google.com/s2/favicons?domain=${tempHostname}&sz=${128}`} alt="icon" />
+                                </div>
+                                <div className="site"> {tempHostname} </div>
+                            </div>
+                        )
+                    })
+                }
+
+            </div> :
+            <div className="no-restricted-sites-cnt flex-center">
+                No Sites
+            </div>
+        }
+    </>
     )
 
 }
 
+const CheckBox = ({hostname, getUpdatedBlockedSites, setToastData, isBlocked, favIconUrl})=>{
+    const [isChecked, setIsChecked] = useState(isBlocked)
+    return (
+        <div className='checkbox-cnt'>
+            <input type="checkbox" 
+                checked={isChecked}
+                onChange={ ()=>{
+                    setIsChecked(val=>!val)
+
+                    // *Wait for 500ms for UI 
+                    setTimeout(async ()=>{
+                        await blockOrUnblockSite(!isBlocked, hostname, favIconUrl)
+                        getUpdatedBlockedSites()
+                        if (isBlocked){
+                            setToastData(['Unblocked the site', 'green'])
+                        }else{
+                            setToastData(['Blocked the site', 'green'])
+                        }
+                    }, 500)
+                }}
+            />
+        </div>
+    )
+}
+
 export default BlockedSitesList
 
-const AddSiteToBlockedSite = ({handleShowBtnClick, setToastData})=>{
+const AddSiteToBlockedSite2 = ({getUpdatedBlockedSites, setToastData})=>{
     const [userInput, setUserInput] = useState('')
     const inputRef = useRef(null)
 
@@ -139,7 +174,7 @@ const AddSiteToBlockedSite = ({handleShowBtnClick, setToastData})=>{
         }
         inputRef.current.value = ''
         setUserInput('')
-        handleShowBtnClick()
+        getUpdatedBlockedSites()
     }
 
     const sampleSites = ['www.google.com', 'music.youtube.com', 'fireship.io'] //todo: take backup site and update this
@@ -190,41 +225,10 @@ const AddSiteToBlockedSite = ({handleShowBtnClick, setToastData})=>{
     )
 }
 
-const BlockSiteEntry = ({id, hostname, favIconUrl, isSelectArr, setIsSelectArr, setIsUnsaved})=>{
 
-    const handleEntryClick = () =>{
-        setIsUnsaved(true)
-        setIsSelectArr(prevIsSelectArr=>{
-            prevIsSelectArr[id] = !prevIsSelectArr[id]
-            return [...prevIsSelectArr]
-        })
-    }
 
-    return (
-        <tr
-            key={id}
-            onClick={e => handleEntryClick() }
-            >
-            <td>
-                <input 
-                    type="checkbox" 
-                    checked={isSelectArr[id]} 
-                    />
-            </td>
-            <td>
-                {
-                    favIconUrl ? 
-                    <img src={favIconUrl} alt="icon" />
-                    :
-                    <img src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} alt="icon" />
-                }
-            </td>
-            <td className="site"> {hostname} </td>
-        </tr>
-    )
-}
 
-const AddCurrSiteToBlockedSite = ({blockedSites,handleShowBtnClick, setToastData})=>{
+const AddCurrSiteToBlockedSite = ({blockedSites,getUpdatedBlockedSites, setToastData})=>{
     const [currSiteDetails, setCurrSiteDetails] = useState([null, null])
 
     useEffect(()=>{
@@ -263,7 +267,7 @@ const AddCurrSiteToBlockedSite = ({blockedSites,handleShowBtnClick, setToastData
                         } else{
                             setToastData(['Error on blocking the site', 'red'])
                         }
-                        handleShowBtnClick()
+                        getUpdatedBlockedSites()
                     }}
                 >
                     Block the current site

@@ -114,7 +114,7 @@ const FocusMode = ()=>{
                 {
                     shouldPopScreenOpen ? 
                     // Popup Screen
-                    <PopupFull 
+                    <PopupFull
                         setClosePopup={()=> {
                             if (decisionScreenData){
                                 const {onNoBtnClick} = decisionScreenData
@@ -123,7 +123,8 @@ const FocusMode = ()=>{
                                 setEditTimeInputIndex(-1)
                             }
                         }}
-                        content={
+                    >
+                        {
                             isTimeInputActive ?
                             <TimeInputPopup 
                                 getScheduleData={getScheduleData}
@@ -138,8 +139,7 @@ const FocusMode = ()=>{
                             />
                             : null
                         }
-                    />
-                    : null
+                    </PopupFull> : null
                 }
                 <div className="start-stop cnt flex-center">
                     <button className = {`start-stop btn ${foucsModeBreakTimeDiff ? 'focus-break-active' : ''}`}
@@ -255,7 +255,7 @@ const ScheduleItem = ({scheduleItemData, index, getScheduleData, setEditTimeInpu
     }
 
     const onYesBtnClick = async ()=>{
-        const {scheduleData} =  chrome.storage.local.get('scheduleData')
+        const {scheduleData} =  await chrome.storage.local.get('scheduleData')
         const newScheduleData = scheduleData.filter((val, i)=> i!=index)
 
         await chrome.storage.local.set({scheduleData: [...newScheduleData]})

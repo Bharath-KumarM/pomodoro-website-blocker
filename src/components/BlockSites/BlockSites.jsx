@@ -17,7 +17,8 @@ import { PopupToast } from "../../utilities/PopupScreens"
 const BlockSites = ({setCntHeading})=>{
     const [currTab, setCurrTab] = useState(null)
     const [isBlocked, setIsBlocked] = useState(null)
-    const [toastData, setToastData] = useState(null) //* Toast Message from bottom
+    const [toastData, setToastData] = useState([]) //* Toast Message from bottom
+
 
     const [toastMsg, toasColorCode] = toastData
 

@@ -10,8 +10,9 @@ import { getCurrTab } from '../../utilities/chromeApiTools'
 function App() {
   const [cntHeading, setCntHeading] = useState('')
   // const [navSelect, setNavSelect] = useState('block-site')
-  const [navSelect, setNavSelect] = useState('focus-mode')
+  // const [navSelect, setNavSelect] = useState('focus-mode')
   // const [navSelect, setNavSelect] = useState('screen-time')
+  const [navSelect, setNavSelect] = useState('')
   // const [navSelect, setNavSelect] = useState('pomodoro')
 
   useEffect(()=>{
@@ -44,8 +45,8 @@ function App() {
 
 
     }
-    // !to debug
-    // getNavSelect()
+
+    getNavSelect()
 
   }, [])
 

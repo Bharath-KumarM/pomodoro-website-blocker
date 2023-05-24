@@ -36,23 +36,22 @@ const Content = ({cntHeading, setCntHeading, navSelect, setNavSelect})=>{
         )
     })
 
-    const contentEle =  navSelect === 'block-site' ? <BlockSites setCntHeading={setCntHeading}/> :
+    return (
+        <div className={styles.Cnt}>
+            <div className={styles.ContentCnt}>
+                <div className={styles.ContentScrollCnt}>
+                    {
+                        navSelect === 'block-site' ? <BlockSites setCntHeading={setCntHeading}/> :
                         // navSelect === 'pomodoro' ? <Pomodoro setCntHeading={setCntHeading}/> :
                         navSelect === 'focus-mode' ? <FocusMode /> :
                         navSelect === 'screen-time' ? <ScreenTime setCntHeading={setCntHeading}/> : 
-                        navSelect === 'home' ? <div>Home</div> : 
-                        navSelect === 'settings' ? <div>Settings</div> : 
                         <div>Loading...</div>
-    
-    return (
-        <div className={styles.Cnt}>
+                    }
+                </div>
+            </div>
             <nav className={styles.Nav}>
                 {navOptElements}
             </nav>
-            <div className={styles.ContentCnt}>
-                {/* <h2 className={styles.Heading}>{cntHeading}</h2> */}
-                {contentEle}
-            </div>
         </div>
     )
 }

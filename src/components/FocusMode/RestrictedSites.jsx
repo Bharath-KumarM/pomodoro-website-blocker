@@ -97,7 +97,6 @@ const RestrictedSites = ({setToastData})=>{
                                 <AddMoreCheckBox 
                                     key={tempHostname}
                                     tempHostname={tempHostname}
-                                    addOrRemoveRestrictSite={addOrRemoveRestrictSite} 
                                     getRestrictedSites={getRestrictedSites} 
                                     setToastData={setToastData}
                                 />
@@ -168,7 +167,7 @@ const AddCurrSiteToRestrictedSite = ({restrictedSites, getRestrictedSites, setTo
 }
 
 
-const AddMoreCheckBox = ({tempHostname, addOrRemoveRestrictSite, getRestrictedSites, setToastData})=>{
+const AddMoreCheckBox = ({tempHostname, getRestrictedSites, setToastData})=>{
     const [isChecked, setIsChecked] = useState(false)
     return (
     <div className='checkbox-cnt'>

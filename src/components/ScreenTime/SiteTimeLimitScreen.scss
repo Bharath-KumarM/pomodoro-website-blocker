@@ -1,0 +1,192 @@
+@import '../../utilities/variables';
+
+.sites-time-limit-screen{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: min(90%, 450px);
+    height: 75%;
+    background-color: $bg-color3;
+
+    border-radius: 10px;
+
+    position: relative;
+    .close-btn{
+        border: 0;
+        border-radius: 5px;
+
+        position: absolute;
+        right: 0;
+        top: 0;
+
+        margin: 5px;
+        padding: 5px;
+        background-color: $bg-color4;
+
+        z-index: 2;
+
+        &:hover{
+            background-color: $bg-color2;
+        }
+
+        svg{
+            width: 20px;
+            height: 20px;
+            path{
+                color: $icon-red2;
+            }
+        }
+    }
+    .inner-cnt{
+        width: 100%;
+        height: 100%;
+
+        padding: 5px;
+        padding-top: 0;
+
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+
+        flex-direction: column;
+        gap: 10px;
+        
+
+        .heading-cnt{
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 20px;
+            flex-direction: column;
+
+            padding: 15px 0 10px 0;
+
+            width: 100%;
+
+            .search-bar-cnt{
+                width: 100%;
+                .search-bar{
+                    width: 100%;
+                    height: 35px;
+                    font-size: 16px;
+                    color: $font-color1;
+                    padding: 5px;
+                    border: 0;
+
+                    background-color: $bg-color4;
+    
+                    &:focus{
+                        outline: none;
+                    }
+                    border-radius: 5px;
+                }
+            }
+        }
+
+
+        .site-cnt{
+            width: 100%;
+
+            overflow-y: scroll;
+            &::-webkit-scrollbar {
+                width: 5px;
+            }
+            .header-cnt{
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+                
+                background-color: $bg-color2;
+                
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                
+                border-radius: 5px;
+                gap: 10px;
+                .icon{
+                    svg{
+                        width: 20px;
+                        height: 20px;
+                        path{
+                            stroke: $font-color2;
+                        }
+
+                    }
+                }
+                .header{
+                    font-size: 14px;
+                    color: $font-color2;
+
+                    padding-bottom: 5px;
+                }
+            }
+            .site-item{
+                width: 100%;
+
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                min-width: 0;
+
+                height: 55px;
+
+                
+                .cnt{
+                    padding: 10px;
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+    
+                    gap: 20px;
+                    min-width: 0;
+
+                    img.site-item-icon{
+                        width: 30px;
+                        height: 30px;
+                    }
+
+                    .hostname{
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+                }
+                .icon-btn{
+                        border-left: solid 2px $font-color1;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+
+                        width: 40px;
+                        height: 40px;
+
+                        &:hover{
+                            background-color: $bg-color4;
+                        }
+                        svg{
+                            width: 15px;
+                            height: 15px;
+                        }
+
+                        .time-limit-inner-cnt{
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            flex-direction: column;
+
+                            gap: 5px;
+                            width: 30px;
+
+                            .time-limit-text{
+                                font-size: 10px;
+                            }
+                        }
+                    }
+            }
+            
+        }
+
+    }
+}

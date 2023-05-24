@@ -46,6 +46,15 @@ const TimeLimitInput = ({showTimeLimitInput: hostname, setShowTimeLimitInput, se
         <h2 className="heading">
             Set Time Limit 
         </h2>
+        <div className="site-info">
+            <img className='site-icon' 
+                src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} 
+                alt="icon" 
+            />
+            <span className='hostname'>
+                {hostname}
+            </span>  
+        </div>
         <div className="time-input-cnt">
                 <select 
                     id="time-hr" 
@@ -85,6 +94,7 @@ const TimeLimitInput = ({showTimeLimitInput: hostname, setShowTimeLimitInput, se
                 </div>
                 <BiTime />
         </div>
+
         <input 
             value='Set'
             // className={isUserInputValid ? 'set-input active' : 'set-input'}
