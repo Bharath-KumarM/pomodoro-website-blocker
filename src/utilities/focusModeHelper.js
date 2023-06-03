@@ -1,35 +1,40 @@
 import { getLocalScheduleData } from "../localStorage/localScheduleData"
 import { getDayNumber } from "./date"
 
+// Helper function
+function setHours(dt, h) {
+    var s = /(\d+):(\d+)(.+)/.exec(h);
+    dt.setHours(s[3] === "pm" ? 
+        12 + parseInt(s[1], 10) : 
+        parseInt(s[1], 10));
+    dt.setMinutes(parseInt(s[2],10));
+    }
+
 export async function checkFocusScheduleActive(){
     const {scheduleData} = await getLocalScheduleData()
 
     for (let i=0; i<scheduleData.length; i++){
       const scheduleItemData = scheduleData[i]
-      // Get Start & End Time
       const [startTime, endTime, days] = scheduleItemData
+
       const [startHr, startMin, startAmPM] = startTime.split(':')
       const [endHr, endMin, endAmPM] = endTime.split(':')
-      let start24Hr =  parseInt(startHr)
-      if (startAmPM === 'PM') start24Hr += 12
-      let end24Hr = parseInt(endHr)
-      if (endAmPM === 'PM') end24Hr += 12
-
+      
       const currDayNum = getDayNumber(0)
-      const startTimeObj = new Date()
-      startTimeObj.setHours(start24Hr, parseInt(startMin))
-  
-      const endTimeObj = new Date()
-      endTimeObj.setHours(end24Hr, parseInt(endMin))
-  
       const currTimeObj = new Date()
+
+      const startTimeObj = new Date();
+      setHours(startTimeObj, `${parseInt(startHr)}:${parseInt(startMin)}${startAmPM}`)
+  
+      const endTimeObj = new Date();
+      setHours(endTimeObj, `${parseInt(endHr)}:${parseInt(endMin)}${endAmPM}`)
+
       if (days[currDayNum] && startTimeObj <= currTimeObj && endTimeObj >=  currTimeObj){
-        // Active schedule found
         return true;
       }
     }
+    
     return false
-  
   }
 export async function getActiveFocusScheduledIndexes(){
     const {scheduleData} = await getLocalScheduleData()
@@ -37,27 +42,25 @@ export async function getActiveFocusScheduledIndexes(){
     const activeScheduleIndexes = [] 
     for (let i=0; i<scheduleData.length; i++){
       const scheduleItemData = scheduleData[i]
-      // Get Start & End Time
       const [startTime, endTime, days] = scheduleItemData
+
       const [startHr, startMin, startAmPM] = startTime.split(':')
       const [endHr, endMin, endAmPM] = endTime.split(':')
-      let start24Hr =  parseInt(startHr)
-      if (startAmPM === 'PM') start24Hr += 12
-      let end24Hr = parseInt(endHr)
-      if (endAmPM === 'PM') end24Hr += 12
 
       const currDayNum = getDayNumber(0)
-      const startTimeObj = new Date()
-      startTimeObj.setHours(start24Hr, parseInt(startMin))
-  
-      const endTimeObj = new Date()
-      endTimeObj.setHours(end24Hr, parseInt(endMin))
-  
       const currTimeObj = new Date()
+
+      const startTimeObj = new Date();
+      setHours(startTimeObj, `${parseInt(startHr)}:${parseInt(startMin)}${startAmPM}`)
+  
+      const endTimeObj = new Date();
+      setHours(endTimeObj, `${parseInt(endHr)}:${parseInt(endMin)}${endAmPM}`)
+
       if (days[currDayNum] && startTimeObj <= currTimeObj && endTimeObj >=  currTimeObj){
         activeScheduleIndexes.push(i)
       }
     }
+
     return activeScheduleIndexes
   }
 export const getCurrScheduleDesc = async ()=>{
