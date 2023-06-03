@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react';
 import { MdOutlineArrowDropDown as DropDownIcon} from 'react-icons/md';
 import './BlockedScreen.scss';
-import { blockOrUnblockSite } from '../../utilities/chromeApiTools';
+
+import { getLocalBlockedScreenDataByTabId } from '../../localStorage/localBlockedScreenData'
+
+import { 
+    checkLocalBlockedSitesByHostname, 
+    delLocalBlockedSites
+} from '../../localStorage/localBlockedSites'
 
 
 const countDownMsg = [
@@ -27,20 +33,18 @@ const BlockedScreen = ()=>{
     const [hostname, favIcon] = blockedSiteData ? blockedSiteData : [null, null]
     
     const handleCompountMounted = async () =>{
-
-        const {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
         
         const {tabId} = await chrome.runtime.sendMessage({getTabId: true})
+        const blockedScreenDataOfCurrTab = await getLocalBlockedScreenDataByTabId(tabId)
 
-
-        if (!blockedScreenData[tabId]) {
+        if (!blockedScreenDataOfCurrTab) {
             console.log('Issue: no blockedScreeendata from BG')
             return null;
         }
-        const [tempHostname, tempFavIcon, tempUrl] = blockedScreenData[tabId]
+        const [tempHostname, tempFavIcon, tempUrl] = blockedScreenDataOfCurrTab
 
-        const {blockedSites} = await chrome.storage.local.get('blockedSites')
-        if (!blockedSites[tempHostname]){
+        const isBlockedSite = await checkLocalBlockedSitesByHostname(tempHostname)
+        if (!isBlockedSite){
             // *Got unblocked - refresh with a blocked url
             chrome.tabs.update(tabId, {url: tempUrl})
             return null;
@@ -70,13 +74,8 @@ const BlockedScreen = ()=>{
     }, [count])
 
     const handleUnblockBtnClick = async ()=>{
-        const res = await blockOrUnblockSite(false, hostname, favIcon)
-        if (res){
-            location.reload()
-        }else{
-
-            return res
-        }
+        const isSiteUnblocked = await delLocalBlockedSites(hostname)
+        location.reload()
     }
     if (count < -60){
         chrome.tabs.getCurrent(function(tab) {
@@ -163,32 +162,3 @@ const BlockedScreen = ()=>{
 }
 
 export default BlockedScreen
-
-const BlockBtn = ()=>{
-    const [leftTime, setLeftTime] = useState(60)
-    const [isBtnActive, setIsBtnAtive] = useState(false)
-    useEffect(()=>{
-        if (leftTime > 1){
-            setTimeout(()=>{
-                setLeftTime(prevLeftTime => prevLeftTime-1)
-            }, 1000)
-        }
-        else {
-            setIsBtnAtive(true)
-        }
-    }, [leftTime, isBtnActive])
-    return (
-        <button 
-            className="btn"
-            onClick={async ()=>{
-                if (isBtnActive){
-                    const {blockedSites} = await chrome.storage.local.get('blockedSites')
-
-                }
-            }}
-        >
-            {isBtnActive ? `Cooling Time (${leftTime}sec)` : 'Unblock Site'} 
-        </button>
-    )
-}
-

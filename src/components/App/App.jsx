@@ -5,10 +5,14 @@ import Content from '../Content/Content.jsx'
 import Footer from '../Footer/Footer.jsx'
 
 import { useEffect, useState } from "react"
-import { getCurrTab } from '../../utilities/chromeApiTools'
+import { getCurrTab } from '../../utilities/chrome-tools/chromeApiTools'
+
+ import { checkLocalBlockedScreenDataByTabId } from '../../localStorage/localBlockedScreenData';
+ import { checkLocalRestrictedScreenDataByTabId } from '../../localStorage/localRestrictedScreenData';
+ import { checkLocalTimeLimitScreenDataByTabId } from '../../localStorage/localTimeLimitScreenData';
+
 
 function App() {
-  const [cntHeading, setCntHeading] = useState('')
   // const [navSelect, setNavSelect] = useState('block-site')
   // const [navSelect, setNavSelect] = useState('focus-mode')
   // const [navSelect, setNavSelect] = useState('screen-time')
@@ -22,28 +26,26 @@ function App() {
       const {id: tabId} = await getCurrTab()
       
       // *Blocked Site
-      const {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
-      if (tabId && blockedScreenData[tabId]) {
+      const isCurrTabBlocked = await checkLocalBlockedScreenDataByTabId(tabId)
+      if (isCurrTabBlocked) {
         setNavSelect('block-site')
         return null;
       }
-      // *Blocked Site
-      const {restrictedScreenData} = await chrome.storage.local.get('restrictedScreenData')
-      if (tabId && restrictedScreenData[tabId]) {
+      // *Restricted Site
+      const isCurrTabRestricted = await checkLocalRestrictedScreenDataByTabId(tabId)
+      if (isCurrTabRestricted) {
         setNavSelect('focus-mode')
         return null;
       }
       // *Screen time limit
-      const {timeLimitScreenData} = await chrome.storage.local.get('timeLimitScreenData')
-      if (tabId && timeLimitScreenData[tabId]) {
+      const isCurrTabTimeLimited = await checkLocalTimeLimitScreenDataByTabId(tabId)
+      if (isCurrTabTimeLimited) {
         setNavSelect('screen-time')
         return null;
       }
 
       // * Default Nav select
       setNavSelect('block-site')
-
-
     }
 
     getNavSelect()
@@ -53,13 +55,9 @@ function App() {
   return (
     <div className={style.App}> 
       <Header 
-        cntHeading={cntHeading}
-        setCntHeading={setCntHeading}
         setNavSelect={setNavSelect}
       />
       <Content 
-        cntHeading={cntHeading}
-        setCntHeading={setCntHeading}
         navSelect={navSelect}
         setNavSelect={setNavSelect}
       />

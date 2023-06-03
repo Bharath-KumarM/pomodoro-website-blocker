@@ -11,6 +11,11 @@ import { PopupFull, PopupToast } from '../../utilities/PopupScreens';
 import TimeLimitInput from './TimeLimitInput';
 import SiteTimeLimitScreen from './SitesTimeLimitScreen';
 
+import { getLocalNoOfVisitsTracker } from '../../localStorage/localNoOfVisitsTracker'
+import { getLocalScreenTimeLimit } from '../../localStorage/localScreenTimeLimit';
+import { getLocalScreenTimeTracker } from '../../localStorage/localScreenTimeTracker';
+
+
 
 const ScreenTime = ()=>{
 
@@ -25,8 +30,8 @@ const ScreenTime = ()=>{
     const [screenTimeLimit, setScreenTimeLimit] = useState(null)
 
     const getInfo = async (day)=>{
-        let {screenTimeTracker} = await chrome.storage.local.get('screenTimeTracker')
-        let {noOfVisitsTracker} = await chrome.storage.local.get('noOfVisitsTracker')
+        let {screenTimeTracker} = await getLocalScreenTimeTracker()
+        let {noOfVisitsTracker} = await getLocalNoOfVisitsTracker()
 
         const dateString = getDateString(day)
         const fullDate = getFullDate(day)
@@ -56,8 +61,7 @@ const ScreenTime = ()=>{
 
     useEffect(()=>{
         const getData = async ()=>{
-            let {screenTimeLimit} = await chrome.storage.local.get('screenTimeLimit')
-            if (!screenTimeLimit) return;
+            let {screenTimeLimit} = await getLocalScreenTimeLimit()
             setScreenTimeLimit(screenTimeLimit)
         }
 
@@ -81,6 +85,7 @@ const ScreenTime = ()=>{
     return (
         <>
             <div className='floating-btn'
+                title='set screen time'
                 onClick={()=>{
                     setShowSitesTimeLimitScreen(true)
                 }}
@@ -224,12 +229,12 @@ const SiteList = ({dayScreenTimeTracker, dayNoOfVisitsTracker, setShowTimeLimitI
                 >
                     <div className="time-limit-inner-cnt">
                         {
-                            screenTimeLimit && screenTimeLimit[site] ?
+                            screenTimeLimit?.[site] ?
                             <FaHourglass /> :
                             <FaRegHourglass /> 
                         }
                         {   
-                            screenTimeLimit && screenTimeLimit[site] ?
+                            screenTimeLimit?.[site] ?
                             <div className="time-limit-text">
                                 {
                                     getTimeShowText(screenTimeLimit[site])

@@ -3,9 +3,7 @@ import Btn2Cnt from "../../utilities/Btn2Cnt"
 import { useEffect, useRef, useState } from "react"
 
 
-const PomodoroSetup = ({setCntHeading, pomoData})=>{
-    useEffect(()=>setCntHeading('Setup'))
-
+const PomodoroSetup = ({pomoData})=>{
     // Default time 
     const {
         focusTime :defFocusTime, 

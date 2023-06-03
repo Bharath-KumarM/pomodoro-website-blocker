@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import './SiteTimeLimitScreen.scss'
-import { getRecnetSitesFromNoOfVisitsTracker } from '../../utilities/chromeApiTools'
+import { getRecnetSitesFromNoOfVisitsTracker } from '../../utilities/chrome-tools/chromeApiTools'
 
 import { FaHourglass, FaRegHourglass, FaHourglassHalf } from "react-icons/fa";
 import { GrCircleInformation } from "react-icons/gr";

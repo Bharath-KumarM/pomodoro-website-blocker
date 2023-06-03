@@ -6,7 +6,6 @@ import { IconContext } from "react-icons";
 
 
 const Header = (props)=>{
-    const [setCntHeading, setNavSelect] = [props.setCntHeading, props.setNavSelect]
 
     return (
     <IconContext.Provider value={{className: style.icon}}>

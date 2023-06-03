@@ -4,10 +4,8 @@ import './PomodoroDone.scss'
 
 // import '../../utilities/date.js'
 
-const PomodoroDone = ({setCntHeading, pomoData}) =>{
+const PomodoroDone = ({ pomoData }) =>{
     const [todayTomatoes, setTodayTomatoes] = useState(null)
-
-    // setCntHeading('Pomodoro Breaks')
 
     const { 
             focusTime, sortBreakTime, longBreakTime,

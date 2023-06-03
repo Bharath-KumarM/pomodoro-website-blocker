@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
 import { MdOutlineArrowDropDown as DropDownIcon} from 'react-icons/md';
 import './RestrictedScreen.scss';
-import { turnOffFocusMode } from '../background/restrictSiteBG';
-import { deleteTimeBtwFocusScheduleArr } from '../../utilities/chromeApiTools';
-import { getCurrScheduleDesc, getIsTimeBtwFocusSchedule } from '../../utilities/focusModeHelper';
+import { getCurrScheduleDesc, getActiveFocusScheduledIndexes } from '../../utilities/focusModeHelper';
+
+import { getLocalRestrictedScreenDataByTabId } from '../../localStorage/localRestrictedScreenData'
+import { checkLocalRestrictedSitesByHostname, delLocalRestrictedSites, getLocalRestrictedSites } from '../../localStorage/localRestrictedSites';
+import { getLocalFocusModeTracker, turnOffLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker';
+import { getLocalFocusModeTakeABreakTracker, setLocalFocusModeTakeABreakTracker } from '../../localStorage/localFocusModeTakeABreakTracker';
+
 
 
 const countDownMsg = [
@@ -25,7 +29,7 @@ const countDownMsg = [
 const RestrictedScreen = ()=>{
     const [restrictedSiteData, setRestrictedSiteData] = useState(null)
     const [count, setCount] = useState(30)
-    const [scheduleTimeBtwNos, setScheduleTimeBtwNos] = useState(false)
+    const [activeFocusScheduledIndexes, setActiveFocusScheduledIndexes] = useState([])
     const [currScheduleDesc, setCurrScheduleDesc] = useState(null)
 
     const [hostname, favIcon] = restrictedSiteData ? restrictedSiteData : [null, null]
@@ -33,45 +37,44 @@ const RestrictedScreen = ()=>{
     const handleCompountMounted = async () =>{
 
 
-        const {restrictedScreenData} = await chrome.storage.local.get('restrictedScreenData')
-
+        // Gets from service worker
         const {tabId} = await chrome.runtime.sendMessage({getTabId: true})
 
-        if (!restrictedScreenData[tabId]) {
+        const currTabRestrictedScreenData = await getLocalRestrictedScreenDataByTabId(tabId)
+        
+        if (!currTabRestrictedScreenData) {
             console.log('Issue: no restrictedScreenData from BG\n', 'tabId:', tabId)
             return null;
-        }else{
-            console.log('restrictedScreenData from BG\n', 'tabId:', tabId)
         }
-        const [tempHostname, tempFavIcon, tempUrl] = restrictedScreenData[tabId]
+        const [tempHostname, tempFavIcon, tempUrl] = currTabRestrictedScreenData
 
-        // *the site removed from restriction, so reload and force the actual site
-        const {restrictedSites} = await chrome.storage.local.get('restrictedSites')
-        if (!restrictedSites[tempHostname]){
+        // the site removed from restriction, so reload and force the actual site
+        const isRestrictedSite = await checkLocalRestrictedSitesByHostname(tempHostname)
+        if (!isRestrictedSite){
             chrome.tabs.update(tabId, {url: tempUrl}); 
             return
         }
 
-        // *focus mode break
-        const {focusModeTakeABreakTracker} = await chrome.storage.local.get('focusModeTakeABreakTracker')
+        // focus mode break
+        const {focusModeTakeABreakTracker} = await getLocalFocusModeTakeABreakTracker()
         if (focusModeTakeABreakTracker){
             chrome.tabs.update(tabId, {url: tempUrl}); 
             return null;
         }
 
-        // *Check schedule Active
-        const tempScheduleTimeBtwNos = await getIsTimeBtwFocusSchedule()
+        // *Get schedule Active
+        const tempActiveFocusScheduledIndexes = await getActiveFocusScheduledIndexes()
 
         // *Check Focus Mode status
-        const {focusModeTracker} = await chrome.storage.local.get('focusModeTracker')
-        if (!focusModeTracker && !tempScheduleTimeBtwNos){
+        const {focusModeTracker} = await getLocalFocusModeTracker()
+        if (!focusModeTracker && !tempActiveFocusScheduledIndexes.length){
             // *Focus Mode turned off, so force the actual site
             chrome.tabs.update(tabId, {url: tempUrl}); 
             return null;
         }
 
-        if (tempScheduleTimeBtwNos) {
-            setScheduleTimeBtwNos(tempScheduleTimeBtwNos)
+        if (tempActiveFocusScheduledIndexes.length) {
+            setActiveFocusScheduledIndexes(tempActiveFocusScheduledIndexes)
             const tempCurrScheduleDesc = await getCurrScheduleDesc()
             setCurrScheduleDesc(tempCurrScheduleDesc)
         }
@@ -101,11 +104,10 @@ const RestrictedScreen = ()=>{
     }, [count])
 
     const handleFocusModeOff = ()=>{
-        turnOffFocusMode()
+        turnOffLocalFocusModeTracker()
     }
-    const handleScheduleDelete = async ()=>{
-        await deleteTimeBtwFocusScheduleArr(scheduleTimeBtwNos)
-        location.reload()
+    const handleUnrestrictSite = async ()=>{
+        await delLocalRestrictedSites(hostname)
     }
 
     if (count < -60){
@@ -125,9 +127,11 @@ const RestrictedScreen = ()=>{
     }
 
     const handleTakeABreakClick = (timeInMinutes)=>{
-        turnOffFocusMode()
-        chrome.storage.local.set({focusModeTakeABreakTracker: Date.now() + (timeInMinutes*60*1000)})
-        if (scheduleTimeBtwNos){
+        turnOffLocalFocusModeTracker()
+
+        setLocalFocusModeTakeABreakTracker(Date.now() + (timeInMinutes*60*1000))
+        
+        if (activeFocusScheduledIndexes.length){
             chrome.alarms.create(
                 `scheduleTakeABreak`,
                 {
@@ -149,14 +153,14 @@ const RestrictedScreen = ()=>{
         <div className="heading">
             <h2>    
                 {
-                    scheduleTimeBtwNos ? 
+                    activeFocusScheduledIndexes.length ? 
                     `This site scheduled to restrict` : 
                     `Focus Mode is ON, this site has been restricted ` 
                 }
             </h2>
             <div className='desc'>
                 {
-                    scheduleTimeBtwNos ?
+                    activeFocusScheduledIndexes.length ?
                     currScheduleDesc : 
                     null
                 }
@@ -213,18 +217,18 @@ const RestrictedScreen = ()=>{
                     {
                         count <= 0 ? 
                         <button 
-                            className={`btn ${scheduleTimeBtwNos? 'schedule': ''}`}
+                            className={`btn ${activeFocusScheduledIndexes.length ? 'schedule': ''}`}
                             onClick={()=>{
-                                if (scheduleTimeBtwNos){
-                                    handleScheduleDelete()
+                                if (activeFocusScheduledIndexes.length){
+                                    handleUnrestrictSite()
                                 }else{
                                     handleFocusModeOff()
                                 }
                             }}
                         >
                             {
-                                scheduleTimeBtwNos? 
-                                `Remove the schedule` :
+                                activeFocusScheduledIndexes.length ? 
+                                `Unrestrict the site` :
                                 `Turn off focus mode`
                             }
                         </button> :
@@ -235,14 +239,15 @@ const RestrictedScreen = ()=>{
                         // </h2> : 
                         <>
                             {
-                                count < 25 ? 
+                                
+                                // count < 25 ? // No need to hide message 
                                 <h2>
                                     {
-                                        scheduleTimeBtwNos ? 
+                                        activeFocusScheduledIndexes.length ? 
                                         `Wait for ${count} sec to remove the schedule...`:
                                         `Wait for ${count} sec to turn off focus mode...`
                                     }
-                                </h2> : null
+                                </h2>
 
                             }
                         </>
@@ -264,32 +269,3 @@ const RestrictedScreen = ()=>{
 }
 
 export default RestrictedScreen
-
-const BlockBtn = ()=>{
-    const [leftTime, setLeftTime] = useState(60)
-    const [isBtnActive, setIsBtnAtive] = useState(false)
-    useEffect(()=>{
-        if (leftTime > 1){
-            setTimeout(()=>{
-                setLeftTime(prevLeftTime => prevLeftTime-1)
-            }, 1000)
-        }
-        else {
-            setIsBtnAtive(true)
-        }
-    }, [leftTime, isBtnActive])
-    return (
-        <button 
-            className="btn"
-            onClick={async ()=>{
-                if (isBtnActive){
-                    const {blockedSites} = await chrome.storage.local.get('blockedSites')
-
-                }
-            }}
-        >
-            {isBtnActive ? `Cooling Time (${leftTime}sec)` : 'Unblock Site'} 
-        </button>
-    )
-}
-

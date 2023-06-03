@@ -4,8 +4,14 @@ import { FiPlus } from "react-icons/fi"
 import { useEffect, useState, useRef } from "react"
 
 import { getHost, isValidUrl } from "../../utilities/simpleTools"
-import { blockOrUnblockSite, getCurrTab, getRecnetSitesFromNoOfVisitsTracker } from "../../utilities/chromeApiTools"
+import { getCurrTab, getRecnetSitesFromNoOfVisitsTracker } from "../../utilities/chrome-tools/chromeApiTools"
 import AddSiteToBlockedSite from "./AddSiteToBlockedSite"
+
+import { 
+    delLocalBlockedSites, 
+    getLocalBlockedSites, 
+    updateLocalBlockedSites
+ } from '../../localStorage/localBlockedSites'
 
 const BlockedSitesList = ({setToastData}) => {
 
@@ -13,7 +19,7 @@ const BlockedSitesList = ({setToastData}) => {
     const [recentSites, setRecentSites] = useState([])
 
     const getUpdatedBlockedSites = async () =>{ 
-        const {blockedSites} = await chrome.storage.local.get('blockedSites') 
+        const {blockedSites} = await getLocalBlockedSites()
         if(!blockedSites) {
             return false;
         } 
@@ -33,7 +39,7 @@ const BlockedSitesList = ({setToastData}) => {
     }, [])
 
     const blockedSitesArr = Object.keys(blockedSites) 
-    const validMoreSitesToRestrict = recentSites.filter((recentSite)=>!blockedSitesArr.includes(recentSite))
+    const validMoreSitesToBlock = recentSites.filter((recentSite)=>!blockedSitesArr.includes(recentSite))
 
 
     return (
@@ -96,7 +102,7 @@ const BlockedSitesList = ({setToastData}) => {
             recentSites.length > 0 ? 
             <div className="restricted-site-table more">
                 {
-                    validMoreSitesToRestrict.map((tempHostname, index)=>{
+                    validMoreSitesToBlock.map((tempHostname, index)=>{
                         return (
                             <div key={tempHostname} className="item flex-center">
                                 <CheckBox 
@@ -137,14 +143,19 @@ const CheckBox = ({hostname, getUpdatedBlockedSites, setToastData, isBlocked, fa
 
                     // *Wait for 500ms for UI 
                     setTimeout(async ()=>{
-                        await blockOrUnblockSite(!isBlocked, hostname, favIconUrl)
-                        getUpdatedBlockedSites()
+
                         if (isBlocked){
-                            setToastData(['Unblocked the site', 'green'])
+                            const isSiteUnblocked = await delLocalBlockedSites(hostname)
+                            if (isSiteUnblocked) setToastData(['Unblocked the site', 'green'])
+                            else setToastData(['Error: Site never blocked', 'red'])
                         }else{
-                            setToastData(['Blocked the site', 'green'])
+                            const isSiteBlocked = await updateLocalBlockedSites(hostname, favIconUrl)
+                            if (isSiteBlocked) setToastData(['Blocked the site', 'green'])
+                            else setToastData(['Error: Site already blocked', 'green'])
                         }
-                    }, 500)
+
+                        getUpdatedBlockedSites()
+                    }, 100)
                 }}
             />
         </div>
@@ -165,13 +176,11 @@ const AddSiteToBlockedSite2 = ({getUpdatedBlockedSites, setToastData})=>{
             setToastData(['Invalid site', 'red'])
             return null;
         }
-        const res = await blockOrUnblockSite(true, getHost(userInput), null)
-        if (res){
-            setToastData(['Blocked Site', 'green'])
-        }
-        else{
-            setToastData(['Error on adding Blocked Site', 'red'])
-        }
+        const isSiteBlocked = await updateLocalBlockedSites(getHost(userInput))
+
+        if (isSiteBlocked) setToastData(['Blocked Site', 'green'])
+        else setToastData(['Error: Site already blocked', 'red'])
+
         inputRef.current.value = ''
         setUserInput('')
         getUpdatedBlockedSites()
@@ -260,12 +269,12 @@ const AddCurrSiteToBlockedSite = ({blockedSites,getUpdatedBlockedSites, setToast
                 </div>
                 <div className="desc"
                     onClick={async ()=>{
-                        const res = await blockOrUnblockSite(true, currSiteHostname, currSiteFavIconUrl)
-                        if (res){
+                        const isSiteBlocked = await updateLocalBlockedSites(currSiteHostname, currSiteFavIconUrl)
+                        if (isSiteBlocked){
                             setToastData(['Blocked site', 'green'])
                             setCurrSiteDetails([null, null])
-                        } else{
-                            setToastData(['Error on blocking the site', 'red'])
+                        } else {
+                            setToastData(['Error: Already blocked', 'red'])
                         }
                         getUpdatedBlockedSites()
                     }}

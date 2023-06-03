@@ -18,7 +18,7 @@ const defaultPomoData = {
     cycleNumber: 4
 }    
 
-const Pomodoro = ({setCntHeading})=>{
+const Pomodoro = ({})=>{
 
     const [pomoData, setPomoData] = useState({mode: 'getData'})
     
@@ -62,17 +62,14 @@ const Pomodoro = ({setCntHeading})=>{
 
     return  pomoData.mode === 'setup' ? 
                 <PomodoroSetup  
-                    setCntHeading={setCntHeading}
                     pomoData={pomoData}
                     /> :
             pomoData.mode === 'run' ? 
                 <PomodoroRun 
-                    setCntHeading={setCntHeading}
                     pomoData={pomoData}
                     /> : 
             pomoData.mode === 'done' ? 
                 <PomodoroDone 
-                    setCntHeading={setCntHeading}
                     pomoData={pomoData}
                     /> :
             <div>Error Message: Unexpected pomoData</div>

@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 import { MdOutlineArrowDropDown as DropDownIcon} from 'react-icons/md';
 import './TimeLimitScreen.scss';
-import { turnOffFocusMode } from '../background/restrictSiteBG';
-import { getIsScreenTimeSurpassedLimit, refreshAllTimeLimitTabs } from '../../utilities/chromeApiTools';
+import { getIsScreenTimeSurpassedLimit } from '../../utilities/chrome-tools/chromeApiTools';
+
+import { getLocalTimeLimitScreenDataByTabId } from '../../localStorage/localTimeLimitScreenData'
+import { delLocalScreenTimeLimit } from '../../localStorage/localScreenTimeLimit';
+
+
 
 
 const countDownMsg = [
@@ -27,22 +31,21 @@ const TimeLimitScreen = ()=>{
 
     const [hostname, favIcon] = currSiteData ? currSiteData : [null, null]
     
-    const handleCompountMounted = async () =>{
-
-        const {timeLimitScreenData} = await chrome.storage.local.get('timeLimitScreenData')
-        
+    const handleCompountMounted = async () =>{        
         const {tabId} = await chrome.runtime.sendMessage({getTabId: true})
 
-        if (!timeLimitScreenData[tabId]) {
+        const currTabTimeLimitScreenData = await getLocalTimeLimitScreenDataByTabId(tabId)
+
+        if (!currTabTimeLimitScreenData) {
             console.log('Issue: no timeLimitScreenData from BG')
             return null;
         }
-        const [tempHostname, tempFavIcon, tempUrl] = timeLimitScreenData[tabId]
+        const [tempHostname, tempFavIcon, tempUrl] = currTabTimeLimitScreenData
 
         
         // * checks whether timi limit increased or removed
         const isScreenTimeSurpassedLimit = await getIsScreenTimeSurpassedLimit(tempHostname)
-        console.log({tempHostname, isScreenTimeSurpassedLimit})
+
         if (!isScreenTimeSurpassedLimit){
             chrome.tabs.update(tabId, {url: tempUrl}); 
             return null;
@@ -89,12 +92,7 @@ const TimeLimitScreen = ()=>{
     }
 
     const handleUnpauseSite = async ()=>{
-        let {screenTimeLimit} = await chrome.storage.local.get('screenTimeLimit')
-        if (!screenTimeLimit) screenTimeLimit = {}
-
-        delete screenTimeLimit[hostname]
-        await chrome.storage.local.set({screenTimeLimit})
-        refreshAllTimeLimitTabs()
+        const isTimeLimitDeleted = await delLocalScreenTimeLimit(hostname)
     }
     return (
     <div className='blocked-scrn-cnt'>

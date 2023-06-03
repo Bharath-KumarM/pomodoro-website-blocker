@@ -6,7 +6,7 @@ import './PomodoroRun.scss'
 
 import ProgressBar from './ProgressBar'
 
-const PomodoroRun = ({setCntHeading, pomoData})=>{
+const PomodoroRun = ({ pomoData })=>{
     // State Hooks
     const [currTime, setCurrTime] = useState(Date.now() / 1000)
 
@@ -22,8 +22,6 @@ const PomodoroRun = ({setCntHeading, pomoData})=>{
     // Refresh UI every second
     let intervalId
     useEffect(()=>{
-        // Set Heading
-        setCntHeading(getHeadingDesc(cycleName))
 
         if (!isPaused){
             intervalId = setInterval(()=>{

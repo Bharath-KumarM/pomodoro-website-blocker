@@ -5,7 +5,8 @@ import { FiPlus } from "react-icons/fi"
 import { MdOutlineSubdirectoryArrowLeft as ArrowIcon } from "react-icons/md"
 import { useEffect, useRef, useState } from 'react'
 import { getHost, isValidUrl } from '../../utilities/simpleTools'
-import { addOrRemoveRestrictSite, getRecnetSitesFromNoOfVisitsTracker } from '../../utilities/chromeApiTools'
+
+import { updateLocalRestrictedSites } from '../../localStorage/localRestrictedSites'
 
 const AddRestrictedSites = ({setToastData, getRestrictedSites, recentSites})=>{
     const [userInput, setUserInput] = useState('')
@@ -38,8 +39,8 @@ const AddRestrictedSites = ({setToastData, getRestrictedSites, recentSites})=>{
 
 
     const handleAddBtnClick = async (hostname)=>{
-        const response = await addOrRemoveRestrictSite(true, hostname, null)
-        if (!response){
+        const isRestricted = await updateLocalRestrictedSites(hostname)
+        if (!isRestricted){
             setToastData(['Already added', 'red'])
         }else{
             setToastData(['Added the site', 'green'])

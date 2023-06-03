@@ -24,7 +24,7 @@ const navOptionData = [
     ['screen-time', 'Screen Time', ScreenTimeIcon],
 ] 
 
-const Content = ({cntHeading, setCntHeading, navSelect, setNavSelect})=>{
+const Content = ({navSelect, setNavSelect})=>{
     const navOptElements = navOptionData.map((details, index)=>{
         return (
             <NavOpts 
@@ -41,10 +41,10 @@ const Content = ({cntHeading, setCntHeading, navSelect, setNavSelect})=>{
             <div className={styles.ContentCnt}>
                 <div className={styles.ContentScrollCnt}>
                     {
-                        navSelect === 'block-site' ? <BlockSites setCntHeading={setCntHeading}/> :
-                        // navSelect === 'pomodoro' ? <Pomodoro setCntHeading={setCntHeading}/> :
+                        navSelect === 'block-site' ? <BlockSites /> :
+                        // navSelect === 'pomodoro' ? <Pomodoro /> :
                         navSelect === 'focus-mode' ? <FocusMode /> :
-                        navSelect === 'screen-time' ? <ScreenTime setCntHeading={setCntHeading}/> : 
+                        navSelect === 'screen-time' ? <ScreenTime /> : 
                         <div>Loading...</div>
                     }
                 </div>

@@ -5,10 +5,11 @@ import { BiInfoCircle, BiTime } from "react-icons/bi"
 import { useEffect, useRef, useState } from 'react'
 import { RiCloseLine } from 'react-icons/ri'
 import { pad2 } from './simpleTools'
+import { getLocalScheduleData, updateLocalScheduleData } from '../localStorage/localScheduleData'
 
 const hrValues = Array.from({length: 12}, (_ ,index)=>pad2(index+1))
 const minValues = Array.from({length: 12}, (_ ,index)=>pad2(index*5))
-const amPmValues = ['AM', 'PM']
+const amPmValues = ['am', 'pm']
 
 const defaultDaysActiveArr = [false, true, true, true, true, true, false]
 const daysLetterArr = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
@@ -18,16 +19,16 @@ const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, getScheduleD
     const [endTime, setEndTime] = useState(isNewSchedule ? '05:00:PM' : null);
     const [daysActiveArr, setDaysActiveArr] = useState(isNewSchedule ? [...defaultDaysActiveArr] : null)
 
+    const handleNewScheduleEdit = async ()=>{
+        const {scheduleData} = await getLocalScheduleData()
+        if (!scheduleData[editTimeInputIndex]) return
+        const [storedStartTime, storedEndTime, storedDaysActiveArr] = scheduleData[editTimeInputIndex]
+        setStartTime(storedStartTime)
+        setEndTime(storedEndTime)
+        setDaysActiveArr([...storedDaysActiveArr])
+    }
     useEffect(()=>{
-        if (!isNewSchedule){
-            chrome.storage.local.get('scheduleData', ({scheduleData})=>{
-                if (!scheduleData[editTimeInputIndex]) return
-                const [storedStartTime, storedEndTime, storedDaysActiveArr] = scheduleData[editTimeInputIndex]
-                setStartTime(storedStartTime)
-                setEndTime(storedEndTime)
-                setDaysActiveArr([...storedDaysActiveArr])
-            })
-        }
+        if (!isNewSchedule) handleNewScheduleEdit()
     }, [])
 
     if (startTime === null){ // Loading existing Schedule
@@ -42,6 +43,30 @@ const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, getScheduleD
     const isEndTimeGreater = getIsEndTimeGreater({hrDiff, minDiff})
     const isDaysValid = daysActiveArr.includes(true)
     const isUserInputValid = (isEndTimeGreater && isDaysValid)
+
+
+    const handleAddScheduleSubmit = async ()=>{
+        const newScheduleItem = [startTime, endTime, daysActiveArr]
+
+        const {
+            duplicateScheduleIndex,
+            isNewSchedule,
+        } = await updateLocalScheduleData(newScheduleItem, editTimeInputIndex)
+
+        // Duplicate Schedule
+        if (typeof duplicateScheduleIndex === 'number'){
+            setToastData([`Duplicate of Schedule ${duplicateScheduleIndex}`, 'red'])
+            setEditTimeInputIndex(-1) // Closes the pop screen
+            return null;
+        }
+
+        // get updated schedule data
+        getScheduleData()
+
+        setEditTimeInputIndex(-1) // Closes the pop screen
+        if (isNewSchedule) setToastData(['A new schedule has been added', 'green'])
+        else setToastData(['Schedule has been modified'])
+    }
 
     return (
         <div className='time-input-popup-cnt'
@@ -207,38 +232,7 @@ const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, getScheduleD
                 value='Schedule'
                 className={isUserInputValid ? 'set-input active' : 'set-input'}
                 type="submit" 
-                onClick={(e)=>{
-                    chrome.storage.local.get('scheduleData', async ({scheduleData})=>{
-                        // console.log('scheduleData: ', scheduleData, 'editTimeInputIndex:', editTimeInputIndex)
-                        const isNewSchedule = editTimeInputIndex > scheduleData.length-1
-                        const newScheduleItem = [startTime, endTime, daysActiveArr]
-
-                        // Duplicate Schedule
-                        const isNeweScheduleItemDuplicate = getIsNeweScheduleItemDuplicate(scheduleData, newScheduleItem)
-                        if (isNeweScheduleItemDuplicate !== true){
-                            setToastData([`Duplicate of Schedule ${isNeweScheduleItemDuplicate}`, 'red'])
-                            setEditTimeInputIndex(-1) // Closes the pop screen
-                            return 
-                        }
-
-
-                        let newScheduleData = scheduleData.map(val=>val)
-                        if (isNewSchedule){ // *New schedule
-                            newScheduleData.unshift(newScheduleItem)
-                        }
-                        else{ // *Modify existing Schedule
-                            newScheduleData[editTimeInputIndex] = newScheduleItem
-                        }
-
-                        await chrome.storage.local.set({scheduleData: newScheduleData})
-
-                        getScheduleData()
-
-                        setEditTimeInputIndex(-1) // Closes the pop screen
-                        if (isNewSchedule) setToastData(['A new schedule has been added', 'green'])
-                        else setToastData(['Schedule has been modified'])
-                    })
-                }}
+                onClick={(e)=> handleAddScheduleSubmit()}
 
             />
             <div className="cancel-cnt"
@@ -338,20 +332,7 @@ const Day = ({dayLetter, index, setDaysActiveArr, daysActiveArr})=>{
     )
 }
 
-function getIsNeweScheduleItemDuplicate(scheduleData, newScheduleItem){
-    //todo: logic for overlapping schedule
 
-    const [newStartTime, newEndTime, newDaysActiveArr] = newScheduleItem
-    for (let i=0; i<scheduleData.length; i++){
-        const [startTime, endTime, daysActiveArr] = scheduleData[i]
-
-        if (newStartTime === startTime && newEndTime === endTime &&  JSON.stringify(newDaysActiveArr) === JSON.stringify(daysActiveArr)) {
-            return i+1
-        }
-    }
-
-    return true
-}
 
 // Helper function
 

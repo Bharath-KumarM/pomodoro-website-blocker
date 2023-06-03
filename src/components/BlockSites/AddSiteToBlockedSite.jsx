@@ -4,7 +4,7 @@ import { FiPlus } from "react-icons/fi"
 import { MdOutlineSubdirectoryArrowLeft as ArrowIcon } from "react-icons/md"
 import { useEffect, useRef, useState } from 'react'
 import { getHost, isValidUrl } from '../../utilities/simpleTools'
-import { blockOrUnblockSite } from '../../utilities/chromeApiTools'
+import { updateLocalBlockedSites } from '../../localStorage/localBlockedSites'
 
 // *Copied from AddRestrictedSites
 const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites})=>{
@@ -38,7 +38,7 @@ const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites
 
 
     const handleAddBtnClick = async (hostname)=>{
-        const response = await blockOrUnblockSite(true, hostname, null)
+        const response = await updateLocalBlockedSites(hostname)
         if (!response){
             setToastData(['Already blocked', 'red'])
         }else{

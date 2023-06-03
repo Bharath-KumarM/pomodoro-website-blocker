@@ -3,6 +3,9 @@ import "./SiteInfoCard.scss"
 import { IoMdSwap as  SwapIcon} from "react-icons/io"
 import { useEffect, useState } from "react"
 import { getDateString } from "../../utilities/date"
+import { getLocalNoOfVisitsTracker, getLocalNoOfVisitsTrackerForDayByHostname } from "../../localStorage/localNoOfVisitsTracker"
+import { getLocalScreenTimeTrackerForDayByHostname } from "../../localStorage/localScreenTimeTracker"
+
 
 
 const SiteInfoCard = ({hostname}) =>{
@@ -12,14 +15,11 @@ const SiteInfoCard = ({hostname}) =>{
     const getInfo = async ()=>{
         const dateString = getDateString(0)
 
-        let {screenTimeTracker} = await chrome.storage.local.get('screenTimeTracker')
-        let {noOfVisitsTracker} = await chrome.storage.local.get('noOfVisitsTracker')
-
-        const screenTimeInMinutes = screenTimeTracker[dateString][hostname]
-        const noOfVisit = noOfVisitsTracker[dateString][hostname][1]
-
-        setScreenTime(screenTimeInMinutes ? Math.round(screenTimeInMinutes) : 0)
-        setNoOfVisit(noOfVisit ? noOfVisit : 0)
+        const  noOfVisit= await getLocalNoOfVisitsTrackerForDayByHostname()
+        const screenTimeInMinutes = await getLocalScreenTimeTrackerForDayByHostname(dateString, hostname)
+        
+        setScreenTime(screenTimeInMinutes)
+        setNoOfVisit(noOfVisit)
     }
 
     useEffect(()=>{

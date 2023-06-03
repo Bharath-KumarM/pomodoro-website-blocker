@@ -3,26 +3,34 @@ import {
   handlePomoReset, pushNotification, updatePomoHistory
 } from './pomoHelper'
 
-import { getDateString, getDayNumber } from '../../utilities/date'
-import { localLogMessage } from '../../utilities/localStorage'
-import { refreshRestrictedSites, turnOnFocusMode } from './restrictSiteBG'
-import { getCurrentTime } from './helper'
-import { getIsScreenTimeSurpassedLimit } from '../../utilities/chromeApiTools'
-import { getIsTimeBtwFocusSchedule } from '../../utilities/focusModeHelper'
+import { getDateString } from '../../utilities/date'
 
+import { getIsScreenTimeSurpassedLimit } from '../../utilities/chrome-tools/chromeApiTools'
+import { checkFocusScheduleActive } from '../../utilities/focusModeHelper'
+
+import { delLocalBlockedScreenDataByTabId, updateLocalBlockedScreenDataByTab } from '../../localStorage/localBlockedScreenData'
+import { delLocalRestrictedScreenDataByTabId, updateLocalRestrictedScreenDataByTab } from '../../localStorage/localRestrictedScreenData'
+import { delLocalTimeLimitScreenDataByTabId, updateLocalTimeLimitScreenDataByTab } from '../../localStorage/localTimeLimitScreenData'
+import { getLocalNoOfVisitsTracker, setLocalNoOfVisitsTracker } from '../../localStorage/localNoOfVisitsTracker'
+
+import {checkLocalBlockedSitesByHostname} from '../../localStorage/localBlockedSites'
+import { getLocalRestrictedSites } from '../../localStorage/localRestrictedSites'
+import { getLocalFocusModeTracker, turnOnLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker'
+import { getLocalFocusModeTakeABreakTracker, setLocalFocusModeTakeABreakTracker } from '../../localStorage/localFocusModeTakeABreakTracker'
 
 console.log('Script running from background!!!')
 
 // Runtime Log 
 chrome.storage.local.get('BGtimeLog', ({BGtimeLog})=>{
   const MAX_LEN = 100
-
   if (!BGtimeLog) BGtimeLog = []
-  BGtimeLog.push(new Date().toString().slice(0, 25))
-  console.log(BGtimeLog)
 
-  BGtimeLog.slice(Math.max(BGtimeLog.length - MAX_LEN, 0))
-  chrome.storage.local.set({BGtimeLog})
+  const newBGtimeLog = BGtimeLog.slice(-MAX_LEN)
+  console.log(newBGtimeLog)
+  
+  newBGtimeLog.push(new Date().toString().slice(0, 25))
+
+  chrome.storage.local.set({BGtimeLog: newBGtimeLog})
 
 })
 
@@ -41,14 +49,14 @@ chrome.alarms.onAlarm.addListener(({name})=>{
   }
   // Take A Break alarm ends for focus mode
   if (name.startsWith('focusModeTakeABreak')){
-    turnOnFocusMode(name)
-    chrome.storage.local.set({focusModeTakeABreakTracker: false})
+    turnOnLocalFocusModeTracker()
+    setLocalFocusModeTakeABreakTracker(false)
 
   }
   // Take A Break alarm ends for schedule
   if (name.startsWith('scheduleTakeABreak')){
-    chrome.storage.local.set({focusModeTakeABreakTracker: false})
     refreshRestrictedSites()
+    setLocalFocusModeTakeABreakTracker(false)
   }
 })
 
@@ -86,8 +94,7 @@ chrome.tabs.onUpdated.addListener( async (tabId, {url}, tab)=>{
     const currDateString = getDateString(0)
     const hostname = new URL(url).hostname;
 
-    let {noOfVisitsTracker} = await chrome.storage.local.get('noOfVisitsTracker')
-    if (!noOfVisitsTracker) noOfVisitsTracker = {}
+    let {noOfVisitsTracker} = await getLocalNoOfVisitsTracker()
     if (!noOfVisitsTracker[currDateString]) noOfVisitsTracker[currDateString] = {}
 
     // *To identify the same tab reload the same site again
@@ -98,7 +105,7 @@ chrome.tabs.onUpdated.addListener( async (tabId, {url}, tab)=>{
     }
     if (isValidVisitCount){
       noOfVisitsTracker[currDateString][hostname][1]++
-      chrome.storage.local.set({noOfVisitsTracker})
+      setLocalNoOfVisitsTracker(noOfVisitsTracker)
     }
 
   }
@@ -110,57 +117,30 @@ chrome.tabs.onUpdated.addListener( async (tabId, {url}, tab)=>{
   const hostname = new URL(tab.url).hostname;
   const favIconUrl = tab.favIconUrl
   
-  const {blockedSites} = await chrome.storage.local.get('blockedSites')
+  const isBlockedSite = await checkLocalBlockedSitesByHostname(hostname)
 
-  if (blockedSites[hostname]){
-    // *Remember hostname and favIcon based on tab id
-    let {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
-    if (!blockedScreenData) blockedScreenData = {}
-    
-    blockedScreenData[tabId] = [hostname, favIconUrl, tab.url]
-    await chrome.storage.local.set({blockedScreenData})
-  
-    chrome.tabs.update(tabId, {
-      url: chrome.runtime.getURL(`/src/pages/blocked-screen/blocked-screen.html`) 
-    })
+  if (isBlockedSite){
+    updateLocalBlockedScreenDataByTab(tabId, [hostname, favIconUrl, tab.url])
     return null;
   }
 
   //* Focus mode & Restriction site load handeling
   // todo: can be efficient
-  const {focusModeTracker} = await chrome.storage.local.get('focusModeTracker')
-  const {restrictedSites} = await chrome.storage.local.get('restrictedSites')
-  const isTimeBtwFocusSchedule = await getIsTimeBtwFocusSchedule()
-  const {focusModeTakeABreakTracker} = await chrome.storage.local.get('focusModeTakeABreakTracker')
+  const {focusModeTracker} = await getLocalFocusModeTracker()
+  const {restrictedSites} = await getLocalRestrictedSites()
+  const isCurrTimeFocusScheduled = await checkFocusScheduleActive()
+  const {focusModeTakeABreakTracker} = await getLocalFocusModeTakeABreakTracker()
 
 
-  if ((restrictedSites[hostname] && !focusModeTakeABreakTracker) && (focusModeTracker || isTimeBtwFocusSchedule)){
-    // *Remember hostname and favIcon based on tab id
-    let {restrictedScreenData} = await chrome.storage.local.get('restrictedScreenData')
-    if (!restrictedScreenData) restrictedScreenData = {} //Initializing step
-    
-    restrictedScreenData[tabId] = [hostname, favIconUrl, tab.url]
-    await chrome.storage.local.set({restrictedScreenData})
-  
-    chrome.tabs.update(tabId, {
-      url: chrome.runtime.getURL(`/src/pages/restricted-screen/restricted-screen.html`) 
-    })
+  if ((restrictedSites[hostname] && !focusModeTakeABreakTracker) && (focusModeTracker || isCurrTimeFocusScheduled)){
+    await updateLocalRestrictedScreenDataByTab(tabId, [hostname, favIconUrl, tab.url])
     return null;
   }
 
   // * Time Limit
   const isScreenTimeSurpassedLimit = await getIsScreenTimeSurpassedLimit(hostname)
   if (isScreenTimeSurpassedLimit){
-    // *Remember hostname and favIcon based on tab id, can be used in time limit screens
-    let {timeLimitScreenData} = await chrome.storage.local.get('timeLimitScreenData')
-    if (!timeLimitScreenData) timeLimitScreenData = {} //Initializing step
-    
-    timeLimitScreenData[tabId] = [hostname, favIconUrl, tab.url]
-    await chrome.storage.local.set({timeLimitScreenData})
-
-    chrome.tabs.update(tabId, {
-      url: chrome.runtime.getURL(`/src/pages/time-limit-screen/time-limit-screen.html`) 
-    })
+    await updateLocalTimeLimitScreenDataByTab(tabId, [hostname, favIconUrl, tab.url])
     return null;
   }
 
@@ -171,23 +151,8 @@ chrome.tabs.onUpdated.addListener( async (tabId, {url}, tab)=>{
 
 // *Handles Tab Remove
 chrome.tabs.onRemoved.addListener( async (tabId, removeInfo)=>{
-    const {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
-    if (blockedScreenData && blockedScreenData[tabId]) {
-      delete blockedScreenData[tabId]
-      chrome.storage.local.set({blockedScreenData})
-    }
-    
-    const {restrictedSiteData} = await chrome.storage.local.get('restrictedSiteData')
-    if (restrictedSiteData && restrictedSiteData[tabId]){
-      delete restrictedSiteData[tabId]
-      chrome.storage.local.set({restrictedSiteData})
-    }
-
-    const {timeLimitScreenData} = await chrome.storage.local.get('timeLimitScreenData')
-    if (timeLimitScreenData && timeLimitScreenData[tabId]){
-      delete timeLimitScreenData[tabId]
-      chrome.storage.local.set({timeLimitScreenData})
-    }
-    
+    delLocalBlockedScreenDataByTabId(tabId)
+    delLocalRestrictedScreenDataByTabId(tabId)
+    delLocalTimeLimitScreenDataByTabId(tabId)
   })
 

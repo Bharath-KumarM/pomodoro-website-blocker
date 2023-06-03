@@ -1,3 +1,4 @@
+import { getLocalScreenTimeTracker, setLocalScreenTimeTracker } from "../../localStorage/localScreenTimeTracker";
 import { getDateString } from "../../utilities/date"
 
 console.log('content script running...')
@@ -11,8 +12,7 @@ const updateSpentTime = async ()=>{
     const spentTimeInMinutes = (new Date - START_TIME) ? (new Date - START_TIME)/(1000*60) : 0
     START_TIME = null
 
-    let {screenTimeTracker} = await chrome.storage.local.get('screenTimeTracker')
-    if (!screenTimeTracker) screenTimeTracker = {}
+    let {screenTimeTracker} = await getLocalScreenTimeTracker()
 
     const dateString = getDateString(0)
     if (screenTimeTracker[dateString] === undefined){
@@ -23,7 +23,7 @@ const updateSpentTime = async ()=>{
         screenTimeTracker[dateString][window.location.host] = 0
     }
     screenTimeTracker[dateString][window.location.host] +=  spentTimeInMinutes
-    chrome.storage.local.set({screenTimeTracker})
+    setLocalScreenTimeTracker(screenTimeTracker)
 }
 
 updateSpentTime()

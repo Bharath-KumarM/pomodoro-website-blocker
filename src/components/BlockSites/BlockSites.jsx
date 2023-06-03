@@ -6,15 +6,25 @@ import {BiInfoCircle as InfoIcon} from "react-icons/bi"
 
 import BlockedSitesInfo from "./BlockedSitesInfo"
 import SiteInfoCard from "./SiteInfoCard"
-import { localLogMessage } from "../../utilities/localStorage"
-import { blockOrUnblockSite, getCurrTab } from "../../utilities/chromeApiTools"
+import { localLogMessage } from "../../utilities/localStorageMsg"
+import { getCurrTab } from "../../utilities/chrome-tools/chromeApiTools"
 
 import "./BlockSites.scss"
 import { PopupToast } from "../../utilities/PopupScreens"
 
 
+import { getLocalBlockedScreenDataByTabId } from '../../localStorage/localBlockedScreenData'
+import { getLocalRestrictedScreenDataByTabId } from '../../localStorage/localRestrictedScreenData'
+import { getLocalTimeLimitScreenDataByTabId } from '../../localStorage/localTimeLimitScreenData'
+import { 
+    checkLocalBlockedSitesByHostname,
+    updateLocalBlockedSites, 
+    delLocalBlockedSites, 
+ } from '../../localStorage/localBlockedSites'
+
+
 // In popup screen, it creates the UI to block current website.
-const BlockSites = ({setCntHeading})=>{
+const BlockSites = ()=>{
     const [currTab, setCurrTab] = useState(null)
     const [isBlocked, setIsBlocked] = useState(null)
     const [toastData, setToastData] = useState([]) //* Toast Message from bottom
@@ -29,40 +39,41 @@ const BlockSites = ({setCntHeading})=>{
         let hostname = (new URL(tempCurrTab.url)).hostname
         let favIconUrl = tempCurrTab.favIconUrl
 
-        // *If the current tab is blocked and blocked screen is loaded, then get the site details from blockedScreenData local storage
+        // *If the current tab is blocked and blocked screen is loaded, then get the site details from local storage
         if (urlPathname === '/src/pages/blocked-screen/blocked-screen.html'){
-            const {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
-            if (!blockedScreenData[tempCurrTab.id]) {
-                localLogMessage("[-] @BlockedSite.jsx, blocked site's tab id is not found in blockedScreenData ")
+            const blockedScreenDataOfCurrTab = await getLocalBlockedScreenDataByTabId(tempCurrTab.id)
+            if (!blockedScreenDataOfCurrTab) {
+                localLogMessage("[-] @BlockedSite.jsx, blocked site's data is not found in local blockedScreenData ")
                 return
             }
 
-            [hostname, favIconUrl] = blockedScreenData[tempCurrTab.id]
+            [hostname, favIconUrl] = blockedScreenDataOfCurrTab
             tempCurrTab = {hostname, favIconUrl}
         }
         if (urlPathname === '/src/pages/restricted-screen/restricted-screen.html'){
-            const {restrictedScreenData} = await chrome.storage.local.get('restrictedScreenData')
-            if (!restrictedScreenData[tempCurrTab.id]) {
+            const restrictedScreenDataOfCurrTab = await getLocalRestrictedScreenDataByTabId(tempCurrTab.id)
+            if (!restrictedScreenDataOfCurrTab) {
                 localLogMessage("[-] @BlockedSite.jsx, restricted site's tab id is not found in restrictedScreenData ")
                 return
             }
 
-            [hostname, favIconUrl] = restrictedScreenData[tempCurrTab.id]
+            [hostname, favIconUrl] = restrictedScreenDataOfCurrTab
             tempCurrTab = {hostname, favIconUrl}
         }
         if (urlPathname === '/src/pages/time-limit-screen/time-limit-screen.html'){
-            const {timeLimitScreenData} = await chrome.storage.local.get('timeLimitScreenData')
-            if (!timeLimitScreenData[tempCurrTab.id]) {
+            const timeLimitScreenDataOfCurrTab = await getLocalTimeLimitScreenDataByTabId(tempCurrTab.id)
+            if (!timeLimitScreenDataOfCurrTab) {
                 localLogMessage("[-] @BlockedSite.jsx, time limit site's tab id is not found in timeLimitScreenData ")
                 return
             }
 
-            [hostname, favIconUrl] = timeLimitScreenData[tempCurrTab.id]
+            [hostname, favIconUrl] = timeLimitScreenDataOfCurrTab
             tempCurrTab = {hostname, favIconUrl}
         }
 
         setCurrTab(tempCurrTab)
-        setIsBlocked(await getIsBlocked(hostname))
+        const tempIsBlocked  = await checkLocalBlockedSitesByHostname(hostname)
+        setIsBlocked(tempIsBlocked)
     }
     useEffect( ()=>{
         handleComponentMount()
@@ -74,16 +85,17 @@ const BlockSites = ({setCntHeading})=>{
 
     const hostname = currTab.url ? (new URL(currTab.url)).hostname : currTab.hostname // todo: what does it do?
     const handleBlockBtnClick = async ()=>{
-        const res = await blockOrUnblockSite(!isBlocked, hostname, currTab.favIconUrl)
-        if (res){
-            setIsBlocked(prevIsBlocked=>!prevIsBlocked)
-            if (isBlocked) setToastData(['Unblocked Successfully!', 'red'])
-            else setToastData(['Blocked Successfully!', 'green'])
+        if (isBlocked){
+            const isSiteUnblocked = await delLocalBlockedSites(hostname)
+            if (isSiteUnblocked) setToastData(['Unblocked the site', 'green'])
+            else setToastData(['Error: Site never blocked', 'red'])
+        }else{
+            const isSiteBlocked = await updateLocalBlockedSites(hostname, currTab.favIconUrl)
+            if (isSiteBlocked) setToastData(['Blocked the site', 'green'])
+            else setToastData(['Error: Site already blocked', 'green'])
         }
-        else{
-            if (isBlocked) setToastData(['Error on unblocking the site', 'red'])
-            else setToastData(['Error on blocking the site', 'red'])
-        }
+
+        setIsBlocked(prevIsBlocked=>!prevIsBlocked)
     }
     return (
         <>
@@ -118,13 +130,6 @@ const BlockSites = ({setCntHeading})=>{
     )
 }
 
-async function getIsBlocked(hostName){
-    let {blockedSites} = await chrome.storage.local.get('blockedSites')
-    return blockedSites && blockedSites[hostName] ? true : false
-}
-
-
-
 
 function SiteDetails({isBlocked, currTab, hostName, handleBlockBtnClick}){
     const [count , setCount] = useState(30) // wait time to unblock site
@@ -135,7 +140,7 @@ function SiteDetails({isBlocked, currTab, hostName, handleBlockBtnClick}){
                 setCount((prevCount)=>prevCount-1)
             }, 1000)
         }
-    }, [count])
+    }, [count, isBlocked])
 
     return (
     <div className="content">

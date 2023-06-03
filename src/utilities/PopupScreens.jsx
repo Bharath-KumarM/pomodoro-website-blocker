@@ -13,12 +13,20 @@ export const PopupFull = ({setClosePopup, children})=>{
     )
 }
 
-export const PopupToast = ({toastMsg, setToastMsg, toastColorCode, setToastData})=>{
+export const PopupToast = ({toastMsg, toastColorCode, setToastData})=>{
 
-    toastColorCode = toastColorCode ?? null
+    const popupToastRef = useRef(null);
+    useEffect(()=>{
+        popupToastRef.current.style.animation = 'none';
+        popupToastRef.current.offsetHeight; /* trigger reflow */
+        popupToastRef.current.style.animation = null; 
+    })
+
+    toastColorCode = toastColorCode ?? null;
 
     return (
         <div className={`prevent-select popup-screen toast ${toastColorCode}`}
+            ref={popupToastRef}
             onAnimationEnd={()=>{
                 setToastData([null, null])
             }}

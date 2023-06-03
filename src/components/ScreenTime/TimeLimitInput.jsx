@@ -5,7 +5,9 @@ import { RiCloseLine } from 'react-icons/ri'
 
 import { pad2 } from '../../utilities/simpleTools'
 import { useEffect, useState } from 'react'
-import {  getIsScreenTimeSurpassedLimit, refreshAllTabsByHostname, refreshAllTimeLimitTabs } from '../../utilities/chromeApiTools'
+import {  getIsScreenTimeSurpassedLimit } from '../../utilities/chrome-tools/chromeApiTools'
+import { refreshAllTabsByHostname, refreshAllTimeLimitScreenTabs } from "../../utilities/chrome-tools/refreshTabs"
+import { delLocalScreenTimeLimit, getLocalScreenTimeLimit, getLocalScreenTimeLimitByHostname, updateLocalScreenTimeLimit } from '../../localStorage/localScreenTimeLimit'
 
 
 const hrValues = Array.from({length: 24}, (_ ,index)=>pad2(index))
@@ -19,10 +21,12 @@ const TimeLimitInput = ({showTimeLimitInput: hostname, setShowTimeLimitInput, se
     useEffect(()=>{
         const getData = async ()=>{
 
-            let {screenTimeLimit} = await chrome.storage.local.get('screenTimeLimit')
-            if (!screenTimeLimit[hostname]) return;
+            let screenTimeLimitOfHostname = await getLocalScreenTimeLimitByHostname(hostname)
             
-            const [tempHour, tempMinute] = screenTimeLimit[hostname]
+            // Time Limit is unavailable
+            if (!screenTimeLimitOfHostname) return;
+            
+            const [tempHour, tempMinute] = screenTimeLimitOfHostname
             setIsLimited(true)
             setHours(pad2(tempHour))
             setMinutes(pad2(tempMinute))
@@ -102,19 +106,10 @@ const TimeLimitInput = ({showTimeLimitInput: hostname, setShowTimeLimitInput, se
             type="submit" 
             onClick={(e)=>{
                 const storeData = async ()=>{
-                    let {screenTimeLimit} = await chrome.storage.local.get('screenTimeLimit')
-                    if (!screenTimeLimit) screenTimeLimit = {}
+                    await updateLocalScreenTimeLimit(hostname, [parseInt(hours), parseInt(minutes)])
 
-                    screenTimeLimit[hostname] = [parseInt(hours), parseInt(minutes)]
-
-                    chrome.storage.local.set({screenTimeLimit}, async ()=>{
-                        setShowTimeLimitInput(false)
-                        setScreenTimeLimit(null)
-                        const isScreenTimeSurpassedLimit = await getIsScreenTimeSurpassedLimit(hostname)
-                        if (isScreenTimeSurpassedLimit){
-                            refreshAllTabsByHostname(hostname)
-                        }
-                    })
+                    setShowTimeLimitInput(false)
+                    setScreenTimeLimit(null)
 
                 }
                 storeData()
@@ -126,17 +121,14 @@ const TimeLimitInput = ({showTimeLimitInput: hostname, setShowTimeLimitInput, se
             isLimited ?
             <div className="remove-cnt"
                 onClick={async ()=>{
-                    let {screenTimeLimit} = await chrome.storage.local.get('screenTimeLimit')
+                    const isScreenTimeLimitDeleted = delLocalScreenTimeLimit(hostname);
 
-                    if (!screenTimeLimit) screenTimeLimit = {}
-                    delete screenTimeLimit[hostname]
-                    await chrome.storage.local.set({screenTimeLimit})
+                    if (isScreenTimeLimitDeleted) setToastMsg('Time limit removed');
+                    else setToastMsg('Time limit never exist');
 
-                    refreshAllTimeLimitTabs()
-
-                    setShowTimeLimitInput(false)
-                    setScreenTimeLimit(null)
-                    setToastMsg('Time limit removed')
+                    setShowTimeLimitInput(false);
+                    setScreenTimeLimit(null);
+                    
                 }}
             >
                 Remove
