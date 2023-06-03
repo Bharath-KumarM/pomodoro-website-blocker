@@ -15,8 +15,8 @@ const defaultDaysActiveArr = [false, true, true, true, true, true, false]
 const daysLetterArr = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 
 const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, getScheduleData, isNewSchedule, setToastData})=>{
-    const [startTime, setStartTime] = useState(isNewSchedule ? '10:00:AM' : null);
-    const [endTime, setEndTime] = useState(isNewSchedule ? '05:00:PM' : null);
+    const [startTime, setStartTime] = useState(isNewSchedule ? '10:00:am' : null);
+    const [endTime, setEndTime] = useState(isNewSchedule ? '05:00:pm' : null);
     const [daysActiveArr, setDaysActiveArr] = useState(isNewSchedule ? [...defaultDaysActiveArr] : null)
 
     const handleNewScheduleEdit = async ()=>{

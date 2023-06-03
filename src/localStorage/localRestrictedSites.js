@@ -1,4 +1,5 @@
 import { refreshAllRestrictedScreenTabs, refreshAllTabsByHostname } from "../utilities/chrome-tools/refreshTabs"
+import { checkFocusScheduleActive } from "../utilities/focusModeHelper"
 import { getLocalFocusModeTracker } from "./localFocusModeTracker"
 
 // *restrictedSites
@@ -28,7 +29,9 @@ export const updateLocalRestrictedSites = async (hostname, favIconUrl=null)=>{
     const {focusModeTracker} = await getLocalFocusModeTracker()
     const isFocusModeOn = focusModeTracker ? true : false
 
-    if (!isFocusModeOn){
+    const isCurrTimeFocusScheduled = await checkFocusScheduleActive()
+
+    if (!isFocusModeOn && !isCurrTimeFocusScheduled){
         return true;
     }
 
@@ -53,7 +56,9 @@ export const delLocalRestrictedSites = async (hostname)=>{
     const {focusModeTracker} = await getLocalFocusModeTracker()
     const isFocusModeOn = focusModeTracker ? true : false
 
-    if (!isFocusModeOn){
+    const isCurrTimeFocusScheduled = await checkFocusScheduleActive()
+
+    if (!isFocusModeOn && !isCurrTimeFocusScheduled){
         return true
     }
  

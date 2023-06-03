@@ -4,7 +4,7 @@ import './RestrictedScreen.scss';
 import { getCurrScheduleDesc, getActiveFocusScheduledIndexes } from '../../utilities/focusModeHelper';
 
 import { getLocalRestrictedScreenDataByTabId } from '../../localStorage/localRestrictedScreenData'
-import { checkLocalRestrictedSitesByHostname, delLocalRestrictedSites, getLocalRestrictedSites } from '../../localStorage/localRestrictedSites';
+import { checkLocalRestrictedSitesByHostname, delLocalRestrictedSites } from '../../localStorage/localRestrictedSites';
 import { getLocalFocusModeTracker, turnOffLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker';
 import { getLocalFocusModeTakeABreakTracker, setLocalFocusModeTakeABreakTracker } from '../../localStorage/localFocusModeTakeABreakTracker';
 
@@ -154,7 +154,7 @@ const RestrictedScreen = ()=>{
             <h2>    
                 {
                     activeFocusScheduledIndexes.length ? 
-                    `This site scheduled to restrict` : 
+                    `This site is scheduled to restrict` : 
                     `Focus Mode is ON, this site has been restricted ` 
                 }
             </h2>
@@ -244,7 +244,7 @@ const RestrictedScreen = ()=>{
                                 <h2>
                                     {
                                         activeFocusScheduledIndexes.length ? 
-                                        `Wait for ${count} sec to remove the schedule...`:
+                                        `Wait for ${count} sec to remove the site restriction...`:
                                         `Wait for ${count} sec to turn off focus mode...`
                                     }
                                 </h2>

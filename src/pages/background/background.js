@@ -17,6 +17,7 @@ import {checkLocalBlockedSitesByHostname} from '../../localStorage/localBlockedS
 import { getLocalRestrictedSites } from '../../localStorage/localRestrictedSites'
 import { getLocalFocusModeTracker, turnOnLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker'
 import { getLocalFocusModeTakeABreakTracker, setLocalFocusModeTakeABreakTracker } from '../../localStorage/localFocusModeTakeABreakTracker'
+import { refreshAllRestrictedSites } from '../../utilities/chrome-tools/refreshTabs'
 
 console.log('Script running from background!!!')
 
@@ -53,9 +54,9 @@ chrome.alarms.onAlarm.addListener(({name})=>{
     setLocalFocusModeTakeABreakTracker(false)
 
   }
-  // Take A Break alarm ends for schedule
+  // Take A Break alarm ends for active schedule
   if (name.startsWith('scheduleTakeABreak')){
-    refreshRestrictedSites()
+    refreshAllRestrictedSites()
     setLocalFocusModeTakeABreakTracker(false)
   }
 })
