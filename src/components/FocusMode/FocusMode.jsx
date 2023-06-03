@@ -16,7 +16,7 @@ import RestrictedSites from './RestrictedSites';
 import { getScheduleItemDesc, getActiveFocusScheduledIndexes } from '../../utilities/focusModeHelper';
 import { delLocalScheduleDataByIndex, getLocalScheduleData } from '../../localStorage/localScheduleData';
 import { getLocalFocusModeTracker, turnOffLocalFocusModeTracker, turnOnLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker';
-import { getLocalFocusModeTakeABreakTracker, setLocalFocusModeTakeABreakTracker } from '../../localStorage/localFocusModeTakeABreakTracker';
+import { getLocalTakeABreakTrackerforRestrict, turnOffLocalTakeABreakTrackerforRestrict } from '../../localStorage/localTakeABreakTrackerforRestrict';
 
 
 
@@ -46,22 +46,21 @@ const FocusMode = ()=>{
         const tempActiveFocusScheduledIndexes = await getActiveFocusScheduledIndexes()
         setActiveFocusScheduledIndexes(tempActiveFocusScheduledIndexes)
     }
-    const getfocusModeTakeABreakTrackerData = async ()=>{
+    const gettakeABreakTrackerforRestrictData = async ()=>{
         // Take a break
-        const {focusModeTakeABreakTracker} = await getLocalFocusModeTakeABreakTracker()
+        const {takeABreakTrackerforRestrict} = await getLocalTakeABreakTrackerforRestrict()
 
-        if (focusModeTakeABreakTracker !== undefined){
-            if (focusModeTakeABreakTracker === false) setFoucsModeBreakTimeDiff(false)
+        if (takeABreakTrackerforRestrict !== undefined){
+            if (takeABreakTrackerforRestrict === false) setFoucsModeBreakTimeDiff(false)
             else{
-                // !bug
-                const newTimeDiff = Math.ceil((focusModeTakeABreakTracker - new Date().getTime())/(1000*60))
+                const newTimeDiff = Math.ceil((takeABreakTrackerforRestrict - new Date().getTime())/(1000*60))
                 setFoucsModeBreakTimeDiff(newTimeDiff)
             }
         } 
     }
     useEffect(()=>{
         getScheduleData()
-        getfocusModeTakeABreakTrackerData()
+        gettakeABreakTrackerforRestrictData()
 
 
         // Focus mode tracker
@@ -150,22 +149,16 @@ const FocusMode = ()=>{
                         {
                             !foucsModeBreakTimeDiff ? null :
                             <div className="resume-cnt"
-                                onClick={()=>{
-                                    
-                                    const isCurrFocusModeOn = !isFocusModeOn
-                                    if (isCurrFocusModeOn) turnOnLocalFocusModeTracker()
-                                    else turnOffLocalFocusModeTracker()
+                                onClick={async ()=>{
+                                    // forcfully turning off
+                                    await turnOffLocalTakeABreakTrackerforRestrict(false)
+                                    if (isFocusModeOn) {
+                                        setToastData(['Focus Mode resumed', 'green'])
+                                    } else {
+                                        setToastData(['Scheduled restict resumed', 'green'])
+                                    }
 
-                                    setIsFocusModeOn(isCurrFocusModeOn)
                                     setFoucsModeBreakTimeDiff(false)
-
-                                    setLocalFocusModeTakeABreakTracker(false)
-
-                                    chrome.alarms.clear('focusModeTakeABreak', ()=>{
-                                        console.log('break alarm cleared!!!')
-                                    })
-
-                                    setToastData(['Focus Mode resumed', 'green'])
                                 }}
                             >
                                 Resume now
@@ -234,8 +227,9 @@ export default FocusMode
 
 
 const ScheduleItem = ({scheduleItemData, index, getScheduleData, setEditTimeInputIndex, setDecisionScreenData, setToastData, activeFocusScheduledIndexes})=>{
-    const [isScheduleItemAtive, setIsScheduleItemAtive] = useState(false)
+    const [isScheduleItemAtive, setIsScheduleItemAtive] = useState(activeFocusScheduledIndexes.includes(index))
 
+    console.log(activeFocusScheduledIndexes)
     useEffect(()=>{
             if (activeFocusScheduledIndexes.includes(index)) setIsScheduleItemAtive(true)
             else setIsScheduleItemAtive(false)
@@ -270,7 +264,7 @@ const ScheduleItem = ({scheduleItemData, index, getScheduleData, setEditTimeInpu
             <div className="content">
                 <div className="content-heading-cnt">
                     <h3 className="content-heading">
-                        {`Schedule ${index+1} ${isScheduleItemAtive ? '- Active Now' : ''}`}
+                        {`Schedule ${index+1} ${isScheduleItemAtive ? '- Active ' : ''}`}
                     </h3>
                     {
                         isScheduleItemAtive ?

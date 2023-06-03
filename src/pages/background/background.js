@@ -16,7 +16,7 @@ import { getLocalNoOfVisitsTracker, setLocalNoOfVisitsTracker } from '../../loca
 import {checkLocalBlockedSitesByHostname} from '../../localStorage/localBlockedSites'
 import { getLocalRestrictedSites } from '../../localStorage/localRestrictedSites'
 import { getLocalFocusModeTracker, turnOnLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker'
-import { getLocalFocusModeTakeABreakTracker, setLocalFocusModeTakeABreakTracker } from '../../localStorage/localFocusModeTakeABreakTracker'
+import { getLocalTakeABreakTrackerforRestrict, turnOffLocalTakeABreakTrackerforRestrict } from '../../localStorage/localTakeABreakTrackerforRestrict'
 import { refreshAllRestrictedSites } from '../../utilities/chrome-tools/refreshTabs'
 
 console.log('Script running from background!!!')
@@ -48,16 +48,9 @@ chrome.alarms.onAlarm.addListener(({name})=>{
       })
     })
   }
-  // Take A Break alarm ends for focus mode
-  if (name.startsWith('focusModeTakeABreak')){
-    turnOnLocalFocusModeTracker()
-    setLocalFocusModeTakeABreakTracker(false)
-
-  }
-  // Take A Break alarm ends for active schedule
-  if (name.startsWith('scheduleTakeABreak')){
-    refreshAllRestrictedSites()
-    setLocalFocusModeTakeABreakTracker(false)
+  // Take A Break alarm ends for restricting sites
+  if (name.startsWith('takeABreakForRestrict')){
+    turnOffLocalTakeABreakTrackerforRestrict(true)
   }
 })
 
@@ -130,10 +123,10 @@ chrome.tabs.onUpdated.addListener( async (tabId, {url}, tab)=>{
   const {focusModeTracker} = await getLocalFocusModeTracker()
   const {restrictedSites} = await getLocalRestrictedSites()
   const isCurrTimeFocusScheduled = await checkFocusScheduleActive()
-  const {focusModeTakeABreakTracker} = await getLocalFocusModeTakeABreakTracker()
+  const {takeABreakTrackerforRestrict} = await getLocalTakeABreakTrackerforRestrict()
 
 
-  if ((restrictedSites[hostname] && !focusModeTakeABreakTracker) && (focusModeTracker || isCurrTimeFocusScheduled)){
+  if ((restrictedSites[hostname] && !takeABreakTrackerforRestrict) && (focusModeTracker || isCurrTimeFocusScheduled)){
     await updateLocalRestrictedScreenDataByTab(tabId, [hostname, favIconUrl, tab.url])
     return null;
   }

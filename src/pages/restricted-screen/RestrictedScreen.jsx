@@ -6,7 +6,7 @@ import { getCurrScheduleDesc, getActiveFocusScheduledIndexes } from '../../utili
 import { getLocalRestrictedScreenDataByTabId } from '../../localStorage/localRestrictedScreenData'
 import { checkLocalRestrictedSitesByHostname, delLocalRestrictedSites } from '../../localStorage/localRestrictedSites';
 import { getLocalFocusModeTracker, turnOffLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker';
-import { getLocalFocusModeTakeABreakTracker, setLocalFocusModeTakeABreakTracker } from '../../localStorage/localFocusModeTakeABreakTracker';
+import { getLocalTakeABreakTrackerforRestrict, turnOnLocalTakeABreakTrackerforRestrict } from '../../localStorage/localTakeABreakTrackerforRestrict';
 
 
 
@@ -56,8 +56,8 @@ const RestrictedScreen = ()=>{
         }
 
         // focus mode break
-        const {focusModeTakeABreakTracker} = await getLocalFocusModeTakeABreakTracker()
-        if (focusModeTakeABreakTracker){
+        const {takeABreakTrackerforRestrict} = await getLocalTakeABreakTrackerforRestrict()
+        if (takeABreakTrackerforRestrict){
             chrome.tabs.update(tabId, {url: tempUrl}); 
             return null;
         }
@@ -127,26 +127,15 @@ const RestrictedScreen = ()=>{
     }
 
     const handleTakeABreakClick = (timeInMinutes)=>{
-        turnOffLocalFocusModeTracker()
+        const currTimeObj = Date.now()
+        turnOnLocalTakeABreakTrackerforRestrict(currTimeObj + (timeInMinutes*60*1000))
 
-        setLocalFocusModeTakeABreakTracker(Date.now() + (timeInMinutes*60*1000))
-        
-        if (activeFocusScheduledIndexes.length){
-            chrome.alarms.create(
-                `scheduleTakeABreak`,
-                {
-                    when: Date.now() + (timeInMinutes*60*1000),
-                }
-            ) 
-
-        }else{
-            chrome.alarms.create(
-                `focusModeTakeABreak`,
-                {
-                    when: Date.now() + (timeInMinutes*60*1000),
-                }
-            ) 
-        }
+        chrome.alarms.create(
+            `takeABreakForRestrict`,
+            {
+                when: currTimeObj + (timeInMinutes*60*1000),
+            }
+        )
     }
     return (
     <div className='blocked-scrn-cnt'>
