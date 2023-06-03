@@ -153,7 +153,7 @@ const AddCurrSiteToRestrictedSite = ({restrictedSites, getRestrictedSites, setTo
                 </div>
                 <div className="desc"
                     onClick={async ()=>{
-                        const isRestricted = updateLocalRestrictedSites(getHost(currSite), favIconURL)
+                        const isRestricted = await updateLocalRestrictedSites(getHost(currSite), favIconURL)
                         getRestrictedSites(null)
                         if (isRestricted) setToastData(['Restricted the site', 'green'])
                         else setToastData(['Already restricted', 'red'])
