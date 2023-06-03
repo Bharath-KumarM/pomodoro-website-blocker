@@ -45,11 +45,6 @@ export const delLocalScheduleDataByIndex = async (index)=>{
     return true; 
 }
 
-export const checkLocalScheduleDataByHostname = async (hostname)=>{
-    const {scheduleData} = await getLocalScheduleData()
-    return Boolean(scheduleData[hostname])
-}
-
 // Simple Helper functions
 function findDuplicateScheduleIndex(scheduleData, newScheduleItem){
     //todo: logic for overlapping schedule
