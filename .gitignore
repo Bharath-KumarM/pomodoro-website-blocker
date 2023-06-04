@@ -23,5 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-*.md
+# Rough work and notes
+note.md
 rough.js
