@@ -24,7 +24,7 @@ const RestrictedSites = ({setToastData})=>{
 
     useEffect(()=>{
         getRestrictedSites()
-        getRecnetSitesFromNoOfVisitsTracker(-2).then(tempRecentSites=>setRecentSites(tempRecentSites))
+        getRecnetSitesFromNoOfVisitsTracker(-10).then(tempRecentSites=>setRecentSites(tempRecentSites))
     }, [])
 
     const restrictedSiteArr = restrictedSites ? Object.keys(restrictedSites).map(tempHostname=>tempHostname) : []

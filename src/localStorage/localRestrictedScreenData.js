@@ -2,6 +2,12 @@
 
 import { forceRestrictedScreenByTabId } from "../utilities/chrome-tools/forceTabs"
 
+export const initializeLocalRestrictedScreenData = async ()=>{
+    const {restrictedScreenData} = await chrome.storage.local.get('restrictedScreenData')
+    if (restrictedScreenData === undefined){
+      await chrome.storage.local.set({restrictedScreenData: {}})
+    }
+}
 export const getLocalRestrictedScreenData = async ()=>{
     return await chrome.storage.local.get('restrictedScreenData')
 }

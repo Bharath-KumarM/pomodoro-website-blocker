@@ -126,6 +126,6 @@ export const getScheduleItemDesc = (scheduleItemData)=>{
 
     const daysDesc = getDayDesc(days)
 
-    return `From ${startHr}:${startMin} ${startAmPM} to ${endHr}:${endMin} ${endAmPM} ${daysDesc}`
+    return `${startHr}:${startMin} ${startAmPM} to ${endHr}:${endMin} ${endAmPM} ${daysDesc}`
 
 }

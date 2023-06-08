@@ -17,6 +17,7 @@ import {checkLocalBlockedSitesByHostname} from '../../localStorage/localBlockedS
 import { getLocalRestrictedSites } from '../../localStorage/localRestrictedSites'
 import { getLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker'
 import { getLocalTakeABreakTrackerforRestrict, turnOffLocalTakeABreakTrackerforRestrict } from '../../localStorage/localTakeABreakTrackerforRestrict'
+import { handleOnInstallEvent } from './installEvents'
 
 console.log('Script running from background!!!')
 
@@ -155,67 +156,3 @@ chrome.runtime.onInstalled.addListener(()=>{
 
 })
 
-async function handleOnInstallEvent (){
-  // *Initialize browser storage local 
-  // BlockedSites
-  const {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
-  if (blockedScreenData === undefined){
-    await chrome.storage.local.set({blockedScreenData: {}})
-  }
-  const {blockedSites} = await chrome.storage.local.get('blockedSites')
-  if (blockedSites === undefined){
-    await chrome.storage.local.set({blockedSites: {}})
-  }
-
-  // Focus Mode & Restricted Sites 
-  const {focusModeTracker} = await chrome.storage.local.get('focusModeTracker')
-  if (focusModeTracker === undefined){
-    await chrome.storage.local.set({focusModeTracker: false})
-  }
-  const {restrictedScreenData} = await chrome.storage.local.get('restrictedScreenData')
-  if (restrictedScreenData === undefined){
-    await chrome.storage.local.set({restrictedScreenData: {}})
-  }
-  const {restrictedSites} = await chrome.storage.local.get('restrictedSites')
-  if (restrictedSites === undefined){
-    await chrome.storage.local.set({restrictedSites: {}})
-  }
-
-  // ScreenTime and Visits
-  const {screenTimeLimit} = await chrome.storage.local.get('screenTimeLimit')
-  if (screenTimeLimit === undefined){
-    await chrome.storage.local.set({screenTimeLimit: {}})
-  }
-  const {screenTimeTracker} = await chrome.storage.local.get('screenTimeTracker')
-  if (screenTimeTracker === undefined){
-    await chrome.storage.local.set({screenTimeTracker: {}})
-  }
-  const {timeLimitScreenData} = await chrome.storage.local.get('timeLimitScreenData')
-  if (timeLimitScreenData === undefined){
-    await chrome.storage.local.set({timeLimitScreenData: {}})
-  }
-  const {noOfVisitsTracker} = await chrome.storage.local.get('noOfVisitsTracker')
-  if (noOfVisitsTracker === undefined){
-    await chrome.storage.local.set({noOfVisitsTracker: {}})
-  }
-
-  // Schedule & takeAbreakforRestrict
-  const {scheduleData} = await chrome.storage.local.get('scheduleData')
-  if (scheduleData === undefined){
-    await chrome.storage.local.set({scheduleData: []})
-  }
-  const {takeABreakTrackerforRestrict} = await chrome.storage.local.get('takeABreakTrackerforRestrict')
-  if (takeABreakTrackerforRestrict === undefined){
-    await chrome.storage.local.set({takeABreakTrackerforRestrict: false})
-  }
-
-  // Miscelleneous
-  const {BGtimeLog} = await chrome.storage.local.get('BGtimeLog')
-  if (BGtimeLog === undefined){
-    await chrome.storage.local.set({BGtimeLog: []})
-  }
-  const {logMassage} = await chrome.storage.local.get('logMassage')
-  if (logMassage === undefined){
-    await chrome.storage.local.set({logMassage: []})
-  }
-} 

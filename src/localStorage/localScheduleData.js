@@ -1,6 +1,12 @@
 import { refreshAllBlockedScreenTabs, refreshAllTabsByHostname } from "../utilities/chrome-tools/refreshTabs"
 
 // *scheduleData
+export const initializeLocalScheduleData = async ()=>{
+    const {scheduleData} = await chrome.storage.local.get('scheduleData')
+    if (scheduleData === undefined){
+      await chrome.storage.local.set({scheduleData: []})
+    }
+}
 export const getLocalScheduleData = async ()=>{
     return await chrome.storage.local.get('scheduleData')
 }

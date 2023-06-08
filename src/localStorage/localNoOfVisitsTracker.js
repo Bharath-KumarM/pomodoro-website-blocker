@@ -1,4 +1,10 @@
 // *noOfVisitsTracker
+export const initializeLocalNoOfVisitsTracker = async ()=>{
+    const {noOfVisitsTracker} = await chrome.storage.local.get('noOfVisitsTracker')
+    if (noOfVisitsTracker === undefined){
+      await chrome.storage.local.set({noOfVisitsTracker: {}})
+    }
+}
 export const getLocalNoOfVisitsTracker = async ()=>{
     return await chrome.storage.local.get('noOfVisitsTracker')
 }

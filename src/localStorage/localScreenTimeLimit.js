@@ -2,6 +2,13 @@ import { getIsScreenTimeSurpassedLimit } from "../utilities/chrome-tools/chromeA
 import { refreshAllTabsByHostname, refreshAllTimeLimitScreenTabs } from "../utilities/chrome-tools/refreshTabs"
 
 // *screenTimeLimit
+export const initializeLocalScreenTimeLimit = async ()=>{
+    const {screenTimeLimit} = await chrome.storage.local.get('screenTimeLimit')
+    if (screenTimeLimit === undefined){
+      await chrome.storage.local.set({screenTimeLimit: {}})
+    }
+}
+
 export const getLocalScreenTimeLimit = async ()=>{
     return await chrome.storage.local.get('screenTimeLimit')
 }

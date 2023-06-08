@@ -1,6 +1,13 @@
 import { refreshAllBlockedScreenTabs, refreshAllTabsByHostname } from "../utilities/chrome-tools/refreshTabs"
 
 // *blockedSites
+
+export const initializeLocalBlockedSites = async ()=>{
+    const {blockedSites} = await chrome.storage.local.get('blockedSites')
+    if (blockedSites === undefined){
+      await chrome.storage.local.set({blockedSites: {}})
+    }
+}
 export const getLocalBlockedSites = async ()=>{
     return await chrome.storage.local.get('blockedSites')
 }

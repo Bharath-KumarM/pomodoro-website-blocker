@@ -3,6 +3,12 @@ import { checkFocusScheduleActive } from "../utilities/focusModeHelper"
 import { getLocalFocusModeTracker } from "./localFocusModeTracker"
 
 // *restrictedSites
+export const initializLocalRestrictedSites = async ()=>{
+    const {restrictedSites} = await chrome.storage.local.get('restrictedSites')
+    if (restrictedSites === undefined){
+      await chrome.storage.local.set({restrictedSites: {}})
+    }
+}
 export const getLocalRestrictedSites = async ()=>{
     return await chrome.storage.local.get('restrictedSites')
 }
