@@ -18,6 +18,7 @@ import { getLocalRestrictedSites } from '../../localStorage/localRestrictedSites
 import { getLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker'
 import { getLocalTakeABreakTrackerforRestrict, turnOffLocalTakeABreakTrackerforRestrict } from '../../localStorage/localTakeABreakTrackerforRestrict'
 import { handleOnInstallEvent } from './installEvents'
+import { handleOnStartUpEvent } from './onStartupEvents'
 
 console.log('Script running from background!!!')
 
@@ -154,5 +155,10 @@ chrome.runtime.onInstalled.addListener(()=>{
   console.log('onInstalled')
   handleOnInstallEvent()
 
+})
+
+chrome.runtime.onStartup.addListener(()=>{
+  console.log('Onstartup', Date ().toLocaleString())
+  handleOnStartUpEvent()
 })
 

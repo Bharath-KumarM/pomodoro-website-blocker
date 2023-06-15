@@ -19,13 +19,12 @@ const SiteTimeLimitScreen = ({toastMsg, setClosePopup, showTimeLimitInput, scree
         searchBarRef.current.focus()
     }, [])
 
-    const recentSitesWithScreenTime = recentSites.map(hostname=> {
+    const recentSitesWithScreenTime = recentSites.map((hostname)=> {
         return [hostname, getTotalTimeInMin(screenTimeLimit?.[hostname] ?? [0, 0])];
     })
 
     recentSitesWithScreenTime.sort( (a, b)=> -a[1] + b[1] )
 
-    console.log(recentSitesWithScreenTime)
     return (
     <div className='sites-time-limit-screen'
         onClick={(e)=>{
@@ -53,8 +52,12 @@ const SiteTimeLimitScreen = ({toastMsg, setClosePopup, showTimeLimitInput, scree
                                 // setUserInput()
                                 const typedValue = e.target.value.toLocaleUpperCase() 
                                 if (typedValue){
-                                    const tempRecentSites = recentSitesWithScreenTime.filter(
-                                        ([hostname, timeLimit] )=> hostname.toLocaleUpperCase().includes(typedValue) 
+                                    const tempRecentSites = []
+                                    recentSitesWithScreenTime.map(( [hostname, timeLimit] )=> {
+                                            if (hostname.toLocaleUpperCase().includes(typedValue)){
+                                                tempRecentSites.push(hostname)
+                                            }
+                                        }
                                     )
                                     setRecentSites(tempRecentSites)
                                 }

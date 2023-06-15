@@ -15,7 +15,7 @@ const SiteInfoCard = ({hostname}) =>{
     const getInfo = async ()=>{
         const dateString = getDateString(0)
 
-        const  noOfVisit= await getLocalNoOfVisitsTrackerForDayByHostname()
+        const  noOfVisit= await getLocalNoOfVisitsTrackerForDayByHostname(dateString, hostname)
         const screenTimeInMinutes = await getLocalScreenTimeTrackerForDayByHostname(dateString, hostname)
         
         setScreenTime(screenTimeInMinutes)

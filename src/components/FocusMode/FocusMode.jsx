@@ -135,13 +135,19 @@ const FocusMode = ()=>{
                     </PopupFull> : null
                 }
                 <div className="start-stop cnt flex-center">
-                    <button className = {`start-stop btn ${foucsModeBreakTimeDiff ? 'focus-break-active' : ''}`}
-                    onClick={()=>handleFocusModeBtnClick()}
+                    <button 
+                        className = {
+                            `
+                                start-stop btn 
+                                ${foucsModeBreakTimeDiff ? 'focus-break-active' : isFocusModeOn ? 'focused' : '' }
+                            `
+                        }
+                        onClick={()=>handleFocusModeBtnClick()}
                     >
                         {
-                            foucsModeBreakTimeDiff ? "💤You took a break"  :
-                            isFocusModeOn === false ? '🏃🏼‍♂️Start Focus Mode': 
-                            isFocusModeOn === true ? '🚫Stop Focus Mode' :
+                            foucsModeBreakTimeDiff ? "You took a break"  :
+                            isFocusModeOn === false ? 'Start Focus Mode': 
+                            isFocusModeOn === true ? 'Stop focusing' :
                             'Loading'
                         }
                     </button>
@@ -164,24 +170,22 @@ const FocusMode = ()=>{
                                 Resume now
                             </div>
                         }
-                        {
-                            !foucsModeBreakTimeDiff && !activeFocusScheduledIndexes.length ? null :
-                            <div className='break-cnt flex-center'>
-                                <div className="info-icon-cnt">
-                                    <BiInfoCircle />
-                                </div>
-                                <div className="desc">
-                                    {   
-                                        !foucsModeBreakTimeDiff && activeFocusScheduledIndexes.length ?
-                                        `Scheduled focus is active now` :
-                                        activeFocusScheduledIndexes.length ? 
-                                        `Schedule resumes in ${foucsModeBreakTimeDiff} minutes` :
-                                        `Focus Mode resumes in ${foucsModeBreakTimeDiff} minutes`
-                                    }
-                                </div>
+                        <div className='break-cnt flex-center'>
+                            <div className="info-icon-cnt">
+                                <BiInfoCircle />
                             </div>
-                        }
-
+                            <div className="desc">
+                                {   
+                                    !foucsModeBreakTimeDiff && !activeFocusScheduledIndexes.length ? 
+                                    `Focus mode is ON` :
+                                    !foucsModeBreakTimeDiff && activeFocusScheduledIndexes.length ?
+                                    `Scheduled focus is active now` :
+                                    activeFocusScheduledIndexes.length ? 
+                                    `Schedule resumes in ${foucsModeBreakTimeDiff} minutes` :
+                                    `Focus Mode resumes in ${foucsModeBreakTimeDiff} minutes`
+                                }
+                            </div>
+                        </div>
                     </>
                 </div>
                 <div className="schedule-cnt">
@@ -229,7 +233,6 @@ export default FocusMode
 const ScheduleItem = ({scheduleItemData, index, getScheduleData, setEditTimeInputIndex, setDecisionScreenData, setToastData, activeFocusScheduledIndexes})=>{
     const [isScheduleItemAtive, setIsScheduleItemAtive] = useState(activeFocusScheduledIndexes.includes(index))
 
-    console.log(activeFocusScheduledIndexes)
     useEffect(()=>{
             if (activeFocusScheduledIndexes.includes(index)) setIsScheduleItemAtive(true)
             else setIsScheduleItemAtive(false)

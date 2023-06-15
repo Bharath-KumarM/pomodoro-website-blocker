@@ -12,11 +12,8 @@ import { initializeLocalTimeLimitScreenData } from "../../localStorage/localTime
 
 export async function handleOnInstallEvent (){
     localStorageInitialize()
-    localStorageCleanUp()
   } 
-export async function localStorageCleanUp(){
 
-}
 export async function localStorageInitialize (){
         // *Initialize browser storage local 
     // BlockedSites

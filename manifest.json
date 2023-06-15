@@ -8,7 +8,8 @@
                   "nativeMessaging", 
                   "notifications",
                   "alarms",
-                  "tabs"
+                  "tabs",
+                  "history"
                 ],
   "background": {
     "service_worker": "src/pages/background/background.js",

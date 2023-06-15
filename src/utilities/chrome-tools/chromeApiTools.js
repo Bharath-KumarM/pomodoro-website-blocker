@@ -47,6 +47,5 @@ export const getRecnetSitesFromNoOfVisitsTracker = async (n)=>{
             }
         }
     }
-    
     return recentSites
 }
