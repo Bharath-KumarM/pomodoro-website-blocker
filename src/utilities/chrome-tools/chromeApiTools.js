@@ -1,7 +1,7 @@
 
-import { getLocalNoOfVisitsTracker } from "../../localStorage/localNoOfVisitsTracker"
 import { getLocalScreenTimeLimitByHostname } from "../../localStorage/localScreenTimeLimit"
 import { getDateString } from "../date"
+import { getNoOfVisitsObjByDateRage } from "../noOfVisits"
 
 export async function getCurrTab(){
     let queryOptions = { active: true, lastFocusedWindow: true }
@@ -29,23 +29,7 @@ export async function getIsScreenTimeSurpassedLimit(hostname){
     return totalScreenTimeLimitInMinutes < totalScreenTimeTrackerInMinutes
 }
 
-
-export const getRecnetSitesFromNoOfVisitsTracker = async (n)=>{
-    // *Defaults for last 3 days
-    if (n > 0) return []
-    if (n === undefined) n = -2
-    const recentSites = []
-    // *takeing recent sites from noOfVisitsTracker for last 3 days
-    let {noOfVisitsTracker} = await getLocalNoOfVisitsTracker()
-
-    for (let i=n; i<=0; i++){
-        const date = getDateString(i)
-        if (!noOfVisitsTracker[date]) continue;
-        for (const hostname in noOfVisitsTracker[date]){
-            if(!recentSites.includes(hostname)){
-                recentSites.push(hostname)
-            }
-        }
-    }
-    return recentSites
+export const getRecentHostnames = async (n=-3)=>{
+    const noOfVisitsObj = await getNoOfVisitsObjByDateRage( getDateString(n) )
+    return Object.keys(noOfVisitsObj)
 }

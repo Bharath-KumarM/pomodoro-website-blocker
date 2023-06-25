@@ -1,4 +1,3 @@
-import { cleanLocalNoOfVisitsTracker, delLocalNoOfVisitsTrackerByDate } from "../../localStorage/localNoOfVisitsTracker"
 import { cleanLocalScreenTimeTracker } from "../../localStorage/localScreenTimeTracker"
 
 export async function handleOnStartUpEvent(){
@@ -9,6 +8,5 @@ export async function handleOnStartUpEvent(){
     chrome.storage.local.set({timeLimitScreenData: {}})
 
     // Clean data older 30 days
-    cleanLocalNoOfVisitsTracker()
     cleanLocalScreenTimeTracker()
 }

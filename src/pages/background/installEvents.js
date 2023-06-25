@@ -1,7 +1,6 @@
 import { initializeLocalBlockedScreenData } from "../../localStorage/localBlockedScreenData"
 import { initializeLocalBlockedSites } from "../../localStorage/localBlockedSites"
 import { initializeLocalFocusModeTracker } from "../../localStorage/localFocusModeTracker"
-import { initializeLocalNoOfVisitsTracker } from "../../localStorage/localNoOfVisitsTracker"
 import { initializeLocalRestrictedScreenData } from "../../localStorage/localRestrictedScreenData"
 import { initializLocalRestrictedSites } from "../../localStorage/localRestrictedSites"
 import { initializeLocalScheduleData } from "../../localStorage/localScheduleData"
@@ -30,7 +29,6 @@ export async function localStorageInitialize (){
     initializeLocalScreenTimeLimit()
     initializeLocalScreenTimeTracker()
     initializeLocalTimeLimitScreenData()
-    initializeLocalNoOfVisitsTracker()
   
     // Schedule & takeAbreakforRestrict
     initializeLocalScheduleData()

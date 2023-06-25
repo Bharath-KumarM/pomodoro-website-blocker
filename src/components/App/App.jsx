@@ -19,6 +19,9 @@ function App() {
   const [navSelect, setNavSelect] = useState('')
   // const [navSelect, setNavSelect] = useState('pomodoro')
 
+  // !Debug Starts
+  // !Debug Ends
+
   useEffect(()=>{
     const getNavSelect = async ()=>{
       
@@ -52,22 +55,6 @@ function App() {
 
   }, [])
 
-  // !Debug starts
-  // chrome.history.getVisits({
-    //     url: "https://www.youtube.com/*"
-    //   }, (details)=>{
-      //       console.log(details.length, details.splice(-5))
-      // })
-  const todayStartMilli = new Date().setHours(0, 0, 0, 0)
-  chrome.history.search({
-    endTime: new Date().getTime(),
-    startTime: todayStartMilli,
-    text: ''
-  }, (historyItem)=>{
-    historyItem.sort((a, b)=>a.lastVisitTime-b.lastVisitTime)
-    console.log({historyItem})
-  })
-  // !Debug ends
 
   return (
     <div className={style.App}> 

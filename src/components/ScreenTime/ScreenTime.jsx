@@ -11,9 +11,9 @@ import { PopupFull, PopupToast } from '../../utilities/PopupScreens';
 import TimeLimitInput from './TimeLimitInput';
 import SiteTimeLimitScreen from './SitesTimeLimitScreen';
 
-import { getLocalNoOfVisitsTracker } from '../../localStorage/localNoOfVisitsTracker'
 import { getLocalScreenTimeLimit } from '../../localStorage/localScreenTimeLimit';
 import { getLocalScreenTimeTracker } from '../../localStorage/localScreenTimeTracker';
+import { getNoOfVisitsObjByDateRage } from '../../utilities/noOfVisits';
 
 
 
@@ -31,7 +31,6 @@ const ScreenTime = ()=>{
 
     const getInfo = async (day)=>{
         let {screenTimeTracker} = await getLocalScreenTimeTracker()
-        let {noOfVisitsTracker} = await getLocalNoOfVisitsTracker()
 
         const dateString = getDateString(day)
         const fullDate = getFullDate(day)
@@ -50,7 +49,8 @@ const ScreenTime = ()=>{
         }
 
         const dayScreenTimeTracker = screenTimeTracker[dateString] ? screenTimeTracker[dateString] : null
-        const dayNoOfVisitsTracker = noOfVisitsTracker[dateString] ? noOfVisitsTracker[dateString]  : {}
+        const dayNoOfVisitsTracker = await getNoOfVisitsObjByDateRage(dateString)
+
         setScreenTimeData({dayScreenTimeTracker, fullDate, totalScreenTimeWeekly, dayNoOfVisitsTracker})
 
     }
@@ -76,7 +76,7 @@ const ScreenTime = ()=>{
         </h3>
     )
 
-    const {dayScreenTimeTracker, fullDate, totalScreenTimeWeekly, dayNoOfVisitsTracker} = screenTimeData
+    const {dayScreenTimeTracker, fullDate, totalScreenTimeWeekly, dayNoOfVisitsTracker} = screenTimeData;
 
     const totalTimeSpentInMins = getTotalTimeFromTracker(dayScreenTimeTracker)
     const totalTimeSpentDesc = getHrMinString(totalTimeSpentInMins)
@@ -186,12 +186,8 @@ const ScreenTime = ()=>{
 }
 
 const SiteList = ({dayScreenTimeTracker, dayNoOfVisitsTracker, setShowTimeLimitInput, screenTimeLimit})=>{
-    const dayScreenTimeTrackerArr = []
-    for (const site in dayScreenTimeTracker){
-        const secondsSpent = dayScreenTimeTracker[site]
-        dayScreenTimeTrackerArr.push([site, secondsSpent])
-    }
-
+    const dayScreenTimeTrackerArr = Object.entries(dayScreenTimeTracker)
+    
     if (dayScreenTimeTrackerArr.length < 1){
         // Empty time tracker
         return (
@@ -208,7 +204,7 @@ const SiteList = ({dayScreenTimeTracker, dayNoOfVisitsTracker, setShowTimeLimitI
 
     const siteListArr = []
     for (const [site, minutesSpent] of dayScreenTimeTrackerArr){
-        const visitTimesDesc = dayNoOfVisitsTracker[site] ? `• ${dayNoOfVisitsTracker[site][1]} opens` : ''
+        const visitTimesDesc = dayNoOfVisitsTracker[site] ? `• ${dayNoOfVisitsTracker[site]} visits` : ''
         const item = (
             <li className='site-list-item'
                 key={site}

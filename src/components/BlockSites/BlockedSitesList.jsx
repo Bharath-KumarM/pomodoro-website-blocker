@@ -4,7 +4,7 @@ import { FiPlus } from "react-icons/fi"
 import { useEffect, useState, useRef } from "react"
 
 import { getHost, isValidUrl } from "../../utilities/simpleTools"
-import { getCurrTab, getRecnetSitesFromNoOfVisitsTracker } from "../../utilities/chrome-tools/chromeApiTools"
+import { getCurrTab, getRecentHostnames } from "../../utilities/chrome-tools/chromeApiTools"
 import AddSiteToBlockedSite from "./AddSiteToBlockedSite"
 
 import { 
@@ -35,7 +35,7 @@ const BlockedSitesList = ({setToastData}) => {
         }
 
         getUpdatedBlockedSites()
-        getRecnetSitesFromNoOfVisitsTracker(-2).then(tempRecentSites=>setRecentSites(tempRecentSites))
+        getRecentHostnames(-2).then(tempRecentSites=>setRecentSites(tempRecentSites))
     }, [])
 
     const blockedSitesArr = Object.keys(blockedSites) 

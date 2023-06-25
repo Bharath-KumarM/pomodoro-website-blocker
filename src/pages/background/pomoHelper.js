@@ -1,6 +1,51 @@
 import {calculateReminingTime, getDateString, getCurrentTime} from './helper'
 
 
+// * Background starts
+// Message Listener
+chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
+  // Request Types
+  const { pomoData, msg, getTabId } = request
+
+  if (getTabId){
+    sendResponse({tabId: sender.tab.id})
+    return null;
+  }
+
+  // Pomodoro Data
+  if (pomoData){
+    chrome.alarms.clear(
+      'pomodoro_alarm_id',
+      ()=>{
+        if (msg === 'start') handlePomoStart(pomoData)
+        if (msg  === 'pause') handlePomoPause(pomoData)
+        if (msg === 'reset') handlePomoReset()
+        if (msg === 'stop') handlePomoStop(pomoData)
+      }
+    )
+  }
+
+  return true
+});
+
+
+chrome.alarms.onAlarm.addListener(({name})=>{
+  if (name === 'pomodoro_alarm_id'){
+    chrome.storage.local.get('pomoData', ({pomoData})=>{
+      chrome.storage.local.set({pomoData: {
+        ...pomoData, 
+        mode: 'done'
+      }}, ()=>{
+        updatePomoHistory(pomoData)
+        chrome.runtime.sendMessage({pomoData: {...pomoData, mode: 'done'}})
+        pushNotification(pomoData)
+      })
+    })
+  }
+})
+
+// * Background Ends
+
 // Pomodoro Handle functions
 export function handlePomoStart(pomoData){
     const remainingTime = calculateReminingTime(pomoData)

@@ -5,7 +5,7 @@ import { ImCheckboxUnchecked as UncheckedIcon, ImCheckboxChecked as CheckedIcon 
 import { TbBarrierBlock } from "react-icons/tb"
 import { BiMemoryCard as SaveIcon } from "react-icons/bi"
 import { useEffect, useState } from 'react';
-import { getCurrTab, getRecnetSitesFromNoOfVisitsTracker } from '../../utilities/chrome-tools/chromeApiTools';
+import { getCurrTab, getRecentHostnames } from '../../utilities/chrome-tools/chromeApiTools';
 import { getHost } from '../../utilities/simpleTools';
 import { delLocalRestrictedSites, getLocalRestrictedSites, updateLocalRestrictedSites } from '../../localStorage/localRestrictedSites';
 
@@ -24,7 +24,7 @@ const RestrictedSites = ({setToastData})=>{
 
     useEffect(()=>{
         getRestrictedSites()
-        getRecnetSitesFromNoOfVisitsTracker(-10).then(tempRecentSites=>setRecentSites(tempRecentSites))
+        getRecentHostnames(-10).then(tempRecentSites=>setRecentSites(tempRecentSites))
     }, [])
 
     const restrictedSiteArr = restrictedSites ? Object.keys(restrictedSites).map(tempHostname=>tempHostname) : []

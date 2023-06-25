@@ -170,22 +170,35 @@ const FocusMode = ()=>{
                                 Resume now
                             </div>
                         }
-                        <div className='break-cnt flex-center'>
-                            <div className="info-icon-cnt">
-                                <BiInfoCircle />
-                            </div>
-                            <div className="desc">
-                                {   
-                                    !foucsModeBreakTimeDiff && !activeFocusScheduledIndexes.length ? 
-                                    `Focus mode is ON` :
-                                    !foucsModeBreakTimeDiff && activeFocusScheduledIndexes.length ?
-                                    `Scheduled focus is active now` :
-                                    activeFocusScheduledIndexes.length ? 
-                                    `Schedule resumes in ${foucsModeBreakTimeDiff} minutes` :
-                                    `Focus Mode resumes in ${foucsModeBreakTimeDiff} minutes`
-                                }
-                            </div>
-                        </div>
+                        {
+                            foucsModeBreakTimeDiff || activeFocusScheduledIndexes.length || isFocusModeOn ?
+                            <div className='break-cnt flex-center'>
+                                <div className="info-icon-cnt">
+                                    <BiInfoCircle />
+                                </div>
+                                <div className="desc">
+                                    {   
+                                        // take a break description
+                                        foucsModeBreakTimeDiff && activeFocusScheduledIndexes.length ?
+                                        `Schedule resumes in ${foucsModeBreakTimeDiff} minutes` :
+                                        foucsModeBreakTimeDiff && !activeFocusScheduledIndexes.length ?
+                                        `Focus Mode resumes in ${foucsModeBreakTimeDiff} minutes` :
+
+                                        // Focus active description
+                                        isFocusModeOn && activeFocusScheduledIndexes.length ?
+                                        `Focus mode & Schedule active` :
+                                        activeFocusScheduledIndexes.length ?
+                                        `Scheduled focus is active now` :
+                                        isFocusModeOn ?
+                                        'Focus mode is ON' :
+                                        
+                                        // Focus inactive description
+                                        null
+                                    }
+                                </div>
+                            </div> : 
+                            null
+                        }
                     </>
                 </div>
                 <div className="schedule-cnt">

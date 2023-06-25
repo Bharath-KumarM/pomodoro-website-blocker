@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import './SiteTimeLimitScreen.scss'
-import { getRecnetSitesFromNoOfVisitsTracker } from '../../utilities/chrome-tools/chromeApiTools'
+import { getRecentHostnames } from '../../utilities/chrome-tools/chromeApiTools'
 
 import { FaHourglass, FaRegHourglass, FaHourglassHalf } from "react-icons/fa";
 import { GrCircleInformation } from "react-icons/gr";
@@ -12,7 +12,7 @@ const SiteTimeLimitScreen = ({toastMsg, setClosePopup, showTimeLimitInput, scree
     
     const searchBarRef = useRef(null)
     useEffect(()=>{
-        getRecnetSitesFromNoOfVisitsTracker(-10).then((tempRecentSites)=>{
+        getRecentHostnames(-10).then((tempRecentSites)=>{
             setRecentSites(tempRecentSites)
             setRecentSitesbackUp(tempRecentSites)
         })
