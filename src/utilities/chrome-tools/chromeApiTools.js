@@ -1,7 +1,8 @@
 
 import { getLocalScreenTimeLimitByHostname } from "../../localStorage/localScreenTimeLimit"
+import { getLocalScreenTimeTracker, getLocalScreenTimeTrackerForDay } from "../../localStorage/localScreenTimeTracker"
+import { getLocalVisitTracker, getLocalVisitTrackerForDay } from "../../localStorage/localVisitTracker"
 import { getDateString } from "../date"
-import { getNoOfVisitsObjByDateRage } from "../noOfVisits"
 
 export async function getCurrTab(){
     let queryOptions = { active: true, lastFocusedWindow: true }
@@ -12,7 +13,7 @@ export async function getCurrTab(){
 
 
 export async function getIsScreenTimeSurpassedLimit(hostname){    
-    const timeLmitOfSite = await getLocalScreenTimeLimitByHostname()
+    const timeLmitOfSite = await getLocalScreenTimeLimitByHostname(hostname)
     if (!timeLmitOfSite) return false;
 
     const [hours, minutes] = timeLmitOfSite
@@ -30,6 +31,18 @@ export async function getIsScreenTimeSurpassedLimit(hostname){
 }
 
 export const getRecentHostnames = async (n=-3)=>{
-    const noOfVisitsObj = await getNoOfVisitsObjByDateRage( getDateString(n) )
-    return Object.keys(noOfVisitsObj)
+    /* todo: since visit tracker is recenly created, it may not have a lot of sites. So, for time being 
+       getLocalScreenTimeTrackerForDay used.
+    */
+
+    // const tracker = await getLocalVisitTracker()
+    const {screenTimeTracker: tracker} = await getLocalScreenTimeTracker()
+    
+    let trackerForNDays = {}
+    for ( let i=n; i<=0; i++ ){
+        const trackerForDay = tracker[ getDateString(i) ] ?? {}
+        trackerForNDays = { ...trackerForNDays, ...trackerForDay }
+    }
+
+    return Object.keys(trackerForNDays)
 }

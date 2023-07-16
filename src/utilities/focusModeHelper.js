@@ -4,9 +4,13 @@ import { getDayNumber } from "./date"
 // Helper function
 function setHours(dt, h) {
     var s = /(\d+):(\d+)(.+)/.exec(h);
-    dt.setHours(s[3] === "pm" ? 
-        12 + parseInt(s[1], 10) : 
-        parseInt(s[1], 10));
+    dt.setHours(
+            (s[3] === "am" && parseInt(s[1], 10) === 12) ?
+            0 :
+            s[3] === "pm" ? 
+            12 + parseInt(s[1], 10) : 
+            parseInt(s[1], 10)
+        );
     dt.setMinutes(parseInt(s[2],10));
     }
 
@@ -52,7 +56,7 @@ export async function getActiveFocusScheduledIndexes(){
 
       const startTimeObj = new Date();
       setHours(startTimeObj, `${parseInt(startHr)}:${parseInt(startMin)}${startAmPM}`)
-  
+ 
       const endTimeObj = new Date();
       setHours(endTimeObj, `${parseInt(endHr)}:${parseInt(endMin)}${endAmPM}`)
 

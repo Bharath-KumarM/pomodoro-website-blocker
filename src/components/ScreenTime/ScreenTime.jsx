@@ -1,19 +1,20 @@
 import Graph from './Graph';
 import "./ScreenTime.scss";
 
-import { AiFillCaretDown as DropDownIcon} from "react-icons/ai";
-import { FaHourglass, FaRegHourglass, FaHourglassHalf } from "react-icons/fa";
+import { FaHourglass, FaRegHourglass } from "react-icons/fa";
 import { AiOutlineLeft as LeftArrowIcon} from "react-icons/ai";
+import { GiHamburgerMenu } from "react-icons/gi";
+import { MdSettingsSuggest } from "react-icons/md";
 import { AiOutlineRight as RightArrowIcon} from "react-icons/ai";
 import { useEffect, useState } from 'react';
-import { getDateString, getDayNumber, getDayString, getFullDate, getHrMinString } from '../../utilities/date';
+import { getDateString, getDayNumber, getFullDate, getHrMinString } from '../../utilities/date';
 import { PopupFull, PopupToast } from '../../utilities/PopupScreens';
 import TimeLimitInput from './TimeLimitInput';
 import SiteTimeLimitScreen from './SitesTimeLimitScreen';
 
 import { getLocalScreenTimeLimit } from '../../localStorage/localScreenTimeLimit';
 import { getLocalScreenTimeTracker } from '../../localStorage/localScreenTimeTracker';
-import { getNoOfVisitsObjByDateRage } from '../../utilities/noOfVisits';
+import { getLocalVisitTrackerForDay } from '../../localStorage/localVisitTracker';
 
 
 
@@ -25,37 +26,36 @@ const ScreenTime = ()=>{
 
     const [showSitesTimeLimitScreen, setShowSitesTimeLimitScreen] = useState(false)
 
-    const [toastMsg, setToastMsg] = useState(null) //* Toast Message from bottom
+    const [toastData, setToastData] = useState([null, null]) //* Toast Message from bottom
 
     const [screenTimeLimit, setScreenTimeLimit] = useState(null)
 
-    const getInfo = async (day)=>{
-        let {screenTimeTracker} = await getLocalScreenTimeTracker()
+    useEffect(()=>{
+        const getInfo = async (day)=>{
+            let {screenTimeTracker} = await getLocalScreenTimeTracker()
 
-        const dateString = getDateString(day)
-        const fullDate = getFullDate(day)
-        
-        const dayNumOfWeek = getDayNumber(day)
-        const totalScreenTimeWeekly = []
+            const dateString = getDateString(day)
+            const fullDate = getFullDate(day)
+            
+            const dayNumOfWeek = getDayNumber(day)
+            const totalScreenTimeWeekly = []
 
-        // data for Graph
-        const weekStartDay = day-dayNumOfWeek
-        for (let i=weekStartDay; i<7+weekStartDay; i++){
-            const tempDateString = getDateString(i)
-            const tempScreenTimeTracker = screenTimeTracker[tempDateString]
-            const totalTimeSpentInSec = getTotalTimeFromTracker(tempScreenTimeTracker)
+            // data for Graph
+            const weekStartDay = day-dayNumOfWeek
+            for (let i=weekStartDay; i<7+weekStartDay; i++){
+                const tempDateString = getDateString(i)
+                const tempScreenTimeTracker = screenTimeTracker[tempDateString]
+                const totalTimeSpentInSec = getTotalTimeFromTracker(tempScreenTimeTracker)
 
-            totalScreenTimeWeekly.push(totalTimeSpentInSec)
+                totalScreenTimeWeekly.push(totalTimeSpentInSec)
+            }
+
+            const dayScreenTimeTracker = screenTimeTracker[dateString] ? screenTimeTracker[dateString] : {}
+            const dayNoOfVisitsTracker = await getLocalVisitTrackerForDay(dateString)
+
+            setScreenTimeData({dayScreenTimeTracker, fullDate, totalScreenTimeWeekly, dayNoOfVisitsTracker})
         }
 
-        const dayScreenTimeTracker = screenTimeTracker[dateString] ? screenTimeTracker[dateString] : null
-        const dayNoOfVisitsTracker = await getNoOfVisitsObjByDateRage(dateString)
-
-        setScreenTimeData({dayScreenTimeTracker, fullDate, totalScreenTimeWeekly, dayNoOfVisitsTracker})
-
-    }
-
-    useEffect(()=>{
         getInfo(day)
     },[day])
 
@@ -69,6 +69,8 @@ const ScreenTime = ()=>{
             getData()
         }
     }, [screenTimeLimit])
+
+    const [toastMsg, toastColorCode] = toastData
 
     if (screenTimeData===null) return (
         <h3 className='screen-time-cnt empty'>
@@ -84,14 +86,11 @@ const ScreenTime = ()=>{
 
     return (
         <>
-            <div className='floating-btn'
-                title='set screen time'
-                onClick={()=>{
-                    setShowSitesTimeLimitScreen(true)
-                }}
-            >
-                <FaHourglassHalf />
-            </div>
+            
+            {/* <FloatingBtn 
+                setShowSitesTimeLimitScreen={setShowSitesTimeLimitScreen}
+            /> */}
+
             <div className="screen-time-cnt">
 
                 {
@@ -99,7 +98,8 @@ const ScreenTime = ()=>{
                     <PopupToast 
                         key={'popup-toast'}
                         toastMsg={toastMsg}
-                        setToastMsg={setToastMsg}
+                        toastColorCode={toastColorCode}
+                        setToastData={setToastData}
                     /> : null
                 }
                 {
@@ -112,7 +112,7 @@ const ScreenTime = ()=>{
                         <TimeLimitInput 
                             showTimeLimitInput={showTimeLimitInput}
                             setShowTimeLimitInput={setShowTimeLimitInput}
-                            setToastMsg={setToastMsg}
+                            setToastData={setToastData}
                             setScreenTimeLimit={setScreenTimeLimit}
                         />
                     </PopupFull> :
@@ -134,6 +134,19 @@ const ScreenTime = ()=>{
                         />
                     </PopupFull> : null
                 }
+                <div className='set-screen-time-btn-cnt'
+                    onClick={()=>{
+
+                        setShowSitesTimeLimitScreen(true)
+                    }}
+                >
+                    <p className="icon">
+                        <MdSettingsSuggest />
+                    </p>
+                    <p className="desc">
+                        Set Screen Time Limit
+                    </p>
+                </div>
                 <div className="screen-time-details-cnt">
                     <h2 className="screen-time-detail">
                         {totalTimeSpentDesc ? totalTimeSpentDesc : '0 minutes'}
@@ -176,16 +189,17 @@ const ScreenTime = ()=>{
                             dayNoOfVisitsTracker={dayNoOfVisitsTracker}
                             setShowTimeLimitInput={setShowTimeLimitInput}
                             screenTimeLimit={screenTimeLimit}
+                            setToastData={setToastData}
                         />
                     </ul>
                 </div>
-
             </div>
+
         </>
     )
 }
 
-const SiteList = ({dayScreenTimeTracker, dayNoOfVisitsTracker, setShowTimeLimitInput, screenTimeLimit})=>{
+const SiteList = ({dayScreenTimeTracker, dayNoOfVisitsTracker, setShowTimeLimitInput, screenTimeLimit, setToastData})=>{
     const dayScreenTimeTrackerArr = Object.entries(dayScreenTimeTracker)
     
     if (dayScreenTimeTrackerArr.length < 1){
@@ -219,6 +233,7 @@ const SiteList = ({dayScreenTimeTracker, dayNoOfVisitsTracker, setShowTimeLimitI
                 <div 
                     className="time-limit-cnt"
                     onClick={()=>{
+                        setToastData([null, null])
                         setShowTimeLimitInput(site)
                     }}
                 
@@ -253,6 +268,18 @@ const SiteList = ({dayScreenTimeTracker, dayNoOfVisitsTracker, setShowTimeLimitI
 }
 export default ScreenTime
 
+function FloatingBtn({setShowSitesTimeLimitScreen}){
+    return (
+        <div className='floating-btn'
+            title='set screen time'
+            onClick={()=>{
+                setShowSitesTimeLimitScreen(true)
+            }}
+        >
+            <GiHamburgerMenu />
+        </div>
+    )
+}
 
 const getDayAgo = (day)=>{
     if (day > 1) return `${day} days from today`

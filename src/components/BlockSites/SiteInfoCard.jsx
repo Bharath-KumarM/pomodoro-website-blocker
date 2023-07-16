@@ -4,7 +4,7 @@ import { IoMdSwap as  SwapIcon} from "react-icons/io"
 import { useEffect, useState } from "react"
 import { getDateString } from "../../utilities/date"
 import { getLocalScreenTimeTrackerForDayByHostname } from "../../localStorage/localScreenTimeTracker"
-import { getNoOfVisitsByHostname } from "../../utilities/noOfVisits"
+import { getLocalVisitTrackerForDayByHostname } from "../../localStorage/localVisitTracker"
 
 
 
@@ -14,10 +14,8 @@ const SiteInfoCard = ({hostname}) =>{
 
     const getInfo = async ()=>{
         const dateString = getDateString(0)
-
-        // ! Debug for visits 
-        const  noOfVisit = await getNoOfVisitsByHostname(hostname)
-
+    
+        const noOfVisit = await getLocalVisitTrackerForDayByHostname(hostname, dateString)
         const screenTimeInMinutes = await getLocalScreenTimeTrackerForDayByHostname(dateString, hostname)
         
         setScreenTime(screenTimeInMinutes)

@@ -43,29 +43,8 @@
                 
                 &.focused{
                     background-color: $accent-bg-dark-color1;
-                    // box-shadow: 0 0 20px -10px rgb(0, 255, 230);
-                    animation: glow 1s ease infinite;
+                    box-shadow: 0 0 15px -2px $accent-bg-bright-color2;
                 }
-
-                @keyframes glow {
-                    0%{
-                        box-shadow: 0 0 20px -7px rgb(0, 255, 230);
-                    }
-                    25%{
-                        box-shadow: 0 0 10px -7px rgb(0, 255, 230);
-                    }
-                    50%{
-                        box-shadow: 0 0 5px -7px rgb(0, 255, 230);
-                    }
-                    75%{
-                        box-shadow: 0 0 10px -7px rgb(0, 255, 230);
-                    }
-                    100%{
-                        box-shadow: 0 0 20px -7px rgb(0, 255, 230);
-                    }
-                }
-
-                
             }
     
             .resume-cnt{
@@ -168,6 +147,15 @@
                     &:hover{
                         background-color: $bg-color4;
                     }
+                    &.active{
+                        animation: glow2 1s ease-in-out infinite;
+                    }
+                }
+
+                @keyframes glow2 {
+                    50%{
+                        box-shadow: 0 0 10px -2px $bg-color7;
+                    }
                 }
                 .schedule-item.compact{
                     display: flex;
@@ -207,7 +195,7 @@
                                 justify-content: center;
                                 align-items: center;
                         
-                                padding: 5px;
+                                // padding: 5px;
                         
                                 background-color: $font-green1;
                                 border-radius: 100%;

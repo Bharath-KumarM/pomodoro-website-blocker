@@ -85,7 +85,7 @@ const RestrictedSites = ({setToastData})=>{
             </div>
         }
         <h3 className='site-table-heading more sticky'>
-            More sites to restrict
+            Recent sites to restrict
         </h3>
         {
             recentSites.length > 0 ? 

@@ -6,11 +6,13 @@ import { delLocalRestrictedScreenDataByTabId, updateLocalRestrictedScreenDataByT
 import { delLocalTimeLimitScreenDataByTabId, updateLocalTimeLimitScreenDataByTab } from '../../localStorage/localTimeLimitScreenData'
 
 import {checkLocalBlockedSitesByHostname} from '../../localStorage/localBlockedSites'
-import { getLocalRestrictedSites } from '../../localStorage/localRestrictedSites'
+import { checkLocalRestrictedSitesByHostname } from '../../localStorage/localRestrictedSites'
 import { getLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker'
 import { getLocalTakeABreakTrackerforRestrict, turnOffLocalTakeABreakTrackerforRestrict } from '../../localStorage/localTakeABreakTrackerforRestrict'
 import { handleOnInstallEvent } from './installEvents'
 import { handleOnStartUpEvent } from './onStartupEvents'
+import { checkLocalVisitTabIdTrackerNewSession, delLocalVisitTabIdTracker } from '../../localStorage/localVisitTrackerTabId'
+import { incrementLocalVisitTracker } from '../../localStorage/localVisitTracker'
 
 console.log('Script running from background!!!')
 
@@ -27,6 +29,44 @@ chrome.storage.local.get('BGtimeLog', ({BGtimeLog})=>{
 
 })
 
+//* On Install or Update event or reloaded the package
+chrome.runtime.onInstalled.addListener(({id, previousVersion, reason})=>{
+  handleOnInstallEvent()
+
+  // reason = 'install' || 'update' || 'chrome_update' || 'shared_module_update'
+
+  console.log(`onInstalled reason ${reason}`, Date ().toLocaleString())
+  
+})
+
+// * Handles new session opened
+chrome.runtime.onStartup.addListener(()=>{
+  handleOnStartUpEvent()
+  console.log(`Onstartup reason`, Date ().toLocaleString())
+})
+
+//* Handle messages from  runtime
+chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
+  // Request Types
+  
+  const { 
+      msg, 
+      getTabId,
+      checkCurrentTabAudible
+     } = request
+
+  if (getTabId){
+    sendResponse({tabId: sender.tab.id})
+  }
+
+  if (checkCurrentTabAudible){
+    sendResponse({audible: sender.tab.audible})
+  }
+
+  return true;
+})
+
+//* Handles alarm
 chrome.alarms.onAlarm.addListener(({name})=>{
   // Take A Break alarm ends for restricting sites
   if (name.startsWith('takeABreakForRestrict')){
@@ -34,6 +74,53 @@ chrome.alarms.onAlarm.addListener(({name})=>{
   }
 })
 
+//* Handles URL updates
+chrome.webNavigation.onBeforeNavigate.addListener( async (details)=>{
+    const {tabId, url} = details
+    handleUrlUpdate({tabId, url})
+  }, 
+  {url: [
+    {urlPrefix: 'http'},
+  ]}
+)
+chrome.tabs.onUpdated.addListener( async ( tabId, {url, audible}, tab )=>{
+  if (audible !== undefined){
+    
+    handleAudibleUpdate({tabId, url: tab.url, audible})
+  }
+  if (url){
+    handleUrlUpdateForVisitCount({tabId, url})
+    handleUrlUpdate({tabId, url})
+  }
+})
+
+// *Handles Tab closes
+chrome.tabs.onRemoved.addListener( async (tabId, removeInfo)=>{
+    delLocalVisitTabIdTracker(tabId)
+    delLocalBlockedScreenDataByTabId(tabId)
+    delLocalRestrictedScreenDataByTabId(tabId)
+    delLocalTimeLimitScreenDataByTabId(tabId)
+  })
+
+// Helper functions
+async function handleAudibleUpdate({tabId, url, audible}){
+  const response = await chrome.tabs.sendMessage(tabId, {audible});
+
+}
+async function handleUrlUpdateForVisitCount({tabId, url}){
+  // handle new site 
+  if (!url || !url.startsWith('http')) return;
+  
+  const hostname = new URL(url).hostname;
+  const favIconUrl = `http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`;
+  
+  const isNewSession = await checkLocalVisitTabIdTrackerNewSession(tabId, hostname)
+  if (!isNewSession){
+    return null;
+  }
+
+  const incrementCount = await incrementLocalVisitTracker(hostname)
+}
 async function handleUrlUpdate({tabId, url}){
 
   // handle new site 
@@ -51,12 +138,12 @@ async function handleUrlUpdate({tabId, url}){
 
   //* Focus mode & Restriction site load handeling
   const {focusModeTracker} = await getLocalFocusModeTracker()
-  const {restrictedSites} = await getLocalRestrictedSites()
+  const isRestricted = await checkLocalRestrictedSitesByHostname(hostname)
   const isCurrTimeFocusScheduled = await checkFocusScheduleActive()
   const {takeABreakTrackerforRestrict} = await getLocalTakeABreakTrackerforRestrict()
 
 
-  if ((restrictedSites[hostname] && !takeABreakTrackerforRestrict) && (focusModeTracker || isCurrTimeFocusScheduled)){
+  if ((isRestricted && !takeABreakTrackerforRestrict) && (focusModeTracker || isCurrTimeFocusScheduled)){
     await updateLocalRestrictedScreenDataByTab(tabId, [hostname, favIconUrl, url])
     return null;
   }
@@ -68,46 +155,6 @@ async function handleUrlUpdate({tabId, url}){
     return null;
   }
 }
-
-
-chrome.webNavigation.onBeforeNavigate.addListener(async (details)=>{
-  const {tabId, url} = details
-  handleUrlUpdate({tabId, url})
-}, 
-{url: [
-  {urlPrefix: 'http'},
-]}
-)
-
-chrome.tabs.onUpdated.addListener( async (tabId, {url}, tab)=>{
-  handleUrlUpdate({tabId, url})
-})
-
-
-
-// *Handles Tab Remove
-chrome.tabs.onRemoved.addListener( async (tabId, removeInfo)=>{
-    delLocalBlockedScreenDataByTabId(tabId)
-    delLocalRestrictedScreenDataByTabId(tabId)
-    delLocalTimeLimitScreenDataByTabId(tabId)
-  })
-
-// On Install or Update event or reloaded the package
-chrome.runtime.onInstalled.addListener(({id, previousVersion, reason})=>{
-  handleOnInstallEvent()
-
-  // reason = 'install' || 'update' || 'chrome_update' || 'shared_module_update'
-
-  console.log(`onInstalled reason ${reason}`, Date ().toLocaleString())
-  
-})
-
-// * Handles new session opened
-chrome.runtime.onStartup.addListener(()=>{
-  handleOnStartUpEvent()
-  console.log(`Onstartup reason`, Date ().toLocaleString())
-})
-
 
 
 

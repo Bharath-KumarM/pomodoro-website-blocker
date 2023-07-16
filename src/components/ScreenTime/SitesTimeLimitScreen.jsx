@@ -74,7 +74,7 @@ const SiteTimeLimitScreen = ({toastMsg, setClosePopup, showTimeLimitInput, scree
                         <GrCircleInformation />
                     </span>
                     <span className='header'>
-                        Suggesting recently visited sites
+                        Recently visited sites
                     </span>
                 </li>
                 {

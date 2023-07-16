@@ -35,10 +35,12 @@ export const delLocalTimeLimitScreenDataByTabId = async (tabId)=>{
     const {timeLimitScreenData} = await getLocalTimeLimitScreenData();
     
     // Delete
-    if (timeLimitScreenData[tabId]) isValidDelete = true;
-
-    delete timeLimitScreenData[tabId];
-    await setLocalTimeLimitScreenData(timeLimitScreenData);
+    if (timeLimitScreenData[tabId]) {
+        delete timeLimitScreenData[tabId];
+        await setLocalTimeLimitScreenData(timeLimitScreenData);
+        
+        isValidDelete = true;
+    }
 
     return isValidDelete;
 }

@@ -16,6 +16,11 @@ export const getLocalScreenTimeTrackerForDayByHostname = async (dateString, host
 
     return Math.round(screenTimeTracker?.[dateString]?.[hostname] ?? 0);
 }
+export const getLocalScreenTimeTrackerForDay = async (dateString, hostname)=>{
+    const {screenTimeTracker} = await getLocalScreenTimeTracker()
+
+    return screenTimeTracker?.[dateString] ?? {};
+}
 
 export const setLocalScreenTimeTracker = async (screenTimeTracker)=>{
     return await chrome.storage.local.set({screenTimeTracker})

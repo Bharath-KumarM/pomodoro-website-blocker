@@ -36,10 +36,12 @@ export const delLocalRestrictedScreenDataByTabId = async (tabId)=>{
     const {restrictedScreenData} = await getLocalRestrictedScreenData();
     
     // Delete
-    if (restrictedScreenData[tabId]) isValidDelete = true;
-
-    delete restrictedScreenData[tabId];
-    await setLocalRestrictedScreenData(restrictedScreenData);
+    if (restrictedScreenData[tabId]) {
+        delete restrictedScreenData[tabId];
+        await setLocalRestrictedScreenData(restrictedScreenData);
+        
+        isValidDelete = true;
+    }
 
     return isValidDelete;
 }

@@ -145,9 +145,9 @@ const FocusMode = ()=>{
                         onClick={()=>handleFocusModeBtnClick()}
                     >
                         {
-                            foucsModeBreakTimeDiff ? "You took a break"  :
-                            isFocusModeOn === false ? 'Start Focus Mode': 
-                            isFocusModeOn === true ? 'Stop focusing' :
+                            foucsModeBreakTimeDiff ? "💤You took a break"  :
+                            isFocusModeOn === false ? '✨Start focusing': 
+                            isFocusModeOn === true ? '🚫Stop focusing' :
                             'Loading'
                         }
                     </button>
@@ -167,7 +167,7 @@ const FocusMode = ()=>{
                                     setFoucsModeBreakTimeDiff(false)
                                 }}
                             >
-                                Resume now
+                                Resume focus now
                             </div>
                         }
                         {
@@ -267,7 +267,7 @@ const ScheduleItem = ({scheduleItemData, index, getScheduleData, setEditTimeInpu
     }
 
     return (
-        <div className="schedule-item compact"
+        <div className={`schedule-item compact ${isScheduleItemAtive ? 'active' : ''}`}
             title='Edit Schedule'
             onClick={()=>{
                 setEditTimeInputIndex(index)

@@ -30,7 +30,7 @@ const BlockedScreen = ()=>{
     const [blockedSiteData, setBlockedSiteData] = useState(null)
     const [count, setCount] = useState(30)
 
-    const [hostname, favIcon] = blockedSiteData ? blockedSiteData : [null, null]
+    const [hostname, favIcon, url] = blockedSiteData ? blockedSiteData : [null, null]
     
     const handleCompountMounted = async () =>{
         
@@ -60,7 +60,7 @@ const BlockedScreen = ()=>{
         link.href = tempFavIcon;
         document.title = `${tempHostname} - 🚫Blocked`
 
-        setBlockedSiteData([tempHostname, tempFavIcon])
+        setBlockedSiteData([tempHostname, tempFavIcon, tempUrl])
     }
     
     useEffect(()=>{
@@ -75,7 +75,9 @@ const BlockedScreen = ()=>{
 
     const handleUnblockBtnClick = async ()=>{
         const isSiteUnblocked = await delLocalBlockedSites(hostname)
-        location.reload()
+        if(isSiteUnblocked){
+            chrome.tabs.update(tabId, {url})
+        }
     }
     if (count < -60){
         chrome.tabs.getCurrent(function(tab) {

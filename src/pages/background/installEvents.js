@@ -8,6 +8,8 @@ import { initializeLocalScreenTimeLimit } from "../../localStorage/localScreenTi
 import { initializeLocalScreenTimeTracker } from "../../localStorage/localScreenTimeTracker"
 import { initializeLocalTakeABreakTrackerforRestrict } from "../../localStorage/localTakeABreakTrackerforRestrict"
 import { initializeLocalTimeLimitScreenData } from "../../localStorage/localTimeLimitScreenData"
+import { initializeLocalVisitTracker } from "../../localStorage/localVisitTracker"
+import { initializeLocalVisitTabIdTracker } from "../../localStorage/localVisitTrackerTabId"
 
 export async function handleOnInstallEvent (){
     localStorageInitialize()
@@ -29,6 +31,8 @@ export async function localStorageInitialize (){
     initializeLocalScreenTimeLimit()
     initializeLocalScreenTimeTracker()
     initializeLocalTimeLimitScreenData()
+    initializeLocalVisitTracker()
+    initializeLocalVisitTabIdTracker()
   
     // Schedule & takeAbreakforRestrict
     initializeLocalScheduleData()

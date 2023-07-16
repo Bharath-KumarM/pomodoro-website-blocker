@@ -35,10 +35,11 @@ export const delLocalBlockedScreenDataByTabId = async (tabId)=>{
     const {blockedScreenData} = await getLocalBlockedScreenData();
     
     // Delete
-    if (blockedScreenData[tabId]) isValidDelete = true;
-
-    delete blockedScreenData[tabId];
-    await setLocalBlockedScreenData(blockedScreenData);
+    if (blockedScreenData[tabId]) {
+        delete blockedScreenData[tabId];
+        await setLocalBlockedScreenData(blockedScreenData);
+        isValidDelete = true
+    }
 
     return isValidDelete;
 }

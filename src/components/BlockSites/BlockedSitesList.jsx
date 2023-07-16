@@ -96,7 +96,7 @@ const BlockedSitesList = ({setToastData}) => {
             </div>
         }
         <h3 className='site-table-heading more sticky'>
-            More sites to block
+            Recent sites to block
         </h3>
         {
             recentSites.length > 0 ? 
