@@ -1,4 +1,4 @@
-import { getIsScreenTimeSurpassedLimit } from "../utilities/chrome-tools/chromeApiTools"
+import { checkScreenTimeSurpassedLimit } from "../utilities/chrome-tools/chromeApiTools"
 import { refreshAllTabsByHostname, refreshAllTimeLimitScreenTabs } from "../utilities/chrome-tools/refreshTabs"
 
 // *screenTimeLimit
@@ -27,7 +27,7 @@ export const updateLocalScreenTimeLimit = async (hostname, timeLimit)=>{
     screenTimeLimit[hostname] =  timeLimit
     await setLocalScreenTimeLimit(screenTimeLimit)
 
-    const isScreenTimeSurpassedLimit = await getIsScreenTimeSurpassedLimit(hostname)
+    const isScreenTimeSurpassedLimit = await checkScreenTimeSurpassedLimit(hostname)
     if (isScreenTimeSurpassedLimit){
         refreshAllTabsByHostname(hostname)
     }

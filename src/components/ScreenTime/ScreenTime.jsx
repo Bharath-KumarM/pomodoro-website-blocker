@@ -219,6 +219,10 @@ const SiteList = ({dayScreenTimeTracker, dayNoOfVisitsTracker, setShowTimeLimitI
     const siteListArr = []
     for (const [site, minutesSpent] of dayScreenTimeTrackerArr){
         const visitTimesDesc = dayNoOfVisitsTracker[site] ? `• ${dayNoOfVisitsTracker[site]} visits` : ''
+
+        const [screenTimeLimitHrs, screenTimeLimitMinutes] = screenTimeLimit?.[site] ?? [0, 0]
+        const isTimeLimitExceeded = screenTimeLimit?.[site] && minutesSpent > ((screenTimeLimitHrs*60) + screenTimeLimitMinutes)
+
         const item = (
             <li className='site-list-item'
                 key={site}
@@ -238,7 +242,7 @@ const SiteList = ({dayScreenTimeTracker, dayNoOfVisitsTracker, setShowTimeLimitI
                     }}
                 
                 >
-                    <div className="time-limit-inner-cnt">
+                    <div className={`time-limit-inner-cnt ${isTimeLimitExceeded ? 'time-limit-exceeded' : ''}`}>
                         {
                             screenTimeLimit?.[site] ?
                             <FaHourglass /> :
@@ -246,7 +250,7 @@ const SiteList = ({dayScreenTimeTracker, dayNoOfVisitsTracker, setShowTimeLimitI
                         }
                         {   
                             screenTimeLimit?.[site] ?
-                            <div className="time-limit-text">
+                            <div className={`time-limit-text`}>
                                 {
                                     getTimeShowText(screenTimeLimit[site])
                                 }

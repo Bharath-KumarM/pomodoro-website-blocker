@@ -79,6 +79,7 @@ const SiteTimeLimitScreen = ({toastMsg, setClosePopup, showTimeLimitInput, scree
                 </li>
                 {
                     recentSitesWithScreenTime.map(([hostname, timeLimit])=>{
+                        
                         return (
                             <li className='site-item'>
                                 <div className="cnt">

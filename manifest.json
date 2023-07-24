@@ -34,7 +34,10 @@
     }
   ],
   "icons": {
-    "16": "logo_1.png"
+    "16": "logo_3.png",
+    "32": "logo_3.png",
+    "48": "logo_3.png",
+    "128": "logo_3.png"
   }
 
 }

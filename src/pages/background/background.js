@@ -1,4 +1,4 @@
-import { getIsScreenTimeSurpassedLimit } from '../../utilities/chrome-tools/chromeApiTools'
+import { checkScreenTimeSurpassedLimit } from '../../utilities/chrome-tools/chromeApiTools'
 import { checkFocusScheduleActive } from '../../utilities/focusModeHelper'
 
 import { delLocalBlockedScreenDataByTabId, updateLocalBlockedScreenDataByTab } from '../../localStorage/localBlockedScreenData'
@@ -13,8 +13,12 @@ import { handleOnInstallEvent } from './installEvents'
 import { handleOnStartUpEvent } from './onStartupEvents'
 import { checkLocalVisitTabIdTrackerNewSession, delLocalVisitTabIdTracker } from '../../localStorage/localVisitTrackerTabId'
 import { incrementLocalVisitTracker } from '../../localStorage/localVisitTracker'
+import { handleUpdateBadgeIcon } from './helper'
+
 
 console.log('Script running from background!!!')
+
+chrome.action.setBadgeBackgroundColor({ color: [175, 227, 255, 255] });
 
 // Runtime Log 
 chrome.storage.local.get('BGtimeLog', ({BGtimeLog})=>{
@@ -35,7 +39,7 @@ chrome.runtime.onInstalled.addListener(({id, previousVersion, reason})=>{
 
   // reason = 'install' || 'update' || 'chrome_update' || 'shared_module_update'
 
-  console.log(`onInstalled reason ${reason}`, Date ().toLocaleString())
+  console.log(`onInstalled reason: ${reason}`, Date ().toLocaleString())
   
 })
 
@@ -52,7 +56,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
   const { 
       msg, 
       getTabId,
-      checkCurrentTabAudible
+      checkCurrentTabAudible,
+      updateBadgeIcon
      } = request
 
   if (getTabId){
@@ -61,6 +66,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
 
   if (checkCurrentTabAudible){
     sendResponse({audible: sender.tab.audible})
+  }
+
+  if (updateBadgeIcon){
+    const {hostname} = updateBadgeIcon
+    const tabId = sender.tab.id
+
+    handleUpdateBadgeIcon({tabId, hostname}).then(isBadgeUpdated=>{
+      sendResponse({isBadgeUpdated})
+    })
+    
   }
 
   return true;
@@ -104,7 +119,7 @@ chrome.tabs.onRemoved.addListener( async (tabId, removeInfo)=>{
 
 // Helper functions
 async function handleAudibleUpdate({tabId, url, audible}){
-  const response = await chrome.tabs.sendMessage(tabId, {audible});
+  const response = await chrome.tabs.sendMessage(tabId, {audibleInfo: {audible}});
 
 }
 async function handleUrlUpdateForVisitCount({tabId, url}){
@@ -149,14 +164,11 @@ async function handleUrlUpdate({tabId, url}){
   }
 
   // * Time Limit
-  const isScreenTimeSurpassedLimit = await getIsScreenTimeSurpassedLimit(hostname)
+  const isScreenTimeSurpassedLimit = await checkScreenTimeSurpassedLimit(hostname)
   if (isScreenTimeSurpassedLimit){
     await updateLocalTimeLimitScreenDataByTab(tabId, [hostname, favIconUrl, url])
     return null;
   }
 }
-
-
-
 
 

@@ -8,6 +8,8 @@ import {
     checkLocalBlockedSitesByHostname, 
     delLocalBlockedSites
 } from '../../localStorage/localBlockedSites'
+import { NavBarInScreen } from '../../utilities/NavBarInScreen';
+import { EndNoteInScreen } from '../../utilities/EndNoteInScreen';
 
 
 const countDownMsg = [
@@ -29,10 +31,38 @@ const countDownMsg = [
 const BlockedScreen = ()=>{
     const [blockedSiteData, setBlockedSiteData] = useState(null)
     const [count, setCount] = useState(30)
-
     const [hostname, favIcon, url] = blockedSiteData ? blockedSiteData : [null, null]
     
-    const handleCompountMounted = async () =>{
+    useEffect(()=>{
+        handleCompountMounted()
+    }, [])
+
+    useEffect(()=>{
+        handleCountUpdate()
+
+        return ()=>{
+            clearTimeout(countTimierID)
+        }
+    }, [count])
+
+    let countTimierID
+    const isUnblockBtnActive = count <= 0
+
+    if (count < -60){
+        chrome.tabs.getCurrent(function(tab) {
+            chrome.tabs.remove(tab.id, function() { 
+                console.log('close the tab')
+            });
+        });
+    }
+
+    function handleCountUpdate(){
+        countTimierID = setTimeout(()=>{
+            setCount((prevCount)=>prevCount-1)
+        }, 1000)
+    }
+
+    async function handleCompountMounted(){
         
         const {tabId} = await chrome.runtime.sendMessage({getTabId: true})
         const blockedScreenDataOfCurrTab = await getLocalBlockedScreenDataByTabId(tabId)
@@ -62,24 +92,17 @@ const BlockedScreen = ()=>{
 
         setBlockedSiteData([tempHostname, tempFavIcon, tempUrl])
     }
-    
-    useEffect(()=>{
-        handleCompountMounted()
-    }, [])
 
-    useEffect(()=>{
-        setTimeout(()=>{
-            setCount((prevCount)=>prevCount-1)
-        }, 1000)
-    }, [count])
-
-    const handleUnblockBtnClick = async ()=>{
+    async function handleUnblockBtnClick(){
         const isSiteUnblocked = await delLocalBlockedSites(hostname)
         if(isSiteUnblocked){
             chrome.tabs.update(tabId, {url})
         }
     }
-    if (count < -60){
+
+
+
+    function handleCloseTabBtnClick(){
         chrome.tabs.getCurrent(function(tab) {
             chrome.tabs.remove(tab.id, function() { 
                 console.log('close the tab')
@@ -87,15 +110,9 @@ const BlockedScreen = ()=>{
         });
     }
 
-    const handleCloseTabBtnClick = ()=>{
-        chrome.tabs.getCurrent(function(tab) {
-            chrome.tabs.remove(tab.id, function() { 
-                console.log('close the tab')
-            });
-        });
-    }
     return (
     <div className='blocked-scrn-cnt'>
+        <NavBarInScreen />
         <div className="heading">
             <h2>
                 This site has been blocked by you
@@ -126,26 +143,18 @@ const BlockedScreen = ()=>{
                         </button>
                     </div>
                     {
-                        count <= 0 ? 
                         <button 
-                            className='btn unblock'
-                            onClick={()=>handleUnblockBtnClick()}
+                            className={`btn unblock ${isUnblockBtnActive ? 'active': 'not-active'}`}
+                            onClick={()=>{
+                                if (!isUnblockBtnActive) {
+                                    return null;
+                                }
+
+                                handleUnblockBtnClick()
+                            }}
                         >
-                            Unblock this site
-                        </button> :
-                        <>
-                                                    {
-                            count < 25 ?
-                            <h2>
-                                {`Wait for ${count} sec to unblock...`}
-                            </h2> : null
-                        }
-                        </>
-                        // !motivation message
-                        // countDownMsg[30-count] ? 
-                        // <h2>
-                        //     {countDownMsg[30-count]}
-                        // </h2> : 
+                            {`Unblock this site ${isUnblockBtnActive ? '' : `(${count})`}`}
+                        </button> 
                     }
                     {
                         count < -50 ? 
@@ -159,6 +168,7 @@ const BlockedScreen = ()=>{
 
             }
         </div>
+        <EndNoteInScreen />
     </div>
     )
 }

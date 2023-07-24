@@ -1,0 +1,43 @@
+@import '../../utilities/variables';
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@900&display=swap');
+
+.welcome-scrn-cnt{
+    font-family: 'Rubik', sans-serif;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+
+    background-color: $bg-color2;
+
+    color: $font-color0;
+
+    .welcome-scrn-inner-cnt{
+        width: 700px;
+
+        display: flex;
+        flex-direction: column;
+
+        gap: 20px;
+
+        img.extention-icon{
+            width: 90px;
+            height: 90px;
+            align-self: center;
+        }
+
+        .main-heading{
+            margin-bottom: 25px;
+        }
+
+        .para{
+            font-size: 18px;
+        }
+
+    }
+    
+}

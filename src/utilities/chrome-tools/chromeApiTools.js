@@ -1,7 +1,6 @@
 
 import { getLocalScreenTimeLimitByHostname } from "../../localStorage/localScreenTimeLimit"
 import { getLocalScreenTimeTracker, getLocalScreenTimeTrackerForDay } from "../../localStorage/localScreenTimeTracker"
-import { getLocalVisitTracker, getLocalVisitTrackerForDay } from "../../localStorage/localVisitTracker"
 import { getDateString } from "../date"
 
 export async function getCurrTab(){
@@ -12,7 +11,7 @@ export async function getCurrTab(){
 }
 
 
-export async function getIsScreenTimeSurpassedLimit(hostname){    
+export async function checkScreenTimeSurpassedLimit(hostname){    
     const timeLmitOfSite = await getLocalScreenTimeLimitByHostname(hostname)
     if (!timeLmitOfSite) return false;
 

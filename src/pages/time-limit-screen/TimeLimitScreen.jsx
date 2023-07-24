@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { MdOutlineArrowDropDown as DropDownIcon} from 'react-icons/md';
 import './TimeLimitScreen.scss';
-import { getIsScreenTimeSurpassedLimit } from '../../utilities/chrome-tools/chromeApiTools';
+import { checkScreenTimeSurpassedLimit } from '../../utilities/chrome-tools/chromeApiTools';
 
 import { getLocalTimeLimitScreenDataByTabId } from '../../localStorage/localTimeLimitScreenData'
 import { delLocalScreenTimeLimit } from '../../localStorage/localScreenTimeLimit';
+import { NavBarInScreen } from '../../utilities/NavBarInScreen';
+import { EndNoteInScreen } from '../../utilities/EndNoteInScreen';
 
 
 
@@ -28,10 +30,39 @@ const countDownMsg = [
 const TimeLimitScreen = ()=>{
     const [currSiteData, setCurrSiteData] = useState(null)
     const [count, setCount] = useState(30)
-
     const [hostname, favIcon] = currSiteData ? currSiteData : [null, null]
     
-    const handleCompountMounted = async () =>{        
+    useEffect(()=>{
+        handleCompountMounted()
+    }, [])
+
+    useEffect(()=>{
+        handleCountUpdate()
+
+        return ()=>{
+            clearTimeout(countTimierID)
+        }
+    }, [count])
+
+    let countTimierID
+    const isRemoveTimeLimitBtnActive = count <= 0
+
+    // *To automatically close tab
+    if (count < -60){
+        chrome.tabs.getCurrent(function(tab) {
+            chrome.tabs.remove(tab.id, function() { 
+                console.log('close the tab')
+            });
+        });
+    }
+
+    function handleCountUpdate(){
+        countTimierID = setTimeout(()=>{
+            setCount((prevCount)=>prevCount-1)
+        }, 1000)
+    }
+
+    async function handleCompountMounted(){        
         const {tabId} = await chrome.runtime.sendMessage({getTabId: true})
 
         const currTabTimeLimitScreenData = await getLocalTimeLimitScreenDataByTabId(tabId)
@@ -44,7 +75,7 @@ const TimeLimitScreen = ()=>{
 
         
         // * checks whether timi limit increased or removed
-        const isScreenTimeSurpassedLimit = await getIsScreenTimeSurpassedLimit(tempHostname)
+        const isScreenTimeSurpassedLimit = await checkScreenTimeSurpassedLimit(tempHostname)
 
         if (!isScreenTimeSurpassedLimit){
             chrome.tabs.update(tabId, {url: tempUrl}); 
@@ -63,19 +94,8 @@ const TimeLimitScreen = ()=>{
 
         setCurrSiteData([tempHostname, tempFavIcon])
     }
-    
-    useEffect(()=>{
-        handleCompountMounted()
-    }, [])
 
-    useEffect(()=>{
-        setTimeout(()=>{
-            setCount((prevCount)=>prevCount-1)
-        }, 1000)
-    }, [count])
-
-    // *To automatically close tab
-    if (count < -60){
+    function handleCloseTabBtnClick(){
         chrome.tabs.getCurrent(function(tab) {
             chrome.tabs.remove(tab.id, function() { 
                 console.log('close the tab')
@@ -83,19 +103,13 @@ const TimeLimitScreen = ()=>{
         });
     }
 
-    const handleCloseTabBtnClick = ()=>{
-        chrome.tabs.getCurrent(function(tab) {
-            chrome.tabs.remove(tab.id, function() { 
-                console.log('close the tab')
-            });
-        });
-    }
-
-    const handleUnpauseSite = async ()=>{
+    async function handleUnpauseSite() {
         const isTimeLimitDeleted = await delLocalScreenTimeLimit(hostname)
     }
+
     return (
     <div className='blocked-scrn-cnt'>
+        <NavBarInScreen />
         <div className="heading">
             <h2>
                 You have exceeded the daily time limit
@@ -126,26 +140,17 @@ const TimeLimitScreen = ()=>{
                         </button>
                     </div>
                     {
-                        count <= 0 ? 
                         <button 
-                            className='btn remove-time-limit'
-                            onClick={()=>handleUnpauseSite()}
+                            className={`btn remove-time-limit ${isRemoveTimeLimitBtnActive ? 'active': 'not-active'}`}
+                            onClick={()=>{
+                                if (!isRemoveTimeLimitBtnActive) {
+                                    return null;
+                                }
+                                handleUnpauseSite()
+                            }}
                         >
-                            Remove Time Limit
-                        </button> :
-                        // !motivation message, maybe added later
-                        // countDownMsg[30-count] ? 
-                        // <h2>
-                        //     {countDownMsg[30-count]}
-                        // </h2> : 
-                        <>
-                            {
-                                count < 25 ?
-                                <h2>
-                                    {`Wait for ${count} sec to remove time limit...`}
-                                </h2> : null
-                            }
-                        </>
+                            {`Remove Time Limit ${isRemoveTimeLimitBtnActive ? '' : `(${count})`}`}
+                        </button>
                     }
                     {
                         count < -50 ? 
@@ -159,6 +164,7 @@ const TimeLimitScreen = ()=>{
 
             }
         </div>
+        <EndNoteInScreen />
     </div>
     )
 }

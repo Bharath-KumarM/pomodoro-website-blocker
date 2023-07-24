@@ -1,4 +1,6 @@
 import { getLocalScreenTimeTracker, setLocalScreenTimeTracker } from "../../localStorage/localScreenTimeTracker";
+import { updateLocalTimeLimitScreenDataByTab } from "../../localStorage/localTimeLimitScreenData";
+import { checkScreenTimeSurpassedLimit } from "../../utilities/chrome-tools/chromeApiTools";
 import { getDateString } from "../../utilities/date"
 
 const dateString = getDateString(0)
@@ -8,14 +10,22 @@ const DEBUG = false
 let START_TIME = null
 let IS_FOCUSED = false
 let IS_AUDIBLE = false
+let INTERVAL_ID
+
+const hostname = window.location.hostname;
+const favIconUrl = getFavIconUrl(hostname)
+const url = window.location.href
 
 // Initial focus
 if (document.hasFocus()){
     handleFocus()
 }
+
 // Initial audio active check
 checkCurrentTabAudibleActive()
 
+// Update extenstion badge
+updateBadgeIcon({hostname})
 
 // Focus events
 window.addEventListener('focus', ()=>{
@@ -29,22 +39,29 @@ window.addEventListener("beforeunload", function(event) {
     handleAudibleNotActive()
     handleUnFocus()
 });
+
 window.addEventListener("onunload", function(event) {
     handleAudibleNotActive()
     handleUnFocus()
 });
 
-// Audio events
-chrome.runtime.onMessage.addListener( ({audible}, sender, sendResponse) => {
-        if (audible){
-            handleAudibleActive()
-        }else{
-            handleAudibleNotActive()
+chrome.runtime.onMessage.addListener( (request, sender, sendResponse) => {
+        const {audibleInfo} = request
+
+        if (audibleInfo){
+            const {audible} = audibleInfo
+            // Audio events
+            if (audible){
+                handleAudibleActive()
+            }else{
+                handleAudibleNotActive()
+            }
+            sendResponse({isMessageReceived: 'good'})
+            return true;
         }
-        sendResponse({isMessageReceived: 'good'})
-        return true
     }
   );
+
 
 
 async function checkCurrentTabAudibleActive(){
@@ -106,12 +123,19 @@ async function startTimeCounting(){
 
     if (START_TIME === null){
         START_TIME = new Date
+        clearInterval(INTERVAL_ID)
+        INTERVAL_ID = setInterval(() => {
+                periodicRefresh()
+            }, 1000*60);
     }
+
 }
 async function endTimeCounting(){
+
     if (DEBUG){
         console.log('endTimeCounting')
     }
+
 
     if (START_TIME === null) {
         console.log('!!! Bug !!!! "START_TIME null in endTimeCount"');
@@ -125,6 +149,8 @@ async function endTimeCounting(){
         return null;
     }
 
+    clearInterval(INTERVAL_ID)
+
     const spentTimeInMinutes = (new Date - START_TIME) ? (new Date - START_TIME)/(1000*60) : 0
     START_TIME = null
 
@@ -134,18 +160,79 @@ async function endTimeCounting(){
         screenTimeTracker[dateString] = {}
     }
 
-    if (screenTimeTracker[dateString][window.location.host] === undefined){
-        screenTimeTracker[dateString][window.location.host] = 0
+    if (screenTimeTracker[dateString][hostname] === undefined){
+        screenTimeTracker[dateString][hostname] = 0
     }
-    screenTimeTracker[dateString][window.location.host] +=  spentTimeInMinutes
-    setLocalScreenTimeTracker(screenTimeTracker)
+    screenTimeTracker[dateString][hostname] +=  spentTimeInMinutes
+    await setLocalScreenTimeTracker(screenTimeTracker)
+    const isBadgeIconUpdated = await updateBadgeIcon({hostname})
 
+    const isTimeLimitScreenForced = await checkAndForceTimeLimitScreen()
 
+    return true;
 }
+
+async function periodicRefresh(){
+    if (START_TIME === null) {
+        console.log('!!! Bug !!!! "START_TIME null in periodicRefresh"');
+        return null;
+    }
+    const spentTimeInMinutes = (new Date - START_TIME) ? (new Date - START_TIME)/(1000*60) : 0;
+
+    if ( IS_AUDIBLE === true || IS_FOCUSED === true ){
+        START_TIME = new Date
+    }
+
+    let {screenTimeTracker} = await getLocalScreenTimeTracker()
+
+    if (screenTimeTracker[dateString] === undefined){
+        screenTimeTracker[dateString] = {}
+    }
+
+    if (screenTimeTracker[dateString][hostname] === undefined){
+        screenTimeTracker[dateString][hostname] = 0
+    }
+    screenTimeTracker[dateString][hostname] +=  spentTimeInMinutes
+    
+    await setLocalScreenTimeTracker(screenTimeTracker)
+    const isBadgeIconUpdated = await updateBadgeIcon({hostname})
+
+    const isTimeLimitScreenForced = await checkAndForceTimeLimitScreen()
+
+    return true;
+}
+
+async function checkAndForceTimeLimitScreen(){
+    const isScreenTimeSurpassedLimit = await checkScreenTimeSurpassedLimit(hostname)
+    if (!isScreenTimeSurpassedLimit){
+        return false;
+    }
+
+    const {tabId} = await chrome.runtime.sendMessage({getTabId: true})
+    await updateLocalTimeLimitScreenDataByTab(tabId, [hostname, favIconUrl, url])
+    return true;
+}
+
+async function updateBadgeIcon({hostname}){
+    const {isBadgeIconUpdated} = await chrome.runtime.sendMessage(
+        {updateBadgeIcon: {hostname}}
+    )
+}
+
+function getFavIconUrl(hostname){
+    let link = document.querySelector("link[rel~='icon']")
+
+    if (!link){
+        return `http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`
+    }
+
+    return link.href
+}
+
 // ! Debug starts
 // debugAdd5MinutesScreenTime('fireship.io', 10)
 async function debugAdd5MinutesScreenTime(hostname, timeInMinutes){
-    if (window.location.host !== hostname){
+    if (hostname !== hostname){
         return null;
     }
 
@@ -156,12 +243,12 @@ async function debugAdd5MinutesScreenTime(hostname, timeInMinutes){
         screenTimeTracker[dateString] = {}
     }
 
-    if (screenTimeTracker[dateString][window.location.host] === undefined){
-        screenTimeTracker[dateString][window.location.host] = 0
+    if (screenTimeTracker[dateString][hostname] === undefined){
+        screenTimeTracker[dateString][hostname] = 0
     }
 
-    if (screenTimeTracker[dateString][window.location.host] < timeInMinutes){
-        screenTimeTracker[dateString][window.location.host] =  timeInMinutes
+    if (screenTimeTracker[dateString][hostname] < timeInMinutes){
+        screenTimeTracker[dateString][hostname] =  timeInMinutes
         setLocalScreenTimeTracker(screenTimeTracker)
     }
 }

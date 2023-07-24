@@ -34,6 +34,8 @@
 
         flex-direction: column;
 
+        margin-bottom: 35px;
+        
         gap: 20px;
         h3{
             text-align: center;
@@ -124,7 +126,7 @@
             border-radius: 10px;
             font-size: 18px;
 
-            width: 200px;
+            width: 250px;
     
             &:hover{
                 background-color: $bg-color3;
@@ -140,7 +142,7 @@
 
             }
 
-            &.remove-time-limit{
+            &.remove-time-limit.active{
                 background-color: $bg-color2;
                 border: solid 2px $icon-red1;
                 color: $icon-red2;
@@ -148,6 +150,13 @@
                 &:hover{
                     background-color: $bg-color3;
                 }
+            }
+
+            &.remove-time-limit.not-active{
+                background-color: $bg-color3;
+                border: solid 2px $font-color2;
+                color: $font-color3;
+                cursor: not-allowed;
             }
         }
     }

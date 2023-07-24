@@ -46,6 +46,7 @@ const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, getScheduleD
 
 
     const handleAddScheduleSubmit = async ()=>{
+        if (!isEndTimeGreater) return null;
         const newScheduleItem = [startTime, endTime, daysActiveArr]
 
         const {

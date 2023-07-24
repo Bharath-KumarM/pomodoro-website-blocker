@@ -53,7 +53,7 @@ const SiteInfoCard = ({hostname}) =>{
                             <SwapIcon />
                         </div>
                         <div className="site-info-title">
-                            No. of Opens
+                            No. of visits
                         </div>
                         <hr className="site-info-line" />
                         <div className="site-info-data">

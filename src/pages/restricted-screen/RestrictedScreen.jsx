@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { MdOutlineArrowDropDown as DropDownIcon} from 'react-icons/md';
+import { AiOutlineInfoCircle as InfoIcon} from 'react-icons/ai';
+import { HiPuzzle as PuzzleIcon} from 'react-icons/hi';
 import './RestrictedScreen.scss';
 import { getCurrScheduleDesc, getActiveFocusScheduledIndexes } from '../../utilities/focusModeHelper';
 
@@ -7,6 +9,8 @@ import { getLocalRestrictedScreenDataByTabId } from '../../localStorage/localRes
 import { checkLocalRestrictedSitesByHostname, delLocalRestrictedSites } from '../../localStorage/localRestrictedSites';
 import { getLocalFocusModeTracker, turnOffLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker';
 import { getLocalTakeABreakTrackerforRestrict, turnOnLocalTakeABreakTrackerforRestrict } from '../../localStorage/localTakeABreakTrackerforRestrict';
+import { NavBarInScreen } from '../../utilities/NavBarInScreen';
+import { EndNoteInScreen } from '../../utilities/EndNoteInScreen';
 
 
 
@@ -34,9 +38,36 @@ const RestrictedScreen = ()=>{
 
     const [hostname, favIcon] = restrictedSiteData ? restrictedSiteData : [null, null]
     
-    const handleCompountMounted = async () =>{
 
+    useEffect(()=>{
+        handleCompountMounted()
+    }, [])
+    useEffect(()=>{
+        handleCountUpdate()
 
+        return ()=>{
+            clearTimeout(countTimierID)
+        }
+    }, [count])
+    
+    let countTimierID
+
+    if (count < -60){
+        chrome.tabs.getCurrent(function(tab) {
+            chrome.tabs.remove(tab.id, function() { 
+                console.log('close the tab')
+            });
+        });
+    }
+
+    const isUnrestrictBtnActive = count <= 0;
+
+    function handleCountUpdate(){
+        countTimierID = setTimeout(()=>{
+            setCount((prevCount)=>prevCount-1)
+        }, 1000)
+    }
+    async function handleCompountMounted(){
         // Gets from service worker
         const {tabId} = await chrome.runtime.sendMessage({getTabId: true})
 
@@ -92,30 +123,11 @@ const RestrictedScreen = ()=>{
         setRestrictedSiteData([tempHostname, tempFavIcon])
     }
 
-    
-    useEffect(()=>{
-        handleCompountMounted()
-    }, [])
-
-    useEffect(()=>{
-        setTimeout(()=>{
-            setCount((prevCount)=>prevCount-1)
-        }, 1000)
-    }, [count])
-
     const handleFocusModeOff = ()=>{
         turnOffLocalFocusModeTracker()
     }
     const handleUnrestrictSite = async ()=>{
         await delLocalRestrictedSites(hostname)
-    }
-
-    if (count < -60){
-        chrome.tabs.getCurrent(function(tab) {
-            chrome.tabs.remove(tab.id, function() { 
-                console.log('close the tab')
-            });
-        });
     }
 
     const handleCloseTabBtnClick = ()=>{
@@ -139,6 +151,7 @@ const RestrictedScreen = ()=>{
     }
     return (
     <div className='blocked-scrn-cnt'>
+        <NavBarInScreen />
         <div className="heading">
             <h2>    
                 {
@@ -204,10 +217,13 @@ const RestrictedScreen = ()=>{
                         </button>
                     </div>
                     {
-                        count <= 0 ? 
                         <button 
-                            className={`btn ${activeFocusScheduledIndexes.length ? 'schedule': ''}`}
+                            className={`btn ${ isUnrestrictBtnActive ? 'active': 'not-active'}`}
                             onClick={()=>{
+                                if (!isUnrestrictBtnActive) {
+                                    return null;
+                                }
+
                                 if (activeFocusScheduledIndexes.length){
                                     handleUnrestrictSite()
                                 }else{
@@ -217,29 +233,11 @@ const RestrictedScreen = ()=>{
                         >
                             {
                                 activeFocusScheduledIndexes.length ? 
-                                `Unrestrict the site` :
-                                `Turn off focus mode`
+                                `Unrestrict the site ${isUnrestrictBtnActive ? '' : `(${count})`}` :
+                                `Turn off focus mode ${isUnrestrictBtnActive ? '' : `(${count})`}`
                             }
-                        </button> :
-                        // todo: Add motivation message later if needed
-                        // countDownMsg[30-count] ? 
-                        // <h2>
-                        //     {countDownMsg[30-count]}
-                        // </h2> : 
-                        <>
-                            {
-                                
-                                // count < 25 ? // No need to hide message 
-                                <h2>
-                                    {
-                                        activeFocusScheduledIndexes.length ? 
-                                        `Wait for ${count} sec to remove the site restriction...`:
-                                        `Wait for ${count} sec to turn off focus mode...`
-                                    }
-                                </h2>
+                        </button> 
 
-                            }
-                        </>
                     }
                     {
                         count < -50 ? 
@@ -253,6 +251,7 @@ const RestrictedScreen = ()=>{
 
             }
         </div>
+        <EndNoteInScreen />
     </div>
     )
 }

@@ -40,6 +40,8 @@
 
         flex-direction: column;
 
+        margin-bottom: 35px;
+
         gap: 20px;
         h3{
             text-align: center;
@@ -51,111 +53,123 @@
                 height: 50px;
             }
         }
-    }  
-    
-    .btn-cnt{
-        display: flex;
-        flex-direction: column;
+        .desc-cnt{
 
-        justify-content: center;
-        align-items: center;
-        gap: 30px;
-
-        .btn-inner-cnt{
+        }
+        .btn-cnt{
             display: flex;
-            align-items: center;
-            justify-content: center;
-
-            gap: 30px
-        }
-
-        .drop-down{
-            position: relative;
-
-            .heading-desc{
-                display: flex;
-                width: 100%;
-                justify-content: center;
-                gap: 5px;
-
-                svg path{
-                    width: 20px;
-                    height: 20px;
-                }
-            }
-            li, ul{
-                width: 100%;
-            }
-
-            ul li ul li {
-                background-color: $bg-color3;
-                padding: 15px 5px;
-                border-bottom: solid 1px $bg-color3;
-                
-                &:hover{
-                    background-color: $bg-color4;
-
-                }
-            }
-
-            /* Hide Dropdowns by Default */
-            ul ul {
-                display: none;
-                position: absolute; 
-                top: 35px; /* the height of the main nav */
-                left: 0;
-
-            }
-                
-            /* Display Dropdowns on Hover */
-            // ul li:hover > ul {
-            &:hover ul li > ul {
-                display:block;
-            }
-                
-            /* Fisrt Tier Dropdown */
-            ul ul li {
-                float:none;
-                display:list-item;
-                position: relative;
-            }
-        }
-
-        .btn{
-            color: $font-color0;
-            padding: 10px;
-            background-color: $bg-color4;
-            border: 0;
-
-            border-radius: 10px;
-            font-size: 18px;
-
-            width: 200px;
+            flex-direction: column;
     
-            &:hover{
-                background-color: $bg-color3;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+    
+            .btn-inner-cnt{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+    
+                gap: 30px
             }
-            
-            &.close-tab{
-                background-color: $accent-color1;
-                color: $font-color4;
-                
-                &:hover{
-                    background-color: $accent-color2;
+    
+            .drop-down{
+                position: relative;
+    
+                .heading-desc{
+                    display: flex;
+                    width: 100%;
+                    justify-content: center;
+                    gap: 5px;
+    
+                    svg path{
+                        width: 20px;
+                        height: 20px;
+                    }
                 }
-
+                li, ul{
+                    width: 100%;
+                }
+    
+                ul li ul li {
+                    background-color: $bg-color3;
+                    padding: 15px 5px;
+                    border-bottom: solid 1px $bg-color3;
+                    
+                    &:hover{
+                        background-color: $bg-color4;
+    
+                    }
+                }
+    
+                /* Hide Dropdowns by Default */
+                ul ul {
+                    display: none;
+                    position: absolute; 
+                    top: 35px; /* the height of the main nav */
+                    left: 0;
+    
+                }
+                    
+                /* Display Dropdowns on Hover */
+                // ul li:hover > ul {
+                &:hover ul li > ul {
+                    display:block;
+                }
+                    
+                /* Fisrt Tier Dropdown */
+                ul ul li {
+                    float:none;
+                    display:list-item;
+                    position: relative;
+                }
             }
-
-            &.schedule{
-                background-color: $bg-color2;
-                border: solid 2px $icon-red1;
-                color: $icon-red2;
-                
+    
+            .btn{
+                color: $font-color0;
+                padding: 10px;
+                background-color: $bg-color4;
+                border: 0;
+    
+                border-radius: 10px;
+                font-size: 18px;
+    
+                width: 200px;
+        
                 &:hover{
                     background-color: $bg-color3;
                 }
+                
+                &.close-tab{
+                    background-color: $accent-color1;
+                    color: $font-color4;
+                    
+                    &:hover{
+                        background-color: $accent-color2;
+                    }
+    
+                }
+    
+                &.active{
+                    background-color: $bg-color2;
+                    border: solid 2px $icon-red1;
+                    color: $icon-red2;
+                    
+                    &:hover{
+                        background-color: $bg-color3;
+                    }
+                }
+    
+                &.not-active{
+                    width: 250px;
+                    background-color: $bg-color3;
+                    border: solid 2px $font-color2;
+                    color: $font-color3;
+                    cursor: not-allowed;
+    
+                }
             }
         }
-    }
+
+    }      
     
 }

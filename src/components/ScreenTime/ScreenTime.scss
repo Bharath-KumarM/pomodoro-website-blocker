@@ -214,6 +214,24 @@
                         align-items: center;
                         flex-direction: column;
 
+                        svg{
+                            path{
+                                color: $accent-green-color1;
+                            }
+                        }
+
+                        &.time-limit-exceeded{
+                            svg{
+                                path{
+                                    color: $icon-red3;
+                                }
+                            }
+
+                            .time-limit-text{
+                                color: $icon-red3;
+                            }
+                        }
+
                         // padding: 10px;
                         gap: 5px;
 

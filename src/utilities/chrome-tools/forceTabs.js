@@ -14,3 +14,8 @@ export async function forceTimeLimitScreenByTabId(tabId) {
         url: chrome.runtime.getURL(`/src/pages/time-limit-screen/time-limit-screen.html`)
     });
 }
+export async function createWelcomeScreencreenTab() {
+    chrome.tabs.create({
+        url: chrome.runtime.getURL(`/src/pages/welcome-screen/welcome-screen.html`)
+    });
+}
