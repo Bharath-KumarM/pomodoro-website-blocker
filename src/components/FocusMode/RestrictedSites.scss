@@ -9,16 +9,17 @@
     justify-content: flex-start;
 
     flex-direction: column;
-
+    
     .sticky {
         background-color: $bg-color2;
         width: 100%;
         position: sticky;
         top: 0;
         z-index: 1;
-      }
+    }
     .heading{
-        margin: 10px auto;
+        margin: 5px 0;
+        // margin: 10px auto;
         width: 100%;
         background-color: $bg-color2;
         padding: 5px 0;
@@ -42,7 +43,6 @@
         justify-content: flex-start;
         align-items: center;
 
-        border-radius: 10px;
         // padding: 10px;
         background-color: $accent-bg-dark-color1;
 
@@ -100,14 +100,6 @@
         padding: 10px 0;
         color: $accent-color1;
         font-size: 16px;
-        &.sticky{
-            position: sticky;
-
-            &.restricted{
-            }
-            &.more{
-            }
-        }
     }
     .restricted-site-table{     
         width: min(90%, 500px);

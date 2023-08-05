@@ -1,4 +1,4 @@
-
+import extensionIcon from '../../logo_3.png'
 
 
 const style = {
@@ -27,7 +27,7 @@ export const NavBarInScreen = ()=>{
         <div style={style.NavBar}>
             <img 
                 style={style.img}
-                src="../../../logo_3.png" 
+                src={extensionIcon}
                 alt="Extension Icon" 
             />
             <h1>

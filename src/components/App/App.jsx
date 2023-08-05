@@ -16,6 +16,7 @@ function App() {
   // const [navSelect, setNavSelect] = useState('block-site')
   // const [navSelect, setNavSelect] = useState('focus-mode')
   // const [navSelect, setNavSelect] = useState('screen-time')
+  // const [navSelect, setNavSelect] = useState('setting')
   const [navSelect, setNavSelect] = useState('')
   // const [navSelect, setNavSelect] = useState('pomodoro')
 

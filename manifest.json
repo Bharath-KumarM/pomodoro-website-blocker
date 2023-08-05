@@ -1,7 +1,6 @@
 {
-  "name": "Website Screen Time &  Block | Pomodoro",
-  "description": 
-"Keep track of screen time and use Pomodoro to be productive",
+  "name": "Be Focused - Website Screen Time & Blocker",
+  "description": "Blocks distracting websites, sets time limits, and monitors your screen time",
   "version": "0.0.1",
   "manifest_version": 3,
   "permissions": ["storage", 

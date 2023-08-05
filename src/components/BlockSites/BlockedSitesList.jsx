@@ -46,7 +46,7 @@ const BlockedSitesList = ({setToastData}) => {
     <>
         {/* Inside the container */}
         <hr className="hr-line"></hr>
-        <div className="sticky">
+        <div className="sticky-ele">
             <div className="heading">
                 <ImBlocked />
                 <h3> Blocked Sites </h3>
@@ -62,7 +62,7 @@ const BlockedSitesList = ({setToastData}) => {
             getUpdatedBlockedSites={getUpdatedBlockedSites}
             recentSites={recentSites}
         />
-        <h3 className='site-table-heading restricted sticky'>
+        <h3 className='site-table-heading restricted sticky-ele'>
             Blocked sites
         </h3>
         {   
@@ -95,7 +95,7 @@ const BlockedSitesList = ({setToastData}) => {
                 No Sites
             </div>
         }
-        <h3 className='site-table-heading more sticky'>
+        <h3 className='site-table-heading more sticky-ele'>
             Recent sites to block
         </h3>
         {

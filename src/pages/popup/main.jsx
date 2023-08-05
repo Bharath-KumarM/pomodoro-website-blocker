@@ -1,4 +1,5 @@
-import React, { Children } from 'react'
+// import 'react-devtools'
+import React, { Children, StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import App from '../../components/App/App'
 import './index.scss'
@@ -6,5 +7,8 @@ import './index.scss'
 
 ReactDOM.createRoot(document.getElementById('root')).
     render(
-        <App />
+        <StrictMode>
+
+            <App />
+        </StrictMode>
     )

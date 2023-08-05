@@ -1,5 +1,6 @@
 
 import { HiPuzzle as PuzzleIcon} from 'react-icons/hi';
+import extensionIcon from '../../logo_3.png';
 
 const style = {
     endNote: {
@@ -38,7 +39,7 @@ export const EndNoteInScreen = ()=>{
         <p style={style.endNotePara}>
             Note: For more infomation click
             <img 
-                src="../../../logo_3.png" 
+                src={extensionIcon}
                 alt="Be focused icon" 
                 style={style.endNoteImg}
             />

@@ -14,6 +14,7 @@ import Pomodoro from "../Pomodoro/Pomodoro"
 import ScreenTime from "../ScreenTime/ScreenTime"
 import BlockSites from "../BlockSites/BlockSites"
 import FocusMode from "../FocusMode/FocusMode"
+import Setting from "../Setting/Setting"
 
 
 
@@ -45,6 +46,7 @@ const Content = ({navSelect, setNavSelect})=>{
                         // navSelect === 'pomodoro' ? <Pomodoro /> :
                         navSelect === 'focus-mode' ? <FocusMode /> :
                         navSelect === 'screen-time' ? <ScreenTime /> : 
+                        navSelect === 'setting' ? <Setting /> :
                         <div>Loading...</div>
                     }
                 </div>

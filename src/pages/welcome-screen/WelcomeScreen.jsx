@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import './WelcomeScreen.scss';
+import extensionIcon from '../../../logo_3.png'
 
 const WelcomeScreen = ()=>{
     
@@ -9,7 +9,7 @@ const WelcomeScreen = ()=>{
         <div className="welcome-scrn-inner-cnt">
             <img 
                 className='extention-icon'
-                src="../../../logo_3.png" 
+                src={extensionIcon}
                 alt="Extension Icon" 
             />
 

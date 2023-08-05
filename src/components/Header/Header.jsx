@@ -1,28 +1,28 @@
 import { createWelcomeScreencreenTab } from '../../utilities/chrome-tools/forceTabs';
 import style from './Header.module.scss'
-
-// import { FiSettings } from 'react-icons/fi'  
-import { IconContext } from "react-icons";
-
+import extensionIcon from '../../../logo_3.png'
 
 
 const Header = (props)=>{
 
     return (
-    <IconContext.Provider value={{className: style.icon}}>
         <div className={style.header}>
-            <div className={style.headerCnt}
-                //! Debug starts
-                onClick={()=>{
-                    // Debugging welcome screen
-                    createWelcomeScreencreenTab()
-                }}
-                //! Debug ends
-            >
-                <h3 className={style.title}>Be Focused</h3>
+            <div className={style.headerCnt}>
+                <img 
+                    className={style.extentionIconImg}
+                    src={extensionIcon} alt="extension icon" 
+                />
+                <h3  
+                    className={style.title}
+                    onClick={()=>{
+                        createWelcomeScreencreenTab()
+                    }}
+                >
+                    Be Focused
+                </h3>
+
             </div>
         </div>
-    </IconContext.Provider>
     )
 }
 

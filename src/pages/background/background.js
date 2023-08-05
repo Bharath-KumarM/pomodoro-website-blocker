@@ -14,6 +14,7 @@ import { handleOnStartUpEvent } from './onStartupEvents'
 import { checkLocalVisitTabIdTrackerNewSession, delLocalVisitTabIdTracker } from '../../localStorage/localVisitTrackerTabId'
 import { incrementLocalVisitTracker } from '../../localStorage/localVisitTracker'
 import { handleUpdateBadgeIcon } from './helper'
+import { createWelcomeScreencreenTab } from '../../utilities/chrome-tools/forceTabs'
 
 
 console.log('Script running from background!!!')
@@ -40,6 +41,10 @@ chrome.runtime.onInstalled.addListener(({id, previousVersion, reason})=>{
   // reason = 'install' || 'update' || 'chrome_update' || 'shared_module_update'
 
   console.log(`onInstalled reason: ${reason}`, Date ().toLocaleString())
+
+  if (['install', 'update', 'shared_module_update'].includes(reason)){
+    createWelcomeScreencreenTab()
+  }
   
 })
 

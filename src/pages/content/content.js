@@ -3,7 +3,7 @@ import { updateLocalTimeLimitScreenDataByTab } from "../../localStorage/localTim
 import { checkScreenTimeSurpassedLimit } from "../../utilities/chrome-tools/chromeApiTools";
 import { getDateString } from "../../utilities/date"
 
-const dateString = getDateString(0)
+
 
 const DEBUG = false
 
@@ -154,6 +154,7 @@ async function endTimeCounting(){
     const spentTimeInMinutes = (new Date - START_TIME) ? (new Date - START_TIME)/(1000*60) : 0
     START_TIME = null
 
+    const dateString = getDateString(0)
     let {screenTimeTracker} = await getLocalScreenTimeTracker()
 
     if (screenTimeTracker[dateString] === undefined){
@@ -183,6 +184,7 @@ async function periodicRefresh(){
         START_TIME = new Date
     }
 
+    const dateString = getDateString(0)
     let {screenTimeTracker} = await getLocalScreenTimeTracker()
 
     if (screenTimeTracker[dateString] === undefined){
