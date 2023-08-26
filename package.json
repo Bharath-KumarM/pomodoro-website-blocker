@@ -11,7 +11,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "set NODE_ENV=build-prod vite build",
+    "build": "set NODE_ENV=build-prod && vite build",
     "build-test": "set NODE_ENV=build-test && vite build",
     "preview": "vite preview",
     "react-devtools": "react-devtools"

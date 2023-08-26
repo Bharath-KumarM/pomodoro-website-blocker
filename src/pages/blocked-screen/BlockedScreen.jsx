@@ -76,7 +76,8 @@ const BlockedScreen = ()=>{
         const isBlockedSite = await checkLocalBlockedSitesByHostname(tempHostname)
         if (!isBlockedSite){
             // *Got unblocked - refresh with a blocked url
-            chrome.tabs.update(tabId, {url: tempUrl})
+            window.location = tempUrl
+            // chrome.tabs.update(tabId, {url: tempUrl})
             return null;
         }
 
@@ -94,8 +95,8 @@ const BlockedScreen = ()=>{
     }
 
     async function handleUnblockBtnClick(){
-        const isSiteUnblocked = await delLocalBlockedSites(hostname)
-        if(isSiteUnblocked){
+        const isSiteUnblockSucessFul = await delLocalBlockedSites(hostname)
+        if(isSiteUnblockSucessFul){
             chrome.tabs.update(tabId, {url})
         }
     }
@@ -113,61 +114,62 @@ const BlockedScreen = ()=>{
     return (
     <div className='blocked-scrn-cnt'>
         <NavBarInScreen />
-        <div className="heading">
-            <h2>
-                This site has been blocked by you
-            </h2>
-        </div>
-        <div className="block-site-card">
-            <div className='icon-cnt'>
-                {favIcon ? <img src={favIcon} alt="icon" /> : null}
-            </div>
-            <div className='desc-cnt'>
-                <h3>
-                    {hostname ? hostname : null}
-                </h3>
-            </div>
-            {
-                !hostname ? 
-                <h1>
-                    Loading...
-                </h1>
-                :
-                <div className='btn-cnt'>
-                    <div className='btn-inner-cnt'>
-                        <button
-                            className='btn close-tab'
-                            onClick={()=> handleCloseTabBtnClick()}
-                        >
-                            Close this tab
-                        </button>
+
+        {
+            !hostname ? 
+            <h1>
+                Loading...
+            </h1> : 
+            <>
+                <div className="heading">
+                    <h2>
+                        This site has been blocked by you
+                    </h2>
+                </div>
+                <div className="block-site-card">
+                    <div className='icon-cnt'>
+                        {favIcon ? <img src={favIcon} alt="icon" /> : null}
                     </div>
-                    {
-                        <button 
-                            className={`btn unblock ${isUnblockBtnActive ? 'active': 'not-active'}`}
-                            onClick={()=>{
-                                if (!isUnblockBtnActive) {
-                                    return null;
-                                }
+                    <div className='desc-cnt'>
+                        <h3>
+                            {hostname ? hostname : null}
+                        </h3>
+                    </div>
+                    <div className='btn-cnt'>
+                        <div className='btn-inner-cnt'>
+                            <button
+                                className='btn close-tab'
+                                onClick={()=> handleCloseTabBtnClick()}
+                            >
+                                Close this tab
+                            </button>
+                        </div>
+                        {
+                            <button 
+                                className={`btn unblock ${isUnblockBtnActive ? 'active': 'not-active'}`}
+                                onClick={()=>{
+                                    if (!isUnblockBtnActive) {
+                                        return null;
+                                    }
 
-                                handleUnblockBtnClick()
-                            }}
-                        >
-                            {`Unblock this site ${isUnblockBtnActive ? '' : `(${count})`}`}
-                        </button> 
-                    }
-                    {
-                        count < -50 ? 
-                        <h2>
-                            No Action taken, closing in few seconds...
-                        </h2> 
-                        :
-                        null
-                    }
-                </div> 
-
-            }
-        </div>
+                                    handleUnblockBtnClick()
+                                }}
+                            >
+                                {`Unblock this site ${isUnblockBtnActive ? '' : `(${count})`}`}
+                            </button> 
+                        }
+                        {
+                            count < -50 ? 
+                            <h2>
+                                No Action taken, closing in few seconds...
+                            </h2> 
+                            :
+                            null
+                        }
+                    </div> 
+                </div>
+            </>
+        }
         <EndNoteInScreen />
     </div>
     )

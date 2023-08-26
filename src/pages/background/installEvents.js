@@ -13,6 +13,17 @@ import { initializeLocalVisitTabIdTracker } from "../../localStorage/localVisitT
 
 export async function handleOnInstallEvent (){
     localStorageInitialize()
+
+    chrome.contextMenus.removeAll(()=>{
+      chrome.contextMenus.create({
+        documentUrlPatterns: ["https://*/*"],
+        id: 'be-focused-block',
+        type: 'normal',
+        title: 'Block current site'
+      })
+    })
+    
+
   } 
 
 export async function localStorageInitialize (){

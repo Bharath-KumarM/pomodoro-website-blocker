@@ -41,6 +41,7 @@ export default defineConfig({
         timeLimit: resolve(__dirname, "src/pages/time-limit-screen/time-limit-screen.html"),
         blockedScreen: resolve(__dirname, "src/pages/blocked-screen/blocked-screen.html"),
         welcomeScreen: resolve(__dirname, "src/pages/welcome-screen/welcome-screen.html"),
+        helpScreen: resolve(__dirname, "src/pages/help-screen/help-screen.html"),
       },
     },
     ...testBuild,

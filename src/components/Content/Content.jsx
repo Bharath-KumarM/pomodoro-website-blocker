@@ -15,6 +15,7 @@ import ScreenTime from "../ScreenTime/ScreenTime"
 import BlockSites from "../BlockSites/BlockSites"
 import FocusMode from "../FocusMode/FocusMode"
 import Setting from "../Setting/Setting"
+import Loader from "../../utilities/Loader"
 
 
 
@@ -47,7 +48,7 @@ const Content = ({navSelect, setNavSelect})=>{
                         navSelect === 'focus-mode' ? <FocusMode /> :
                         navSelect === 'screen-time' ? <ScreenTime /> : 
                         navSelect === 'setting' ? <Setting /> :
-                        <div>Loading...</div>
+                        <Loader />
                     }
                 </div>
             </div>

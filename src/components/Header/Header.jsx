@@ -1,4 +1,4 @@
-import { createWelcomeScreencreenTab } from '../../utilities/chrome-tools/forceTabs';
+import { createHelpScreencreenTab, createWelcomeScreencreenTab } from '../../utilities/chrome-tools/forceTabs';
 import style from './Header.module.scss'
 import extensionIcon from '../../../logo_3.png'
 
@@ -15,7 +15,8 @@ const Header = (props)=>{
                 <h3  
                     className={style.title}
                     onClick={()=>{
-                        createWelcomeScreencreenTab()
+                        // createWelcomeScreencreenTab()
+                        createHelpScreencreenTab()
                     }}
                 >
                     Be Focused

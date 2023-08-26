@@ -11,15 +11,15 @@ const hrValues = Array.from({length: 12}, (_ ,index)=>pad2(index+1))
 const minValues = Array.from({length: 12}, (_ ,index)=>pad2(index*5))
 const amPmValues = ['am', 'pm']
 
-const defaultDaysActiveArr = [false, true, true, true, true, true, false]
-const daysLetterArr = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 
 const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, getScheduleData, isNewSchedule, setToastData})=>{
     const [startTime, setStartTime] = useState(isNewSchedule ? '10:00:am' : null);
     const [endTime, setEndTime] = useState(isNewSchedule ? '05:00:pm' : null);
-    const [daysActiveArr, setDaysActiveArr] = useState(isNewSchedule ? [...defaultDaysActiveArr] : null)
+    const [daysActiveArr, setDaysActiveArr] = useState(isNewSchedule ? [false, true, true, true, true, true, false] : null)
+    
+    const daysLetterArr = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 
-    const handleNewScheduleEdit = async ()=>{
+    const handleExistingScheduleEdit = async ()=>{
         const {scheduleData} = await getLocalScheduleData()
         if (!scheduleData[editTimeInputIndex]) return
         const [storedStartTime, storedEndTime, storedDaysActiveArr] = scheduleData[editTimeInputIndex]
@@ -28,7 +28,7 @@ const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, getScheduleD
         setDaysActiveArr([...storedDaysActiveArr])
     }
     useEffect(()=>{
-        if (!isNewSchedule) handleNewScheduleEdit()
+        if (!isNewSchedule) handleExistingScheduleEdit()
     }, [])
 
     if (startTime === null){ // Loading existing Schedule
@@ -202,14 +202,15 @@ const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, getScheduleD
             </h3>
             <div className="day-cnt">
                 {
-                    daysLetterArr.map((dayLetter, index)=> {
+                    daysLetterArr.map((dayLetter, index)=>{
                         return (
-                            <Day 
-                                dayLetter={dayLetter}
-                                index={index}
-                                daysActiveArr={daysActiveArr}
-                                setDaysActiveArr={setDaysActiveArr}
+                            <DayLetter 
                                 key={index}
+                                dayLetter={dayLetter} 
+                                index={index}
+                                daysLetterArr={daysLetterArr} 
+                                daysActiveArr={daysActiveArr} 
+                                setDaysActiveArr={setDaysActiveArr}
                             />
                         )
                     })
@@ -314,27 +315,21 @@ const TimeCnt = ({time, setTime})=>{
     )
 }
 
-const Day = ({dayLetter, index, setDaysActiveArr, daysActiveArr})=>{
-
+const DayLetter = ({dayLetter, index, daysActiveArr, setDaysActiveArr})=>{
     const tempClass = daysActiveArr[index] ? 'day active' : 'day'
+
     return (
         <span className={tempClass}
             key={index}
             onClick={()=>{
-                setDaysActiveArr(prevArr=>{
-                    prevArr[index] = !prevArr[index]
-                    return [...prevArr]
-                })
+                daysActiveArr[index] = !daysActiveArr[index]
+                setDaysActiveArr([...daysActiveArr])
             }}
-
         >
             {dayLetter}
         </span>
     )
 }
-
-
-
 // Helper function
 
 function handleOnChnageTime({hr, min, amPm, setTime}){

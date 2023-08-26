@@ -5,7 +5,7 @@ import { delLocalBlockedScreenDataByTabId, updateLocalBlockedScreenDataByTab } f
 import { delLocalRestrictedScreenDataByTabId, updateLocalRestrictedScreenDataByTab } from '../../localStorage/localRestrictedScreenData'
 import { delLocalTimeLimitScreenDataByTabId, updateLocalTimeLimitScreenDataByTab } from '../../localStorage/localTimeLimitScreenData'
 
-import {checkLocalBlockedSitesByHostname} from '../../localStorage/localBlockedSites'
+import {checkLocalBlockedSitesByHostname, setLocalBlockedSites, updateLocalBlockedSites} from '../../localStorage/localBlockedSites'
 import { checkLocalRestrictedSitesByHostname } from '../../localStorage/localRestrictedSites'
 import { getLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker'
 import { getLocalTakeABreakTrackerforRestrict, turnOffLocalTakeABreakTrackerforRestrict } from '../../localStorage/localTakeABreakTrackerforRestrict'
@@ -15,6 +15,7 @@ import { checkLocalVisitTabIdTrackerNewSession, delLocalVisitTabIdTracker } from
 import { incrementLocalVisitTracker } from '../../localStorage/localVisitTracker'
 import { handleUpdateBadgeIcon } from './helper'
 import { createWelcomeScreencreenTab } from '../../utilities/chrome-tools/forceTabs'
+import { getHost } from '../../utilities/simpleTools'
 
 
 console.log('Script running from background!!!')
@@ -96,12 +97,13 @@ chrome.alarms.onAlarm.addListener(({name})=>{
 
 //* Handles URL updates
 chrome.webNavigation.onBeforeNavigate.addListener( async (details)=>{
-    const {tabId, url} = details
-    handleUrlUpdate({tabId, url})
+    const {tabId, url, frameType} = details
+    
+    if (frameType === "outermost_frame"){
+      handleUrlUpdate({tabId, url})
+    }
   }, 
-  {url: [
-    {urlPrefix: 'http'},
-  ]}
+  {url: [{urlPrefix: 'http'}]}
 )
 chrome.tabs.onUpdated.addListener( async ( tabId, {url, audible}, tab )=>{
   if (audible !== undefined){
@@ -121,6 +123,14 @@ chrome.tabs.onRemoved.addListener( async (tabId, removeInfo)=>{
     delLocalRestrictedScreenDataByTabId(tabId)
     delLocalTimeLimitScreenDataByTabId(tabId)
   })
+
+// *Handles context menu click
+chrome.contextMenus.onClicked.addListener((info, tab)=>{
+  if (info.pageUrl){
+    const hostname = getHost(info.pageUrl)
+    updateLocalBlockedSites(hostname)
+  }
+})
 
 // Helper functions
 async function handleAudibleUpdate({tabId, url, audible}){

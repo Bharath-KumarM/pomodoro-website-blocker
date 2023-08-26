@@ -19,3 +19,8 @@ export async function createWelcomeScreencreenTab() {
         url: chrome.runtime.getURL(`/src/pages/welcome-screen/welcome-screen.html`)
     });
 }
+export async function createHelpScreencreenTab() {
+    chrome.tabs.create({
+        url: chrome.runtime.getURL(`/src/pages/help-screen/help-screen.html`)
+    });
+}

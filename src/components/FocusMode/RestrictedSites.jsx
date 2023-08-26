@@ -8,23 +8,37 @@ import { useEffect, useState } from 'react';
 import { getCurrTab, getRecentHostnames } from '../../utilities/chrome-tools/chromeApiTools';
 import { getHost } from '../../utilities/simpleTools';
 import { delLocalRestrictedSites, getLocalRestrictedSites, updateLocalRestrictedSites } from '../../localStorage/localRestrictedSites';
+import Loader from '../../utilities/Loader';
 
 
 
 const RestrictedSites = ({setToastData})=>{
 
     const [restrictedSites, setRestrictedSites] = useState(null)
-
     const [recentSites, setRecentSites] = useState([])
+
+    const [dataLoadedStatus, setDataLoadedStatus] = useState({
+        restrictedSites: false,
+        recentSites: false
+    })
 
     const getRestrictedSites = async ()=>{
         const {restrictedSites: tempRestrictedSites} = await getLocalRestrictedSites()
         setRestrictedSites(tempRestrictedSites)
+        setDataLoadedStatus(prevDataLoadedStatus => ({...prevDataLoadedStatus, restrictedSites: true}))
+    }
+    
+    const getRecentSites = async ()=> {
+        const tempRecentSites = await getRecentHostnames(-10)
+        setRecentSites(tempRecentSites)
+
+        setDataLoadedStatus(prevDataLoadedStatus => ({...prevDataLoadedStatus, recentSites: true}))
     }
 
     useEffect(()=>{
+
         getRestrictedSites()
-        getRecentHostnames(-10).then(tempRecentSites=>setRecentSites(tempRecentSites))
+        getRecentSites()
     }, [])
 
     const restrictedSiteArr = restrictedSites ? Object.keys(restrictedSites).map(tempHostname=>tempHostname) : []
@@ -35,87 +49,89 @@ const RestrictedSites = ({setToastData})=>{
 
 
     return (
-    <div className="focus-restricted-sites-cnt">
-        <div className="sticky">
-            <div className='heading'> 
-                <TbBarrierBlock />
-                <h3>Restricted Sites</h3> 
-            </div>
+        Object.values(dataLoadedStatus).includes(false) ? 
+        <Loader /> :
+        <div className="focus-restricted-sites-cnt">
+            <div className="sticky">
+                <div className='heading'> 
+                    <TbBarrierBlock />
+                    <h3>Restricted Sites</h3> 
+                </div>
 
-        </div>
-        <AddCurrSiteToRestrictedSite 
-            setToastData={setToastData}
-            restrictedSites={restrictedSites}
-            getRestrictedSites={getRestrictedSites}
-        />
-        <AddRestrictedSites 
-            setToastData={setToastData}
-            getRestrictedSites={getRestrictedSites}
-            recentSites={recentSites}
-        />
-        <h3 className='site-table-heading restricted sticky'>
-            Your restricted sites
-        </h3>
-        {   
-            restrictedSites ?
-            <div className="restricted-site-table">
-                {
-                    restrictedSiteArr.map((tempHostname, index)=>{
-                        const tempFavIconUrl = restrictedSites[tempHostname][0]
-                        return (
-                        <div key={tempHostname} className="item flex-center">
-                            <RestrictedCheckBox 
-                                key={tempHostname}
-                                tempHostname={tempHostname} 
-                                getRestrictedSites={getRestrictedSites} 
-                                setToastData={setToastData}
-                            />
-                            <div className='site-icon'>
-                                <img src={tempFavIconUrl ? tempFavIconUrl : `http://www.google.com/s2/favicons?domain=${tempHostname}&sz=${128}`} alt="icon" />
-                            </div>
-                            <div className="site"> {tempHostname} </div>
-                        </div>
-                        )
-                    })
-                }
-            </div> 
-            :
-            <div className="no-restricted-sites-cnt flex-center">
-                No Sites
             </div>
-        }
-        <h3 className='site-table-heading more sticky'>
-            Recent sites to restrict
-        </h3>
-        {
-            recentSites.length > 0 ? 
-            <div className="restricted-site-table more">
-                {
-                    validMoreSitesToRestrict.map((tempHostname, index)=>{
-                        return (
+            <AddCurrSiteToRestrictedSite 
+                setToastData={setToastData}
+                restrictedSites={restrictedSites}
+                getRestrictedSites={getRestrictedSites}
+            />
+            <AddRestrictedSites 
+                setToastData={setToastData}
+                getRestrictedSites={getRestrictedSites}
+                recentSites={recentSites}
+            />
+            <h3 className='site-table-heading restricted sticky'>
+                Your restricted sites
+            </h3>
+            {   
+                restrictedSites ?
+                <div className="restricted-site-table">
+                    {
+                        restrictedSiteArr.map((tempHostname, index)=>{
+                            const tempFavIconUrl = restrictedSites[tempHostname][0]
+                            return (
                             <div key={tempHostname} className="item flex-center">
-                                <AddMoreCheckBox 
+                                <RestrictedCheckBox 
                                     key={tempHostname}
-                                    tempHostname={tempHostname}
+                                    tempHostname={tempHostname} 
                                     getRestrictedSites={getRestrictedSites} 
                                     setToastData={setToastData}
                                 />
                                 <div className='site-icon'>
-                                    <img src={`http://www.google.com/s2/favicons?domain=${tempHostname}&sz=${128}`} alt="icon" />
+                                    <img src={tempFavIconUrl ? tempFavIconUrl : `http://www.google.com/s2/favicons?domain=${tempHostname}&sz=${128}`} alt="icon" />
                                 </div>
                                 <div className="site"> {tempHostname} </div>
                             </div>
-                        )
-                    })
-                }
+                            )
+                        })
+                    }
+                </div> 
+                :
+                <div className="no-restricted-sites-cnt flex-center">
+                    No Sites
+                </div>
+            }
+            <h3 className='site-table-heading more sticky'>
+                Recent sites to restrict
+            </h3>
+            {
+                recentSites.length > 0 ? 
+                <div className="restricted-site-table more">
+                    {
+                        validMoreSitesToRestrict.map((tempHostname, index)=>{
+                            return (
+                                <div key={tempHostname} className="item flex-center">
+                                    <AddMoreCheckBox 
+                                        key={tempHostname}
+                                        tempHostname={tempHostname}
+                                        getRestrictedSites={getRestrictedSites} 
+                                        setToastData={setToastData}
+                                    />
+                                    <div className='site-icon'>
+                                        <img src={`http://www.google.com/s2/favicons?domain=${tempHostname}&sz=${128}`} alt="icon" />
+                                    </div>
+                                    <div className="site"> {tempHostname} </div>
+                                </div>
+                            )
+                        })
+                    }
 
-            </div> :
-            <div className="no-restricted-sites-cnt flex-center">
-                No Sites
-            </div>
-        }
+                </div> :
+                <div className="no-restricted-sites-cnt flex-center">
+                    No Sites
+                </div>
+            }
 
-    </div>
+        </div>
     )
 }
 

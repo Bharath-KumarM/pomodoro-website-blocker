@@ -15,6 +15,7 @@ import SiteTimeLimitScreen from './SitesTimeLimitScreen';
 import { getLocalScreenTimeLimit } from '../../localStorage/localScreenTimeLimit';
 import { getLocalScreenTimeTracker } from '../../localStorage/localScreenTimeTracker';
 import { getLocalVisitTrackerForDay } from '../../localStorage/localVisitTracker';
+import Loader from '../../utilities/Loader';
 
 
 
@@ -29,6 +30,8 @@ const ScreenTime = ()=>{
     const [toastData, setToastData] = useState([null, null]) //* Toast Message from bottom
 
     const [screenTimeLimit, setScreenTimeLimit] = useState(null)
+
+    const [isDataAllLoaded, setIsDataAllLoaded] = useState(false)
 
     useEffect(()=>{
         const getInfo = async (day)=>{
@@ -54,6 +57,8 @@ const ScreenTime = ()=>{
             const dayNoOfVisitsTracker = await getLocalVisitTrackerForDay(dateString)
 
             setScreenTimeData({dayScreenTimeTracker, fullDate, totalScreenTimeWeekly, dayNoOfVisitsTracker})
+
+            setIsDataAllLoaded(true)
         }
 
         getInfo(day)
@@ -72,11 +77,12 @@ const ScreenTime = ()=>{
 
     const [toastMsg, toastColorCode] = toastData
 
-    if (screenTimeData===null) return (
-        <h3 className='screen-time-cnt empty'>
-            Loading...
-        </h3>
-    )
+    if (screenTimeData===null) {
+
+        return (
+            <Loader/>
+        )
+    }
 
     const {dayScreenTimeTracker, fullDate, totalScreenTimeWeekly, dayNoOfVisitsTracker} = screenTimeData;
 
@@ -85,6 +91,7 @@ const ScreenTime = ()=>{
 
 
     return (
+        isDataAllLoaded ? 
         <>
             
             {/* <FloatingBtn 
@@ -195,7 +202,8 @@ const ScreenTime = ()=>{
                 </div>
             </div>
 
-        </>
+        </> :
+        <Loader />
     )
 }
 

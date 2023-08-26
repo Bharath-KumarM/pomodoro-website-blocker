@@ -8,8 +8,8 @@
                   "scripting", 
                   "notifications",
                   "alarms",
-                  "history",
-                  "webNavigation"
+                  "webNavigation",
+                  "contextMenus"
                 ],
   "host_permissions": [
     "*://*/*"

@@ -8,7 +8,10 @@ const style = {
         justifyContent: "center",
         alignItems: "center",
         width: "600px",
-        gap: "10px"
+        gap: "10px",
+        position:"fixed",
+        bottom:"0px",
+        margin:"15px"
       },
     endNotePara: { color: "#979797" },
     endNoteImg: {

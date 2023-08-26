@@ -17,6 +17,7 @@ import { getScheduleItemDesc, getActiveFocusScheduledIndexes } from '../../utili
 import { delLocalScheduleDataByIndex, getLocalScheduleData } from '../../localStorage/localScheduleData';
 import { getLocalFocusModeTracker, turnOffLocalFocusModeTracker, turnOnLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker';
 import { getLocalTakeABreakTrackerforRestrict, turnOffLocalTakeABreakTrackerforRestrict } from '../../localStorage/localTakeABreakTrackerforRestrict';
+import Loader from '../../utilities/Loader';
 
 
 
@@ -32,9 +33,16 @@ const FocusMode = ()=>{
     const [activeFocusScheduledIndexes, setActiveFocusScheduledIndexes] = useState([])
 
     const isTimeInputActive = editTimeInputIndex > -1
-    const isDecisionScreenDataThere = decisionScreenData !== null
+    const [dataLoadedStatus, setDataLoadedStatus] = useState({
+        scheduleData: false,
+        isFocusModeOn: false,
+        foucsModeBreakTimeDiff: false,
+        activeFocusScheduledIndexes: false,
+    })
 
-    const shouldPopScreenOpen = [isTimeInputActive, isDecisionScreenDataThere].includes(true)
+
+    const isDecisionScreenDataThere = decisionScreenData !== null
+    const isPopScreenOpen = [editTimeInputIndex > -1, isDecisionScreenDataThere].includes(true)
 
     const [toastMsg, toastColorCode] = toastData
 
@@ -42,9 +50,11 @@ const FocusMode = ()=>{
         // Get schedule data
         const {scheduleData: tempScheduleData} = await getLocalScheduleData()
         setScheduleData(tempScheduleData)
-
+        
+        setDataLoadedStatus(prevDataLoadedStatus => ({...prevDataLoadedStatus, scheduleData: true}))
         const tempActiveFocusScheduledIndexes = await getActiveFocusScheduledIndexes()
         setActiveFocusScheduledIndexes(tempActiveFocusScheduledIndexes)
+        setDataLoadedStatus(prevDataLoadedStatus => ({...prevDataLoadedStatus, activeFocusScheduledIndexes: true}))
     }
     const gettakeABreakTrackerforRestrictData = async ()=>{
         // Take a break
@@ -56,18 +66,19 @@ const FocusMode = ()=>{
                 const newTimeDiff = Math.ceil((takeABreakTrackerforRestrict - new Date().getTime())/(1000*60))
                 setFoucsModeBreakTimeDiff(newTimeDiff)
             }
+            setDataLoadedStatus(prevDataLoadedStatus => ({...prevDataLoadedStatus, foucsModeBreakTimeDiff: true}))
         } 
     }
+    const getFocusMode = async ()=>{
+        const {focusModeTracker} = await getLocalFocusModeTracker()
+        setIsFocusModeOn(Boolean(focusModeTracker))
+        setDataLoadedStatus(prevDataLoadedStatus => ({...prevDataLoadedStatus, isFocusModeOn: true}))
+    }
+
     useEffect(()=>{
         getScheduleData()
         gettakeABreakTrackerforRestrictData()
-
-
-        // Focus mode tracker
-        getLocalFocusModeTracker().
-            then(({focusModeTracker})=>{
-                setIsFocusModeOn(Boolean(focusModeTracker))
-        })
+        getFocusMode()
 
     }, [])
 
@@ -92,7 +103,10 @@ const FocusMode = ()=>{
             // * You are on break, so can't start or end focus mode
         }
     }
+    console.log('FocusMode')
     return (
+        Object.values(dataLoadedStatus).includes(false) ? 
+        <Loader /> :
         <div className="focus-mode-outer-cnt">
             <div className="focus-mode-cnt">
                 {
@@ -105,7 +119,7 @@ const FocusMode = ()=>{
                     /> : null
                 }
                 {
-                    shouldPopScreenOpen ? 
+                    isPopScreenOpen ? 
                     // Popup Screen
                     <PopupFull
                         setClosePopup={()=> {
@@ -132,7 +146,9 @@ const FocusMode = ()=>{
                             />
                             : null
                         }
-                    </PopupFull> : null
+                    
+                    </PopupFull> 
+                    : null
                 }
                 <div className="start-stop cnt flex-center">
                     <button 
@@ -222,10 +238,10 @@ const FocusMode = ()=>{
                                     index={index} 
                                     getScheduleData={getScheduleData}
                                     setEditTimeInputIndex={setEditTimeInputIndex}
-                                    setDecisionScreenData={setDecisionScreenData}
                                     setToastData={setToastData}
                                     key={index}
                                     activeFocusScheduledIndexes={activeFocusScheduledIndexes}
+                                    setDecisionScreenData={setDecisionScreenData}
                                 />
                             ) 
                         })}
@@ -243,7 +259,7 @@ const FocusMode = ()=>{
 export default FocusMode
 
 
-const ScheduleItem = ({scheduleItemData, index, getScheduleData, setEditTimeInputIndex, setDecisionScreenData, setToastData, activeFocusScheduledIndexes})=>{
+const ScheduleItem = ({scheduleItemData, index, getScheduleData, setEditTimeInputIndex, setToastData, activeFocusScheduledIndexes, setDecisionScreenData})=>{
     const [isScheduleItemAtive, setIsScheduleItemAtive] = useState(activeFocusScheduledIndexes.includes(index))
 
     useEffect(()=>{

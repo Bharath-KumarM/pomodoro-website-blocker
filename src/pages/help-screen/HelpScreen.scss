@@ -1,0 +1,45 @@
+@import '../../utilities/variables';
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@900&display=swap');
+
+.help-scrn-cnt{
+    font-family: 'Rubik', sans-serif;
+    width: min(800px, 100%);
+
+
+
+    background-color: $bg-color3;
+
+    color: $font-color0;    
+    overflow-y: scroll;
+    
+    .help-scrn{
+        padding: 10px;
+        
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 10px;
+        h2{
+            margin-top: 20px;
+        }
+        .unordered-list{
+            padding: 5px 15px;
+
+            li{
+                list-style-type: square;
+                margin: 10px
+            }
+        }
+        .icon-demo-gif{
+            width: 500px;
+            border-radius: 10px;
+        }
+        .popup-screenblock-demo-gif{
+            width: 300px;
+            border-radius: 10px;
+        }
+    }
+
+}

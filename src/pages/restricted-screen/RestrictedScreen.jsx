@@ -152,37 +152,37 @@ const RestrictedScreen = ()=>{
     return (
     <div className='blocked-scrn-cnt'>
         <NavBarInScreen />
-        <div className="heading">
-            <h2>    
-                {
-                    activeFocusScheduledIndexes.length ? 
-                    `This site is scheduled to restrict` : 
-                    `Focus Mode is ON, this site has been restricted ` 
-                }
-            </h2>
-            <div className='desc'>
-                {
-                    activeFocusScheduledIndexes.length ?
-                    currScheduleDesc : 
-                    null
-                }
+        {
+            !hostname ? 
+            <h1>
+                Loading...
+            </h1> :
+            <>
+            <div className="heading">
+                <h2>    
+                    {
+                        activeFocusScheduledIndexes.length ? 
+                        `This site is scheduled to restrict` : 
+                        `Focus Mode is ON, this site has been restricted ` 
+                    }
+                </h2>
+                <div className='desc'>
+                    {
+                        activeFocusScheduledIndexes.length ?
+                        currScheduleDesc : 
+                        null
+                    }
+                </div>
             </div>
-        </div>
-        <div className="block-site-card">
-            <div className='icon-cnt'>
-                {favIcon ? <img src={favIcon} alt="icon" /> : null}
-            </div>
-            <div className='desc-cnt'>
-                <h3>
-                    {hostname ? hostname : null}
-                </h3>
-            </div>
-            {
-                !hostname ? 
-                <h1>
-                    Loading...
-                </h1>
-                :
+            <div className="block-site-card">
+                <div className='icon-cnt'>
+                    {favIcon ? <img src={favIcon} alt="icon" /> : null}
+                </div>
+                <div className='desc-cnt'>
+                    <h3>
+                        {hostname ? hostname : null}
+                    </h3>
+                </div>
                 <div className='btn-cnt'>
                     <div className='btn-inner-cnt'>
                         <button
@@ -248,9 +248,9 @@ const RestrictedScreen = ()=>{
                         null
                     }
                 </div> 
-
-            }
-        </div>
+            </div>
+            </>
+        }
         <EndNoteInScreen />
     </div>
     )
