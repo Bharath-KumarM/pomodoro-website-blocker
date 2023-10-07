@@ -1,3 +1,1 @@
-# Rough Notes
-
-## Current working bench
+"Icon made by Freepik from www.flaticon.com"
