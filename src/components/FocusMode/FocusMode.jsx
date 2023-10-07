@@ -16,7 +16,7 @@ import RestrictedSites from './RestrictedSites';
 import { getScheduleItemDesc, getActiveFocusScheduledIndexes } from '../../utilities/focusModeHelper';
 import { delLocalScheduleDataByIndex, getLocalScheduleData } from '../../localStorage/localScheduleData';
 import { getLocalFocusModeTracker, turnOffLocalFocusModeTracker, turnOnLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker';
-import { getLocalTakeABreakTrackerforRestrict, turnOffLocalTakeABreakTrackerforRestrict } from '../../localStorage/localTakeABreakTrackerforRestrict';
+import { getLocalTakeABreakTrackerforRestrict, handleTakeABreakClick, turnOffLocalTakeABreakTrackerforRestrict } from '../../localStorage/localTakeABreakTrackerforRestrict';
 import Loader from '../../utilities/Loader';
 
 
@@ -103,7 +103,6 @@ const FocusMode = ()=>{
             // * You are on break, so can't start or end focus mode
         }
     }
-    console.log('FocusMode')
     return (
         Object.values(dataLoadedStatus).includes(false) ? 
         <Loader /> :
@@ -151,39 +150,50 @@ const FocusMode = ()=>{
                     : null
                 }
                 <div className="start-stop cnt flex-center">
-                    <button 
-                        className = {
-                            `
-                                start-stop btn 
-                                ${foucsModeBreakTimeDiff ? 'focus-break-active' : isFocusModeOn ? 'focused' : '' }
-                            `
-                        }
-                        onClick={()=>handleFocusModeBtnClick()}
-                    >
-                        {
-                            foucsModeBreakTimeDiff ? "💤You took a break"  :
-                            isFocusModeOn === false ? '✨Start focusing': 
-                            isFocusModeOn === true ? '🚫Stop focusing' :
-                            'Loading'
-                        }
-                    </button>
+                    <div className='start-stop-btn-cnt'>
+                        <button 
+                            className = {
+                                `start-stop btn ${foucsModeBreakTimeDiff ? 'focus-break-active' : isFocusModeOn ? 'focused' : '' }`
+                            }
+                            onClick={()=>handleFocusModeBtnClick()}
+                        >
+                            {
+                                foucsModeBreakTimeDiff ? "💤You took a break"  :
+                                isFocusModeOn === false ? '✨Start focusing': 
+                                isFocusModeOn === true ? '🚫Stop focusing' :
+                                'Loading'
+                            }
+                        </button>
+                    </div>
                     <>
                         {
                             !foucsModeBreakTimeDiff ? null :
-                            <div className="resume-cnt"
-                                onClick={async ()=>{
-                                    // forcfully turning off
-                                    await turnOffLocalTakeABreakTrackerforRestrict(false)
-                                    if (isFocusModeOn) {
-                                        setToastData(['Focus Mode resumed', 'green'])
-                                    } else {
-                                        setToastData(['Scheduled restict resumed', 'green'])
-                                    }
+                            <div className="option-cnt">
+                                <div className="resume-cnt"
+                                    onClick={async ()=>{
+                                        // forcfully turning off
+                                        turnOffLocalTakeABreakTrackerforRestrict({isForceTurnOff: true, shouldRefreshSites: true})
+                                        if (isFocusModeOn) {
+                                            setToastData(['Focus Mode resumed', 'green'])
+                                        } else {
+                                            setToastData(['Scheduled restict resumed', 'green'])
+                                        }
 
-                                    setFoucsModeBreakTimeDiff(false)
-                                }}
-                            >
-                                Resume focus now
+                                        setFoucsModeBreakTimeDiff(false)
+                                        window.close()
+                                    }}
+                                >
+                                    Resume focus now
+                                </div>
+                                <div className="wait-cnt"
+                                    onClick={async ()=>{
+                                        await turnOffLocalTakeABreakTrackerforRestrict({isForceTurnOff: true, shouldRefreshSites: false})
+                                        await handleTakeABreakClick(foucsModeBreakTimeDiff + 5)
+                                        window.close()
+                                    }}
+                                >
+                                    Wait for 5 more minutes
+                                </div>
                             </div>
                         }
                         {

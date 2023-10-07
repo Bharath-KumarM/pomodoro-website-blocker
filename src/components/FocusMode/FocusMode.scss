@@ -20,42 +20,69 @@
         .start-stop.cnt{
             flex-direction: column;
             margin-top: 10px;
-            width: 100%;
-    
-            .start-stop.btn{
-                width: min(300px, 60%);
-                font-size: 16px;
-                background-color: $accent-bg-light-color1;
-                height: 35px;
-                border-radius: 10px;
-                border: 0;
-                transition: background-color 200ms ease-in;
-                color: $font-color1;
+            .start-stop-btn-cnt{
+                display: flex;
+                gap: 5px;
                 margin: 20px;
-    
-                &:hover{
-                    background-color: $accent-bg-dark-color1;
-                    
-                }
-                &.focus-break-active{
-                    background-color: $bg-color4;
-                }
+                width: 200px;
                 
-                &.focused{
-                    background-color: $accent-bg-dark-color1;
-                    box-shadow: 0 0 15px -2px $accent-bg-bright-color2;
+                justify-content: center;
+                align-items: center;
+                
+                
+                .start-stop.btn{
+                    width: 100%;
+                    padding: 5px;
+                    font-size: 16px;
+                    background-color: $accent-bg-light-color1;
+                    height: 35px;
+                    border-radius: 5px;
+                    border: 0;
+                    transition: background-color 200ms ease-in;
+                    color: $font-color1;
+        
+                    &:hover{
+                        background-color: $accent-bg-dark-color1;
+                        
+                    }
+                    &.focus-break-active{
+                        background-color: $bg-color4;
+                    }
+                    
+                    &.focused{
+                        background-color: $accent-bg-dark-color1;
+                        box-shadow: 0 0 15px -2px $accent-bg-bright-color2;
+                    }
                 }
+
             }
-    
-            .resume-cnt{
-                color: $accent-bg-bright-color3;
-                &:hover{
+            .option-cnt{
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                justify-content: center;
+                align-items: center;
+                .resume-cnt{
                     color: $accent-bg-bright-color2;
+                    &:hover{
+                        color: $accent-bg-bright-color3;
+                    }
+                    font-size: 14px;
+                    text-decoration: underline;
+                    cursor: pointer;
+                    margin-bottom: 10px;
                 }
-                font-size: 14px;
-                text-decoration: underline;
-                cursor: pointer;
-                margin-bottom: 10px;
+                .wait-cnt{
+
+                    color: $accent-bg-bright-color2;
+                    &:hover{
+                        color: $accent-bg-bright-color3;
+                    }
+                    font-size: 14px;
+                    text-decoration: underline;
+                    cursor: pointer;
+                    margin-bottom: 10px;
+                }
             }
     
             .break-cnt{
