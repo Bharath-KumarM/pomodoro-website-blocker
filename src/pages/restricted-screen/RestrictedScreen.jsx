@@ -8,7 +8,7 @@ import { getCurrScheduleDesc, getActiveFocusScheduledIndexes } from '../../utili
 import { getLocalRestrictedScreenDataByTabId } from '../../localStorage/localRestrictedScreenData'
 import { checkLocalRestrictedSitesByHostname, delLocalRestrictedSites } from '../../localStorage/localRestrictedSites';
 import { getLocalFocusModeTracker, turnOffLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker';
-import { getLocalTakeABreakTrackerforRestrict, turnOnLocalTakeABreakTrackerforRestrict } from '../../localStorage/localTakeABreakTrackerforRestrict';
+import { getLocalTakeABreakTrackerforRestrict, handleTakeABreakClick } from '../../localStorage/localTakeABreakTrackerforRestrict';
 import { NavBarInScreen } from '../../utilities/NavBarInScreen';
 import { EndNoteInScreen } from '../../utilities/EndNoteInScreen';
 
@@ -75,6 +75,7 @@ const RestrictedScreen = ()=>{
         
         if (!currTabRestrictedScreenData) {
             console.log('Issue: no restrictedScreenData from BG\n', 'tabId:', tabId)
+            window.close()
             return null;
         }
         const [tempHostname, tempFavIcon, tempUrl] = currTabRestrictedScreenData
@@ -130,25 +131,7 @@ const RestrictedScreen = ()=>{
         await delLocalRestrictedSites(hostname)
     }
 
-    const handleCloseTabBtnClick = ()=>{
-        chrome.tabs.getCurrent(function(tab) {
-            chrome.tabs.remove(tab.id, function() { 
-                console.log('close the tab')
-            });
-        });
-    }
 
-    const handleTakeABreakClick = (timeInMinutes)=>{
-        const currTimeObj = Date.now()
-        turnOnLocalTakeABreakTrackerforRestrict(currTimeObj + (timeInMinutes*60*1000))
-
-        chrome.alarms.create(
-            `takeABreakForRestrict`,
-            {
-                when: currTimeObj + (timeInMinutes*60*1000),
-            }
-        )
-    }
     return (
     <div className='blocked-scrn-cnt'>
         <NavBarInScreen />
@@ -211,7 +194,7 @@ const RestrictedScreen = ()=>{
                         </button>
                         <button
                             className='btn close-tab'
-                            onClick={()=> handleCloseTabBtnClick()}
+                            onClick={()=> window.close()}
                         >
                             Close this tab
                         </button>
@@ -242,7 +225,7 @@ const RestrictedScreen = ()=>{
                     {
                         count < -50 ? 
                         <h2>
-                            No Action taken, closing in few seconds...
+                            {`No Action taken, closing in ${count+60} seconds...`}
                         </h2> 
                         :
                         null

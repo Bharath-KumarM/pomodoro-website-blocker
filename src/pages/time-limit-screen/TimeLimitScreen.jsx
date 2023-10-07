@@ -69,6 +69,7 @@ const TimeLimitScreen = ()=>{
 
         if (!currTabTimeLimitScreenData) {
             console.log('Issue: no timeLimitScreenData from BG')
+            window.close()
             return null;
         }
         const [tempHostname, tempFavIcon, tempUrl] = currTabTimeLimitScreenData
@@ -93,14 +94,6 @@ const TimeLimitScreen = ()=>{
         document.title = `${tempHostname} - Time Limit`
 
         setCurrSiteData([tempHostname, tempFavIcon])
-    }
-
-    function handleCloseTabBtnClick(){
-        chrome.tabs.getCurrent(function(tab) {
-            chrome.tabs.remove(tab.id, function() { 
-                console.log('close the tab')
-            });
-        });
     }
 
     async function handleUnpauseSite() {
@@ -134,7 +127,7 @@ const TimeLimitScreen = ()=>{
                     <div className='btn-inner-cnt'>
                         <button
                             className='btn close-tab'
-                            onClick={()=> handleCloseTabBtnClick()}
+                            onClick={()=> window.close()}
                         >
                             Close this tab
                         </button>
@@ -155,7 +148,7 @@ const TimeLimitScreen = ()=>{
                     {
                         count < -50 ? 
                         <h2>
-                            No Action taken, closing in few seconds...
+                            {`No Action taken, closing in ${count+60} seconds...`}
                         </h2> 
                         :
                         null

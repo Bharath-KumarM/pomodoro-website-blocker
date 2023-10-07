@@ -69,6 +69,7 @@ const BlockedScreen = ()=>{
 
         if (!blockedScreenDataOfCurrTab) {
             console.log('Issue: no blockedScreeendata from BG')
+            window.close()
             return null;
         }
         const [tempHostname, tempFavIcon, tempUrl] = blockedScreenDataOfCurrTab
@@ -101,16 +102,6 @@ const BlockedScreen = ()=>{
         }
     }
 
-
-
-    function handleCloseTabBtnClick(){
-        chrome.tabs.getCurrent(function(tab) {
-            chrome.tabs.remove(tab.id, function() { 
-                console.log('close the tab')
-            });
-        });
-    }
-
     return (
     <div className='blocked-scrn-cnt'>
         <NavBarInScreen />
@@ -139,7 +130,7 @@ const BlockedScreen = ()=>{
                         <div className='btn-inner-cnt'>
                             <button
                                 className='btn close-tab'
-                                onClick={()=> handleCloseTabBtnClick()}
+                                onClick={()=> window.close()}
                             >
                                 Close this tab
                             </button>
@@ -161,7 +152,7 @@ const BlockedScreen = ()=>{
                         {
                             count < -50 ? 
                             <h2>
-                                No Action taken, closing in few seconds...
+                                {`No Action taken, closing in ${count+60} seconds...`}
                             </h2> 
                             :
                             null
