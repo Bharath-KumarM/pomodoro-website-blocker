@@ -121,7 +121,7 @@ const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites
                                 })
                             }
                         }}
-                        placeholder={"Type or Paste website"}
+                        placeholder={"Type to block sites"}
                         list="site-list"
                         ref={inputRef}
 
