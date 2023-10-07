@@ -21,9 +21,16 @@ const BlockedSitesInfo = ({setToastData})=>{
                 <div 
                     className="block-site-show-btn" 
                     onClick={()=>{setIsDropDownClicked(true)}}
-                    onWheel={e=>console.log(e)}
+                    onAnimationEnd={(e)=>{
+                        setIsDropDownClicked(true)
+                    }}
                     >
-                    <DownIcon />
+                    <div
+                        className="inner-cnt"
+                    >
+
+                        <DownIcon />
+                    </div>
                 </div>
             }
         </div>

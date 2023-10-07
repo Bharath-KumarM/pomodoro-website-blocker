@@ -24,10 +24,35 @@
             width: 100%;
             background-color:  $bg-color3;
             border-radius: 0 0 5px 5px;
-            
-            &:hover{
-                background-color:  $bg-color4;
+
+            .inner-cnt{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 10%;
+                height: 100%;
             }
+
+            &:hover{
+                .inner-cnt{
+                    background-color:  $bg-color5;
+                    animation: expand 1s ease-in;
+
+                    
+                @keyframes expand {
+                    0%{
+                        width: 0;
+                    }
+                    100%{
+                        width: 95%;
+                    }
+        
+                    
+                }
+                }
+            }
+
+
     
             svg{
                 animation: arrow-down 900ms ease-out  infinite;
@@ -242,5 +267,11 @@
                 }
             }
         }
+    }
+    .no-restricted-sites-cnt{
+        width: min(90%, 500px);
+        height: 100px;
+        color: $font-color1;
+
     }
 }
