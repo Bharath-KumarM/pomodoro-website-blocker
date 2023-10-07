@@ -12,7 +12,7 @@ const SiteTimeLimitScreen = ({toastMsg, setClosePopup, showTimeLimitInput, scree
     
     const searchBarRef = useRef(null)
     useEffect(()=>{
-        getRecentHostnames(-10).then((tempRecentSites)=>{
+        getRecentHostnames().then((tempRecentSites)=>{
             setRecentSites(tempRecentSites)
             setRecentSitesbackUp(tempRecentSites)
         })

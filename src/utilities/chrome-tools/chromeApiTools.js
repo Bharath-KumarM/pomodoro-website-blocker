@@ -1,6 +1,6 @@
 
 import { getLocalScreenTimeLimitByHostname } from "../../localStorage/localScreenTimeLimit"
-import { getLocalScreenTimeTracker, getLocalScreenTimeTrackerForDay } from "../../localStorage/localScreenTimeTracker"
+import { getLocalVisitTracker } from "../../localStorage/localVisitTracker"
 import { getDateString } from "../date"
 
 export async function getCurrTab(){
@@ -29,19 +29,17 @@ export async function checkScreenTimeSurpassedLimit(hostname){
     return totalScreenTimeLimitInMinutes < totalScreenTimeTrackerInMinutes
 }
 
-export const getRecentHostnames = async (n=-3)=>{
-    /* todo: since visit tracker is recenly created, it may not have a lot of sites. So, for time being 
-       getLocalScreenTimeTrackerForDay used.
-    */
+export const getRecentHostnames = async (n=-30)=>{
+    const {visitTracker: tracker} = await getLocalVisitTracker()
 
-    // const tracker = await getLocalVisitTracker()
-    const {screenTimeTracker: tracker} = await getLocalScreenTimeTracker()
-    
-    let trackerForNDays = {}
+    let hostnames = []
     for ( let i=n; i<=0; i++ ){
         const trackerForDay = tracker[ getDateString(i) ] ?? {}
-        trackerForNDays = { ...trackerForNDays, ...trackerForDay }
+        hostnames.push(...Object.keys(trackerForDay))
     }
 
-    return Object.keys(trackerForNDays)
+    hostnames.reverse()
+    const uniqueHostnames = [...new Set(hostnames)]
+
+    return uniqueHostnames
 }
