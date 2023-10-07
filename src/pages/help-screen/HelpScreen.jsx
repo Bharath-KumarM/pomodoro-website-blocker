@@ -1,7 +1,6 @@
 import './HelpScreen.scss';
-import extensionIcon from '../../../logo_3.png'
 import iconPinnedDemo from '../../../help_screen__draft_src/icon_pinned_demo.gif'
-// import popupScreenBlockBtn from '../../../help_screen__draft_src/block_section_popup_screen_button.gif'
+import popupScreenBlockBtn from '../../../help_screen__draft_src/block_section_popup_screen_button.gif'
 
 const HelpScreen = ()=>{
     
@@ -12,12 +11,12 @@ const HelpScreen = ()=>{
                 <h1>Help - Be focused </h1>
                 <p>This page show you the features of "Be focused" extension.</p>
                 <ul className='index unordered-list'>
-                    <li>Option icon</li>
+                    <li>Option Icon</li>
                     <li>Block site section</li>
-                    <li>Foucs Mode section</li>
-                    <li>Screen Time section</li>
+                    <li>Foucs Mode</li>
+                    <li>Screen Time Limit</li>
                 </ul>
-                <h2>Option Icon</h2>
+                <h2>Where to find Option Icon?</h2>
                 <img
                     className='icon-demo-gif' 
                     src={iconPinnedDemo} 
@@ -29,7 +28,7 @@ const HelpScreen = ()=>{
                     follow the above demo.
                 </p>
 
-                <h2>Block site section</h2>
+                <h2>How to Block sites?</h2>
                 <img
                     className='popup-screenblock-demo-gif' 
                     src={popupScreenBlockBtn} 
@@ -40,12 +39,17 @@ const HelpScreen = ()=>{
                     A site can be blocked in different ways.
                     Most common and stright-forward is demoed above. 
                     And unblocking is done using the same button but you may need to wait 
-                    for 30seconds. 
+                    for 30 seconds. 
                 </p>
 
-                <h2>Focus mode section</h2>
+                <h2>Focus mode</h2>
                 <p>
-
+                    Focus mode helps you to restrict distracting sites for a certain time period. Focus mode can be manually turned on or off.
+                    You can schdule focus mode by configuring start and end as well.
+                </p>
+                <h2>Screen Time Limit</h2>
+                <p>
+                    Time limit helps to limit the daily usage of distracting sites.
                 </p>
             </article>
         </div>

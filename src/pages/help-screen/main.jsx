@@ -1,5 +1,4 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
 import HelpScreen from './HelpScreen'
 
 import "./index.scss";
