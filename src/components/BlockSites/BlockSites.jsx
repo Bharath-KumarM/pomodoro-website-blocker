@@ -167,6 +167,7 @@ function SiteDetails({isBlocked, currTab, hostName, handleBlockBtnClick}){
                 if (!isBlocked || count <= 0){
                     handleBlockBtnClick(isBlocked)
                 }
+                window.close()
             }}
         >
             {   
