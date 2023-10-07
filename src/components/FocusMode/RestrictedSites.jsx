@@ -29,7 +29,7 @@ const RestrictedSites = ({setToastData})=>{
     }
     
     const getRecentSites = async ()=> {
-        const tempRecentSites = await getRecentHostnames(-10)
+        const tempRecentSites = await getRecentHostnames()
         setRecentSites(tempRecentSites)
 
         setDataLoadedStatus(prevDataLoadedStatus => ({...prevDataLoadedStatus, recentSites: true}))
