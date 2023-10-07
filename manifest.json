@@ -6,7 +6,6 @@
   "permissions": ["storage", 
                   "tabs", 
                   "scripting", 
-                  "notifications",
                   "alarms",
                   "webNavigation",
                   "contextMenus"
@@ -28,7 +27,7 @@
             "*://*/*"
         ],
         "js": [
-          "src/pages/content/content.js"
+          "src/pages/content/content.jsx"
         ]
     }
   ],
