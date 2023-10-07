@@ -1,0 +1,217 @@
+@import "../../utilities/variables";
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    
+    color: $font-color1;
+    font-family: 'Rubik', sans-serif;
+  
+    margin: 0;
+    padding: 0;
+  
+    // border: solid 0.5px red;
+
+  }
+
+.outter-cnt{
+
+    transition: opacity 0.75s;
+    opacity: 0.75;
+    &:hover{
+        opacity: 1;
+
+    }
+
+
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    
+    animation: fade 4s ease;
+    @keyframes fade {
+        0%{
+            opacity: 1; 
+            transform: translateY(-250%); //slide in start
+        }
+
+        25%{
+            transform: translateY(0); //slide in end
+        }
+        100%{
+            opacity: 1; //fade out start
+        }
+    }
+    
+
+    
+    margin: 15px;
+    width: 300px;
+
+    border-radius: 5px;
+    background-color: $bg-color3;
+
+    .cnt {
+        padding: 10px;
+        // height: 200px;
+
+    
+        display: flex;
+        flex-direction: column;
+    
+    
+        &:hover .header .headerCnt .title{
+            width: 120px;
+        }
+    
+        .header{
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 20px;
+            margin: 10px 0;
+    
+            .headerCnt{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+    
+                transition: 1s;
+            
+                width: 90%;
+    
+                transform: translateX(10px);
+    
+    
+                .title{
+                    font-size: 18px;
+                    font-weight: 900;
+    
+                    cursor: pointer;
+    
+                    display: flex;
+                    align-items: center;
+                    overflow: hidden;
+    
+                    transition: 1s;
+    
+                    white-space: nowrap;
+                    width: 0px;
+                    animation: reveal 2s ease-in;
+    
+                    direction: rtl;
+    
+                    @keyframes reveal {
+                        0%{
+                            width: 120px;
+                        }
+                        60%{
+                            width: 120px;
+                        }
+                        100%{
+                            width: 0px;
+                        }
+                        
+                    }
+                }
+                .extentionIconImg{
+                    vertical-align: middle;
+                    width: 25px;
+                    height: 25px;
+    
+                    // padding: 5px;
+                    margin: 0 2px;
+                }
+                
+            }
+    
+            .close-btn{
+                margin: 10px;
+        
+                width: 20px;
+                height: 20px;
+        
+                background-color: transparent;
+
+                border: 0;
+                
+
+                svg{
+                    width: 25px;
+                    height: 25px;
+        
+                    &:hover{
+                        path{
+                            color: $icon-red3;
+                        }
+                    }
+                }
+            }
+        
+    
+        }
+    
+        section.message-cnt{
+            cursor: default;
+            margin-top: 10px;
+    
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+    
+            gap: 10px;
+            font-size: 16px;
+    
+            p{
+                color: $font-color2;
+                font-size: 15px;
+            }
+        }
+    
+        .option-btn-cnt{
+            margin-top: 10px;
+    
+            display: flex;
+            justify-content: center;
+            align-items: center;
+    
+            gap: 10px;
+    
+        
+    
+            button{
+                font-weight: 500;
+    
+                width: 50%;
+                height: 50px;
+    
+                color: $font-color1;
+                color: $accent-color0;
+                background-color: $bg-color4;
+                &:hover{
+                    background-color: $bg-color5;
+                }
+    
+                border: 0;
+    
+                border-radius: 5px;
+            }
+        }
+    }
+
+    .progress-bar-cnt{
+            
+        height: 5px;
+        width: 100%;
+        
+        // transform: translateY(10px);
+        
+        .progress-bar{
+            transition: width 0.5s;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            background-color: red;
+            height: 5px;
+            // width: 30%;
+        }
+    }
+}
+
