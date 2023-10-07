@@ -6,9 +6,9 @@ import { delLocalRestrictedScreenDataByTabId, updateLocalRestrictedScreenDataByT
 import { delLocalTimeLimitScreenDataByTabId, updateLocalTimeLimitScreenDataByTab } from '../../localStorage/localTimeLimitScreenData'
 
 import {checkLocalBlockedSitesByHostname, setLocalBlockedSites, updateLocalBlockedSites} from '../../localStorage/localBlockedSites'
-import { checkLocalRestrictedSitesByHostname } from '../../localStorage/localRestrictedSites'
+import { checkLocalRestrictedSitesByHostname, getLocalRestrictedSites } from '../../localStorage/localRestrictedSites'
 import { getLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker'
-import { getLocalTakeABreakTrackerforRestrict, turnOffLocalTakeABreakTrackerforRestrict } from '../../localStorage/localTakeABreakTrackerforRestrict'
+import { getLocalTakeABreakTrackerforRestrict, handleTakeABreakClick, turnOffLocalTakeABreakTrackerforRestrict } from '../../localStorage/localTakeABreakTrackerforRestrict'
 import { handleOnInstallEvent } from './installEvents'
 import { handleOnStartUpEvent } from './onStartupEvents'
 import { checkLocalVisitTabIdTrackerNewSession, delLocalVisitTabIdTracker } from '../../localStorage/localVisitTrackerTabId'
@@ -42,6 +42,8 @@ chrome.runtime.onInstalled.addListener(({id, previousVersion, reason})=>{
   // reason = 'install' || 'update' || 'chrome_update' || 'shared_module_update'
 
   console.log(`onInstalled reason: ${reason}`, Date ().toLocaleString())
+  turnOffLocalTakeABreakTrackerforRestrict({isForceTurnOff: true, shouldRefreshSites: false})
+  
 
   if (['install', 'update', 'shared_module_update'].includes(reason)){
     createWelcomeScreencreenTab()
@@ -63,7 +65,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
       msg, 
       getTabId,
       checkCurrentTabAudible,
-      updateBadgeIcon
+      updateBadgeIcon,
+      updateLocalTimeLimitScreenDataByTabMsg,
+      handleTurnOffLocalTakeABreakTrackerforRestrict,
+      createTakeABreak
      } = request
 
   if (getTabId){
@@ -78,27 +83,76 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
     const {hostname} = updateBadgeIcon
     const tabId = sender.tab.id
 
-    handleUpdateBadgeIcon({tabId, hostname}).then(isBadgeUpdated=>{
+    const {isBadgeUpdated} = handleUpdateBadgeIcon({tabId, hostname}).then(()=>{
+
       sendResponse({isBadgeUpdated})
     })
     
   }
 
+  if (updateLocalTimeLimitScreenDataByTabMsg){
+    const [tabId, [hostname, favIconUrl, url]] = updateLocalTimeLimitScreenDataByTabMsg
+    updateLocalTimeLimitScreenDataByTab(tabId, [hostname, favIconUrl, url]).then(()=>{
+      sendResponse(true)
+    })
+  }
+
+  if (handleTurnOffLocalTakeABreakTrackerforRestrict){
+    turnOffLocalTakeABreakTrackerforRestrict({isForceTurnOff: true, shouldRefreshSites: true}).then(()=>{
+      sendResponse(true)
+    })
+  }
+  
+  if(createTakeABreak){
+    turnOffLocalTakeABreakTrackerforRestrict({isForceTurnOff: true, shouldRefreshSites: false}).then(()=>{
+      const {timeInMinutes} = createTakeABreak
+      handleTakeABreakClick(timeInMinutes).then(()=>{
+        sendResponse(true)
+      })
+    })
+    
+
+
+  }
   return true;
 })
 
 //* Handles alarm
-chrome.alarms.onAlarm.addListener(({name})=>{
+chrome.alarms.onAlarm.addListener(async ({name})=>{
+  // name = 'takeABreakForRestrict' ||'takeABreakForRestrictBefore2minute' || 'takeABreakForRestrictBefore1minute'
+
   // Take A Break alarm ends for restricting sites
   if (name.startsWith('takeABreakForRestrict')){
-    turnOffLocalTakeABreakTrackerforRestrict(true)
+    if (name === 'takeABreakForRestrict'){
+      turnOffLocalTakeABreakTrackerforRestrict({isForceTurnOff: false, shouldRefreshSites: true})
+    }
+    else{
+      let {restrictedSites} = await getLocalRestrictedSites()
+
+      let takeABreakForRestrictRemainingMinutes
+      if (name === 'takeABreakForRestrictBefore2minute'){
+        takeABreakForRestrictRemainingMinutes = 2
+      }
+      else if (name === 'takeABreakForRestrictBefore1minute'){
+        takeABreakForRestrictRemainingMinutes = 1
+      }
+      if (!takeABreakForRestrictRemainingMinutes){
+        return null
+      }
+
+      for (const hostname in restrictedSites){
+        const tabs = await chrome.tabs.query({url: `*://${hostname}/*` })
+        for (const {id} of tabs){
+          const response = await chrome.tabs.sendMessage(id, {takeABreakForRestrictRemainingMinutes})
+        }
+      }
+    }
   }
 })
 
 //* Handles URL updates
 chrome.webNavigation.onBeforeNavigate.addListener( async (details)=>{
     const {tabId, url, frameType} = details
-    
     if (frameType === "outermost_frame"){
       handleUrlUpdate({tabId, url})
     }
@@ -173,7 +227,7 @@ async function handleUrlUpdate({tabId, url}){
   const {takeABreakTrackerforRestrict} = await getLocalTakeABreakTrackerforRestrict()
 
 
-  if ((isRestricted && !takeABreakTrackerforRestrict) && (focusModeTracker || isCurrTimeFocusScheduled)){
+  if (isRestricted && !takeABreakTrackerforRestrict && (focusModeTracker || isCurrTimeFocusScheduled)){
     await updateLocalRestrictedScreenDataByTab(tabId, [hostname, favIconUrl, url])
     return null;
   }
