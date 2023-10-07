@@ -35,7 +35,7 @@ const BlockedSitesList = ({setToastData}) => {
         }
 
         getUpdatedBlockedSites()
-        getRecentHostnames(-2).then(tempRecentSites=>setRecentSites(tempRecentSites))
+        getRecentHostnames().then(tempRecentSites=>setRecentSites(tempRecentSites))
     }, [])
 
     const blockedSitesArr = Object.keys(blockedSites) 
@@ -49,7 +49,7 @@ const BlockedSitesList = ({setToastData}) => {
         <div className="sticky-ele">
             <div className="heading">
                 <ImBlocked />
-                <h3> Blocked Sites </h3>
+                <h3> Block Sites </h3>
             </div>
         </div>
         <AddCurrSiteToBlockedSite 
@@ -62,8 +62,9 @@ const BlockedSitesList = ({setToastData}) => {
             getUpdatedBlockedSites={getUpdatedBlockedSites}
             recentSites={recentSites}
         />
+
         <h3 className='site-table-heading restricted sticky-ele'>
-            Blocked sites
+            List of blocked site
         </h3>
         {   
             blockedSitesArr.length ?
@@ -98,6 +99,7 @@ const BlockedSitesList = ({setToastData}) => {
         <h3 className='site-table-heading more sticky-ele'>
             Recent sites to block
         </h3>
+
         {
             recentSites.length > 0 ? 
             <div className="restricted-site-table more">
