@@ -4,7 +4,7 @@ import manifest from './manifest.json';
 import { resolve } from 'path';
 import { crx } from '@crxjs/vite-plugin'
 
-const isBuildTest = process.env.NODE_ENV === 'build-test ' // 'dev ' || 'build-prod '
+const isBuildTest = process.env.NODE_ENV === 'build-test ' // 'dev ' || 'build-prod ' || 'build-test ' 
 let testBuild = {}
 let configResolve = {}
 
