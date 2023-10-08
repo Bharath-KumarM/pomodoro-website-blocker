@@ -167,36 +167,6 @@ const FocusMode = ()=>{
                     </div>
                     <>
                         {
-                            !foucsModeBreakTimeDiff ? null :
-                            <div className="option-cnt">
-                                <div className="resume-cnt"
-                                    onClick={async ()=>{
-                                        // forcfully turning off
-                                        turnOffLocalTakeABreakTrackerforRestrict({isForceTurnOff: true, shouldRefreshSites: true})
-                                        if (isFocusModeOn) {
-                                            setToastData(['Focus Mode resumed', 'green'])
-                                        } else {
-                                            setToastData(['Scheduled restict resumed', 'green'])
-                                        }
-
-                                        setFoucsModeBreakTimeDiff(false)
-                                        window.close()
-                                    }}
-                                >
-                                    Resume focus now
-                                </div>
-                                <div className="wait-cnt"
-                                    onClick={async ()=>{
-                                        await turnOffLocalTakeABreakTrackerforRestrict({isForceTurnOff: true, shouldRefreshSites: false})
-                                        await handleTakeABreakClick(foucsModeBreakTimeDiff + 5)
-                                        window.close()
-                                    }}
-                                >
-                                    Wait for 5 more minutes
-                                </div>
-                            </div>
-                        }
-                        {
                             foucsModeBreakTimeDiff || activeFocusScheduledIndexes.length || isFocusModeOn ?
                             <div className='break-cnt flex-center'>
                                 <div className="info-icon-cnt">
@@ -225,6 +195,38 @@ const FocusMode = ()=>{
                             </div> : 
                             null
                         }
+                        {
+                            !foucsModeBreakTimeDiff ? null :
+                            <div className="option-cnt">
+                                <div className="resume-cnt"
+                                    onClick={async ()=>{
+                                        // forcfully turning off
+                                        turnOffLocalTakeABreakTrackerforRestrict({isForceTurnOff: true, shouldRefreshSites: true})
+                                        if (isFocusModeOn) {
+                                            setToastData(['Focus Mode resumed', 'green'])
+                                        } else {
+                                            setToastData(['Scheduled restict resumed', 'green'])
+                                        }
+
+                                        setFoucsModeBreakTimeDiff(false)
+                                        window.close()
+                                    }}
+                                >
+                                    Resume focus now
+                                </div>
+                                <hr />
+                                <div className="wait-cnt"
+                                    onClick={async ()=>{
+                                        await turnOffLocalTakeABreakTrackerforRestrict({isForceTurnOff: true, shouldRefreshSites: false})
+                                        await handleTakeABreakClick(foucsModeBreakTimeDiff + 5)
+                                        window.close()
+                                    }}
+                                >
+                                    Wait for 5 more minutes
+                                </div>
+                            </div>
+                        }
+
                     </>
                 </div>
                 <div className="schedule-cnt">
