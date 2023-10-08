@@ -11,13 +11,14 @@ const hrValues = Array.from({length: 12}, (_ ,index)=>pad2(index+1))
 const minValues = Array.from({length: 12}, (_ ,index)=>pad2(index*5))
 const amPmValues = ['am', 'pm']
 
+const daysLetterArr = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+const daysWordsArr = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, getScheduleData, isNewSchedule, setToastData})=>{
     const [startTime, setStartTime] = useState(isNewSchedule ? '10:00:am' : null);
     const [endTime, setEndTime] = useState(isNewSchedule ? '05:00:pm' : null);
     const [daysActiveArr, setDaysActiveArr] = useState(isNewSchedule ? [false, true, true, true, true, true, false] : null)
     
-    const daysLetterArr = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 
     const handleExistingScheduleEdit = async ()=>{
         const {scheduleData} = await getLocalScheduleData()
@@ -208,7 +209,6 @@ const TimeInputPopup = ({setEditTimeInputIndex, editTimeInputIndex, getScheduleD
                                 key={index}
                                 dayLetter={dayLetter} 
                                 index={index}
-                                daysLetterArr={daysLetterArr} 
                                 daysActiveArr={daysActiveArr} 
                                 setDaysActiveArr={setDaysActiveArr}
                             />
@@ -317,6 +317,7 @@ const TimeCnt = ({time, setTime})=>{
 
 const DayLetter = ({dayLetter, index, daysActiveArr, setDaysActiveArr})=>{
     const tempClass = daysActiveArr[index] ? 'day active' : 'day'
+    const dayWord = daysWordsArr[index]
 
     return (
         <span className={tempClass}
@@ -325,6 +326,7 @@ const DayLetter = ({dayLetter, index, daysActiveArr, setDaysActiveArr})=>{
                 daysActiveArr[index] = !daysActiveArr[index]
                 setDaysActiveArr([...daysActiveArr])
             }}
+            title={dayWord}
         >
             {dayLetter}
         </span>
