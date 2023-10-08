@@ -73,7 +73,7 @@ const RestrictedSites = ({setToastData})=>{
                 Your restricted sites
             </h3>
             {   
-                restrictedSites ?
+                restrictedSiteArr.length ?
                 <div className="restricted-site-table">
                     {
                         restrictedSiteArr.map((tempHostname, index)=>{
