@@ -1,0 +1,536 @@
+@import '../../utilities/variables';
+
+
+.OutterCnt{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    width: 100%;
+    gap: 10px;
+
+    .IgnoreSiteList{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: min(90%, 450px);
+        height: 75%;
+        background-color: $bg-color3;
+    
+        border-radius: 10px;
+    
+        position: relative;
+        .CloseBtn{
+            border: 0;
+            border-radius: 5px;
+    
+            position: absolute;
+            right: 0;
+            top: 0;
+    
+            margin: 5px;
+            padding: 5px;
+            background-color: $bg-color4;
+    
+            z-index: 2;
+    
+            &:hover{
+                background-color: $bg-color2;
+            }
+    
+            svg{
+                width: 20px;
+                height: 20px;
+                path{
+                    color: $icon-red2;
+                }
+            }
+        }
+        .InnerCnt{
+            width: 100%;
+            height: 100%;
+    
+            padding: 5px;
+            padding-top: 0;
+    
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+    
+    
+            flex-direction: column;
+            gap: 10px;
+            
+    
+            .HeadingCnt{
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                gap: 20px;
+                flex-direction: column;
+    
+                padding: 15px 0 10px 0;
+    
+                width: 100%;
+    
+                .SearchBarCnt{
+                    width: 100%;
+                    .SearchBar{
+                        width: 100%;
+                        height: 35px;
+                        font-size: 16px;
+                        color: $font-color1;
+                        padding: 5px;
+                        border: 0;
+    
+                        background-color: $bg-color4;
+        
+                        &:focus{
+                            outline: none;
+                        }
+                        border-radius: 5px;
+                    }
+                }
+            }
+    
+    
+            .SitesCnt{
+                width: 100%;
+    
+                overflow-y: scroll;
+                &::-webkit-scrollbar {
+                    width: 5px;
+                }
+                .HeaderCnt{
+                    width: 100%;
+                    padding: 10px;
+                    margin-bottom: 10px;
+                    
+                    background-color: $bg-color2;
+                    
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+                    
+                    border-radius: 5px;
+                    gap: 10px;
+                    .Icon{
+                        svg{
+                            width: 20px;
+                            height: 20px;
+                            path{
+                                stroke: $font-color2;
+                            }
+    
+                        }
+                    }
+                    .Header{
+                        font-size: 14px;
+                        color: $font-color2;
+    
+                        padding-bottom: 5px;
+                    }
+                }
+                .AddNewSite{
+                    
+                }
+                .NoSiteItem{
+                    width: 100%;
+    
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+    
+                    min-width: 0;
+    
+                    height: 60px;
+                    color: $font-color2;
+                }
+                .SiteItem{
+                    width: 100%;
+    
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+    
+                    min-width: 0;
+    
+                    height: 55px;
+    
+                    
+                    .SiteItemCnt{
+                        padding: 10px;
+                        display: flex;
+                        justify-content: flex-start;
+                        align-items: center;
+        
+                        gap: 20px;
+                        min-width: 0;
+
+                        .SiteItemCheckBoxCnt{
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+
+                            .SiteItemCheckBox{
+                                width: 20px;
+                                height: 20px;
+
+                                accent-color: $accent-color0;
+                            }
+                        }
+    
+                        .SiteItemIcon{
+                            width: 30px;
+                            height: 30px;
+                        }
+    
+                        .HostName{
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+                    }
+                    .icon-btn{
+                            border-left: solid 2px $font-color1;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+    
+                            width: 60px;
+                            height: 40px;
+    
+                            &:hover{
+                                background-color: $bg-color4;
+                            }
+                            svg{
+                                width: 15px;
+                                height: 15px;
+                            }
+    
+                            .time-limit-inner-cnt{
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                flex-direction: column;
+    
+                                gap: 5px;
+    
+                                .time-limit-text{
+                                    font-size: 10px;
+                                }
+                            }
+                        }
+                }
+                
+            }
+    
+        }
+    }
+
+    .Heading{
+        font-size: 18px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-self: flex-start;
+
+        padding: 5px;
+        margin: 5px;
+        gap: 10px;
+
+        .Title{
+            &:hover{
+                cursor: pointer;
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .Cnt{
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        flex-direction: column;
+
+        width: 100%;
+        padding: 5px;
+        
+        
+        .OptionHeading{
+            color: $font-color1;
+
+            margin: 10px 0;
+            
+        }
+        
+        .OptionsOuterCnt{
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-direction: column;
+    
+            width: 100%;
+    
+            border-radius: 5px;
+
+            background-color: $bg-color3;
+            padding: 5px;
+            gap: 10px;
+
+            .ToggleOptionCnt{
+                border-bottom: solid 1px $bg-color4;
+
+                display: flex;
+                justify-content: flex-start;
+        
+                width: 100%;
+                padding: 10px 0;
+
+                .OptionDescCnt{
+                    width: 80%;
+
+                    display: flex;
+                    justify-content: center;
+                    align-items: flex-start;
+                    flex-direction: column;
+
+                    gap: 10px;
+
+                    .OptionSubHeading{
+                        color: $font-color1;
+                        font-size: 14px;
+                        
+                    }
+                    .OptionDescText{
+                        font-size: 13px;
+                        color: $font-color2;
+        
+                    }
+                }
+    
+                .OptionToggle{
+                    height: 100%;
+                    width: 20%;
+
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    .Bar{
+                            width: 30px;
+                            height: 13px;
+                            background-color: $bg-color4;
+                            
+                            border-radius: 10px;
+                            transition: background-color 0.3s ease-in-out;
+                            
+                            &.Active{
+                                background-color: $bg-color7;
+                            }
+
+                        .Knob{
+                            width: 20px;
+                            height: 20px;
+                            border-radius: 100%;
+
+                            background-color: $accent-color2;
+
+                            transform: translate(-5px, -3px);
+                            transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+
+                            &.Active{
+                                background-color: $accent-color0;
+                                transform: translate(15px, -3px);
+                            }
+                        }
+                    }
+                }
+    
+    
+            }
+            .AddOptionCnt{
+                border-bottom: solid 1px $bg-color4;
+
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+        
+                width: 100%;
+                padding: 10px 0;
+
+                .AddOptionTitleCnt{
+                    display: flex;
+                    justify-content: flex-start;
+
+                    margin-bottom: 15px;
+
+                    .OptionDescCnt{
+                        width: 70%;
+    
+                        display: flex;
+                        justify-content: center;
+                        align-items: flex-start;
+                        flex-direction: column;
+    
+                        gap: 10px;
+    
+                        .OptionSubHeading{
+                            color: $font-color1;
+                            font-size: 14px;
+                            
+                        }
+                        .OptionDescText{
+                            font-size: 13px;
+                            color: $font-color2;
+            
+                        }
+                    }
+        
+                    .AddBtnCtn{
+                        height: 100%;
+                        width: 30%;
+    
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+    
+                        button{
+                            width: 60px;
+                            height: 30px;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+        
+                            background-color: $bg-color4;
+        
+                            border-radius: 5px;
+                            border: 0;
+    
+                            font-weight: bold;
+                            font-size: 13px;
+                            color: $accent-color0;
+    
+                            &:hover{
+                                background-color: $bg-color5;
+                            }
+                        }
+    
+    
+                    }
+                }
+
+                .NoSites{
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    width: 100%;
+                    height: 50px;
+
+                }
+                ul.AddOptionListCnt{
+
+                    list-style-type: none;
+                    margin: 0;
+                    padding: 0;
+
+                    display: flex;
+                    justify-content: center;
+                    align-items: flex-start;
+                    flex-direction: column;
+
+                    gap: 5px;
+
+                    padding: 5px;
+
+                    li{
+
+                        width: 100%;
+                        height: 40px;
+
+                        display: flex;
+                        justify-content: flex-start;
+                        align-items: center;
+
+                        gap: 10px;
+
+
+                        .HostIconCnt{
+                            img{
+                                width: 25px;
+                                height: 25px;
+                            }
+                        }
+                        
+     
+                        .Hostsite{
+                            flex: 1 0 0;
+
+                            display: flex;
+                            justify-content: flex-start;
+                            align-items: center;
+
+                            font-size: 13px;
+
+                            padding-bottom: 5px;
+
+                        }
+
+                        .HostOptionIconCnt{
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+
+                            height: 30px;
+                            width: 30px;
+
+                            border-radius: 100%;
+
+                            &:hover{
+                                background-color: $bg-color5;
+                            }
+                        }
+                        position: relative;
+                            
+                        .HostOptionPopup{
+                            position: absolute;
+                            top: 0;
+                            right: 0px;
+
+                            display: flex;
+                            flex-direction: column;
+                            z-index: 2;
+
+                            background-color: $bg-color2;
+
+                            .HostOption{
+                                cursor: pointer;
+                                height: 30px;
+                                width: 70px;
+                                padding: 10px;
+
+                                font-size: 13px;
+
+                                &:hover{
+                                    background-color: $bg-color1;
+                                }
+                                
+                            }
+                            
+                        }
+                    }
+
+
+
+
+                }
+
+    
+    
+            }
+        }
+
+    }
+}

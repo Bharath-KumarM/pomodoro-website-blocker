@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import './SiteTimeLimitScreen.scss'
-import { getRecentHostnames } from '../../utilities/chrome-tools/chromeApiTools'
+import { getRecentHostnames } from '../../../utilities/chrome-tools/chromeApiTools'
 
 import { FaHourglass, FaRegHourglass, FaHourglassHalf } from "react-icons/fa";
 import { GrCircleInformation } from "react-icons/gr";

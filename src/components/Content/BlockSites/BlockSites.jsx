@@ -6,21 +6,21 @@ import {BiInfoCircle as InfoIcon} from "react-icons/bi"
 
 import BlockedSitesInfo from "./BlockedSitesInfo"
 import SiteInfoCard from "./SiteInfoCard"
-import { localLogMessage } from "../../utilities/localStorageMsg"
-import { getCurrTab } from "../../utilities/chrome-tools/chromeApiTools"
+import { localLogMessage } from "../../../utilities/localStorageMsg"
+import { getCurrTab } from "../../../utilities/chrome-tools/chromeApiTools"
 
 import "./BlockSites.scss"
-import { PopupToast } from "../../utilities/PopupScreens"
+import { PopupToast } from "../../../utilities/PopupScreens"
 
 
-import { getLocalBlockedScreenDataByTabId } from '../../localStorage/localBlockedScreenData'
-import { getLocalRestrictedScreenDataByTabId } from '../../localStorage/localRestrictedScreenData'
-import { getLocalTimeLimitScreenDataByTabId } from '../../localStorage/localTimeLimitScreenData'
+import { getLocalBlockedScreenDataByTabId } from '../../../localStorage/localBlockedScreenData'
+import { getLocalRestrictedScreenDataByTabId } from '../../../localStorage/localRestrictedScreenData'
+import { getLocalTimeLimitScreenDataByTabId } from '../../../localStorage/localTimeLimitScreenData'
 import { 
     checkLocalBlockedSitesByHostname,
     updateLocalBlockedSites, 
     delLocalBlockedSites, 
- } from '../../localStorage/localBlockedSites'
+ } from '../../../localStorage/localBlockedSites'
 
 
 // In popup screen, it creates the UI to block current website.

@@ -1,8 +1,8 @@
 import './FocusMode.scss';
 
-import { PopupFull, PopupToast } from '../../utilities/PopupScreens';
-import DescisionYesNoPopup from '../../utilities/DecisionYesNoPopup';
-import TimeInputPopup from '../../utilities/TimeInputPopup';
+import { PopupFull, PopupToast } from '../../../utilities/PopupScreens';
+import DescisionYesNoPopup from '../../../utilities/DecisionYesNoPopup';
+import TimeInputPopup from '../../../utilities/TimeInputPopup';
 import { useEffect, useState } from 'react';
 
 // Icons
@@ -13,11 +13,11 @@ import { HiClock } from "react-icons/hi"
 import { BiInfoCircle } from "react-icons/bi"
 
 import RestrictedSites from './RestrictedSites';
-import { getScheduleItemDesc, getActiveFocusScheduledIndexes } from '../../utilities/focusModeHelper';
-import { delLocalScheduleDataByIndex, getLocalScheduleData } from '../../localStorage/localScheduleData';
-import { getLocalFocusModeTracker, turnOffLocalFocusModeTracker, turnOnLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker';
-import { getLocalTakeABreakTrackerforRestrict, handleTakeABreakClick, turnOffLocalTakeABreakTrackerforRestrict } from '../../localStorage/localTakeABreakTrackerforRestrict';
-import Loader from '../../utilities/Loader';
+import { getScheduleItemDesc, getActiveFocusScheduledIndexes } from '../../../utilities/focusModeHelper';
+import { delLocalScheduleDataByIndex, getLocalScheduleData } from '../../../localStorage/localScheduleData';
+import { getLocalFocusModeTracker, turnOffLocalFocusModeTracker, turnOnLocalFocusModeTracker } from '../../../localStorage/localFocusModeTracker';
+import { getLocalTakeABreakTrackerforRestrict, handleTakeABreakClick, turnOffLocalTakeABreakTrackerforRestrict } from '../../../localStorage/localTakeABreakTrackerforRestrict';
+import Loader from '../../../utilities/Loader';
 
 
 

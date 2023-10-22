@@ -2,9 +2,9 @@ import "./SiteInfoCard.scss"
 
 import { IoMdSwap as  SwapIcon} from "react-icons/io"
 import { useEffect, useState } from "react"
-import { getDateString } from "../../utilities/date"
-import { getLocalScreenTimeTrackerForDayByHostname } from "../../localStorage/localScreenTimeTracker"
-import { getLocalVisitTrackerForDayByHostname } from "../../localStorage/localVisitTracker"
+import { getDateString } from "../../../utilities/date"
+import { getLocalScreenTimeTrackerForDayByHostname } from "../../../localStorage/localScreenTimeTracker"
+import { getLocalVisitTrackerForDayByHostname } from "../../../localStorage/localVisitTracker"
 
 
 

@@ -3,15 +3,15 @@ import { FiPlus } from "react-icons/fi"
 
 import { useEffect, useState, useRef } from "react"
 
-import { getHost, isValidUrl } from "../../utilities/simpleTools"
-import { getCurrTab, getRecentHostnames } from "../../utilities/chrome-tools/chromeApiTools"
+import { getHost, isValidUrl } from "../../../utilities/simpleTools"
+import { getCurrTab, getRecentHostnames } from "../../../utilities/chrome-tools/chromeApiTools"
 import AddSiteToBlockedSite from "./AddSiteToBlockedSite"
 
 import { 
     delLocalBlockedSites, 
     getLocalBlockedSites, 
     updateLocalBlockedSites
- } from '../../localStorage/localBlockedSites'
+ } from '../../../localStorage/localBlockedSites'
 
 const BlockedSitesList = ({setToastData}) => {
 

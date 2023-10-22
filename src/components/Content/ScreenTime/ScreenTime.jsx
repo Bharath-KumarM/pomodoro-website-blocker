@@ -7,15 +7,15 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { MdSettingsSuggest } from "react-icons/md";
 import { AiOutlineRight as RightArrowIcon} from "react-icons/ai";
 import { useEffect, useState } from 'react';
-import { getDateString, getDayNumber, getFullDate, getHrMinString } from '../../utilities/date';
-import { PopupFull, PopupToast } from '../../utilities/PopupScreens';
+import { getDateString, getDayNumber, getFullDate, getHrMinString } from '../../../utilities/date';
+import { PopupFull, PopupToast } from '../../../utilities/PopupScreens';
 import TimeLimitInput from './TimeLimitInput';
 import SiteTimeLimitScreen from './SitesTimeLimitScreen';
 
-import { getLocalScreenTimeLimit } from '../../localStorage/localScreenTimeLimit';
-import { getLocalScreenTimeTracker } from '../../localStorage/localScreenTimeTracker';
-import { getLocalVisitTrackerForDay } from '../../localStorage/localVisitTracker';
-import Loader from '../../utilities/Loader';
+import { getLocalScreenTimeLimit } from '../../../localStorage/localScreenTimeLimit';
+import { getLocalScreenTimeTracker } from '../../../localStorage/localScreenTimeTracker';
+import { getLocalVisitTrackerForDay } from '../../../localStorage/localVisitTracker';
+import Loader from '../../../utilities/Loader';
 
 
 

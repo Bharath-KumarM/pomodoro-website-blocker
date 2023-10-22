@@ -3,9 +3,9 @@ import './TimeLimitInput.scss'
 import { BiTime } from "react-icons/bi"
 import { RiCloseLine } from 'react-icons/ri'
 
-import { pad2 } from '../../utilities/simpleTools'
+import { pad2 } from '../../../utilities/simpleTools'
 import { useEffect, useState } from 'react'
-import { delLocalScreenTimeLimit, getLocalScreenTimeLimitByHostname, updateLocalScreenTimeLimit } from '../../localStorage/localScreenTimeLimit'
+import { delLocalScreenTimeLimit, getLocalScreenTimeLimitByHostname, updateLocalScreenTimeLimit } from '../../../localStorage/localScreenTimeLimit'
 
 
 const hrValues = Array.from({length: 24}, (_ ,index)=>pad2(index))

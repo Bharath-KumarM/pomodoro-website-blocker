@@ -5,10 +5,10 @@ import { ImCheckboxUnchecked as UncheckedIcon, ImCheckboxChecked as CheckedIcon 
 import { TbBarrierBlock } from "react-icons/tb"
 import { BiMemoryCard as SaveIcon } from "react-icons/bi"
 import { useEffect, useState } from 'react';
-import { getCurrTab, getRecentHostnames } from '../../utilities/chrome-tools/chromeApiTools';
-import { getHost } from '../../utilities/simpleTools';
-import { delLocalRestrictedSites, getLocalRestrictedSites, updateLocalRestrictedSites } from '../../localStorage/localRestrictedSites';
-import Loader from '../../utilities/Loader';
+import { getCurrTab, getRecentHostnames } from '../../../utilities/chrome-tools/chromeApiTools';
+import { getHost } from '../../../utilities/simpleTools';
+import { delLocalRestrictedSites, getLocalRestrictedSites, updateLocalRestrictedSites } from '../../../localStorage/localRestrictedSites';
+import Loader from '../../../utilities/Loader';
 
 
 

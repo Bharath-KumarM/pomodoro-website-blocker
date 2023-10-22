@@ -1,14 +1,13 @@
-import './AddRestrictedSites.scss'
+import './AddSiteToBlockedSite.scss'
 
-// Icons
 import { FiPlus } from "react-icons/fi"
 import { MdOutlineSubdirectoryArrowLeft as ArrowIcon } from "react-icons/md"
 import { useEffect, useRef, useState } from 'react'
-import { getHost, isValidUrl } from '../../utilities/simpleTools'
+import { getHost, isValidUrl } from '../../../utilities/simpleTools'
+import { updateLocalBlockedSites } from '../../../localStorage/localBlockedSites'
 
-import { updateLocalRestrictedSites } from '../../localStorage/localRestrictedSites'
-
-const AddRestrictedSites = ({setToastData, getRestrictedSites, recentSites})=>{
+// *Copied from AddRestrictedSites
+const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites})=>{
     const [userInput, setUserInput] = useState('')
     const [optionSelectIndex, setOptionSelectIndex] = useState(0)
     const [validRecentSites, setValidRecentSites] = useState([])
@@ -39,13 +38,13 @@ const AddRestrictedSites = ({setToastData, getRestrictedSites, recentSites})=>{
 
 
     const handleAddBtnClick = async (hostname)=>{
-        const isRestricted = await updateLocalRestrictedSites(hostname)
-        if (!isRestricted){
-            setToastData(['Already added', 'red'])
+        const response = await updateLocalBlockedSites(hostname)
+        if (!response){
+            setToastData(['Already blocked', 'red'])
         }else{
-            setToastData(['Added the site', 'green'])
+            setToastData(['Blocked the site', 'green'])
         }
-        getRestrictedSites(null)
+        getUpdatedBlockedSites(null)
         inputRef.current.value = ''
         setUserInput('')
 
@@ -122,7 +121,7 @@ const AddRestrictedSites = ({setToastData, getRestrictedSites, recentSites})=>{
                                 })
                             }
                         }}
-                        placeholder={"Type or Paste website"}
+                        placeholder={"Type to block sites"}
                         list="site-list"
                         ref={inputRef}
 
@@ -184,4 +183,4 @@ const AddRestrictedSites = ({setToastData, getRestrictedSites, recentSites})=>{
     )
 }
 
-export default AddRestrictedSites
+export default AddSiteToBlockedSite

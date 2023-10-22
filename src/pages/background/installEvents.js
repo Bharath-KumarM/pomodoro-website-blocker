@@ -6,6 +6,7 @@ import { initializLocalRestrictedSites } from "../../localStorage/localRestricte
 import { initializeLocalScheduleData } from "../../localStorage/localScheduleData"
 import { initializeLocalScreenTimeLimit } from "../../localStorage/localScreenTimeLimit"
 import { initializeLocalScreenTimeTracker } from "../../localStorage/localScreenTimeTracker"
+import { initializLocalSettingsData } from "../../localStorage/localSettingsData"
 import { initializeLocalTakeABreakTrackerforRestrict } from "../../localStorage/localTakeABreakTrackerforRestrict"
 import { initializeLocalTimeLimitScreenData } from "../../localStorage/localTimeLimitScreenData"
 import { initializeLocalVisitTracker } from "../../localStorage/localVisitTracker"
@@ -48,6 +49,9 @@ export async function localStorageInitialize (){
     // Schedule & takeAbreakforRestrict
     initializeLocalScheduleData()
     initializeLocalTakeABreakTrackerforRestrict()
+
+    // Settings data
+    initializLocalSettingsData()
   
     // Miscelleneous
     const {BGtimeLog} = await chrome.storage.local.get('BGtimeLog')
