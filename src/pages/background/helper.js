@@ -91,7 +91,7 @@ const getTakeABreakTrackerforRestrictData = async ()=>{
         return false
       }
       else{
-          const minToSecConvertor = 60 // 60 is default value for debugging
+          const minToSecConvertor = 5 // 60 is default value for debugging
 
           const newTimeDiff = Math.ceil((takeABreakTrackerforRestrict - new Date().getTime())/(1000*minToSecConvertor))
           return newTimeDiff

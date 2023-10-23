@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import styles from "./Setting.module.scss"
 import { getLocalSettingsData, setLocalSettingsData } from "../../../localStorage/localSettingsData"
-import { PopupFull } from "../../../utilities/PopupScreens"
+import { PopupFull, PopupToast } from "../../../utilities/PopupScreens"
 import { getHost, isValidUrl } from "../../../utilities/simpleTools"
 
 import { BsThreeDotsVertical } from "react-icons/bs"
@@ -9,6 +9,8 @@ import { MdClose } from "react-icons/md"
 import { GrCircleInformation } from "react-icons/gr"
 import { getRecentHostnames } from "../../../utilities/chrome-tools/chromeApiTools"
 import { FaHourglass, FaRegHourglass } from "react-icons/fa"
+import { BodyClickContext } from '../../context'
+
 
 
 const privacyOptionsData = {
@@ -20,12 +22,16 @@ const privacyOptionsData = {
             subHeadingText: 'Show notificaiton on webpages',
             descText: `Notification card might be showed inside webpages before restricting or time limit exceeding,
             to warn you`,
+            enableToastData: ['Notification card enabled', 'green'],
+            disableToastData: ['Notification card disabled', 'red']
         },
         {
             key: 'access-webpage',
             optionType: 'toggle', // toggl || multiple-option
             subHeadingText: 'Give webpage access permission',
             descText: `This permission helps the extension to show the Notification Card in webpages.`,
+            enableToastData: ['Webpage access enabled', 'green'],
+            disableToastData: ['Webpage access disabled', 'red']
         },
         {
             key: 'ignore-sites',
@@ -38,7 +44,9 @@ const privacyOptionsData = {
                 newSettingsData[key] = newSettingsData[key].filter((item)=>item != deleteItem)
                             
                 updateSettingData(newSettingsData)
-            }
+            },
+            addToastData: ['The site is ignored', 'green'],
+            removeToastData: ['The site is removed', 'red']
         },
 
 
@@ -46,7 +54,8 @@ const privacyOptionsData = {
 }
 const Setting = ({setNavSelect})=>{
     const [settingsData, setSettingsData] = useState(null)
-    const [showPopUpScreen, setShowPopupScreen] = useState('ignore-sites') // null || 'ignore-sites' ||
+    const [showPopUpScreen, setShowPopupScreen] = useState(null) // null || 'ignore-sites' ||
+    const [toastData, setToastData] = useState([null, null]) //* Toast Message from bottom
 
     const updateSettingData = async (newSettingData)=>{
         await setLocalSettingsData({settingsData: newSettingData})
@@ -62,8 +71,18 @@ const Setting = ({setNavSelect})=>{
         return <div>Loading...</div>
     }
 
+    const [toastMsg, toastColorCode] = toastData
+
     return (
         <div className={styles.OutterCnt}>
+            {
+                    toastMsg ?
+                    <PopupToast
+                        key={'popup-toast'}
+                        toastData={toastData}
+                        setToastData={setToastData}
+                    /> : null
+                }
             {
                 showPopUpScreen !== null ? 
                 <PopupFull
@@ -79,6 +98,7 @@ const Setting = ({setNavSelect})=>{
                             setClosePopup={()=>{
                                 setShowPopupScreen(null)
                             }}
+                            setToastData={setToastData}
                         /> : null
                     }
                 </PopupFull> : null
@@ -109,6 +129,7 @@ const Setting = ({setNavSelect})=>{
                                 settingsData={settingsData}
                                 optionData={optionData}
                                 updateSettingData={updateSettingData}
+                                setToastData={setToastData}
                                 
                                 /> :
                             optionType === 'add-sites' ? 
@@ -118,6 +139,8 @@ const Setting = ({setNavSelect})=>{
                                 setShowPopupScreen={setShowPopupScreen}
                                 settingsData={settingsData}
                                 updateSettingData={updateSettingData}
+                                setToastData={setToastData}
+
                             /> : null
                         )
 
@@ -133,7 +156,7 @@ const Setting = ({setNavSelect})=>{
 export default Setting
 
 
-const IgnoreSiteList = ({setClosePopup, settingsData, updateSettingData})=>{
+const IgnoreSiteList = ({setClosePopup, settingsData, updateSettingData, setToastData})=>{
     const [recentSites, setRecentSites] = useState([])
     const [searchText, setSearchText] = useState('')
     
@@ -215,6 +238,7 @@ const IgnoreSiteList = ({setClosePopup, settingsData, updateSettingData})=>{
                     
                             await updateSettingData(newSettingsData)
                             setSearchText('')
+                            setToastData(['The site is ignored', 'green'])
                         }}
                         >
                         <div className={styles.SiteItemCnt}>
@@ -253,6 +277,7 @@ const IgnoreSiteList = ({setClosePopup, settingsData, updateSettingData})=>{
                                     await updateSettingData(newSettingsData)
                                     setSearchText('')
 
+                                    setToastData(['The site is ignored', 'green'])
                                 }}
                             >
                                 <div className={styles.SiteItemCnt}>
@@ -304,6 +329,7 @@ const IgnoreSiteList = ({setClosePopup, settingsData, updateSettingData})=>{
                             
                                     await updateSettingData(newSettingsData)
                                     setSearchText('')
+                                    setToastData(['The site is removed', 'red'])
 
                                 }}
                             >
@@ -336,27 +362,28 @@ const IgnoreSiteList = ({setClosePopup, settingsData, updateSettingData})=>{
 }
 
 
-function AddOption({optionData, setShowPopupScreen, settingsData, updateSettingData}){
+function AddOption({optionData, setShowPopupScreen, settingsData, updateSettingData, setToastData}){
+    const bodyClickCount = useContext(BodyClickContext)
     const [optionActiveArr, setOptionActive] = useState(settingsData[optionData.key].map(s=>false))
+
+    useEffect(()=>{
+        if (optionActiveArr.includes(true)){
+            setOptionActive(settingsData[optionData.key].map(s=>false))
+        }
+    }, [bodyClickCount])
 
     useEffect(()=>{
         setOptionActive(addedItems.map(s=>false))
     }, [settingsData[optionData.key]])
-
-    useEffect(()=>{
-        const handleClickOnBody = ()=>{
-            setOptionActive(addedItems.map(s=>false))
-        }
-        // todo: body click 
-
-    }, [optionActiveArr])
 
     const {
         key,
         optionType,
         subHeadingText,
         descText,
-        handleDeleteClick
+        handleDeleteClick,
+        addToastData, 
+        removeToastData,
     } = optionData
 
     const addedItems = settingsData[optionData.key]
@@ -374,12 +401,13 @@ function AddOption({optionData, setShowPopupScreen, settingsData, updateSettingD
                     {descText}
                 </span>
             </div>
-            <div className={styles.AddBtnCtn}
-                onClick={()=>{
-                    setShowPopupScreen(optionData.key)
-                }}
-            >
-                <button>
+            <div className={styles.AddBtnCtn}>
+                <button
+                    onClick={()=>{
+                        setShowPopupScreen(optionData.key)
+                    }}
+                
+                >
                     Edit
                 </button>
             </div>
@@ -401,6 +429,7 @@ function AddOption({optionData, setShowPopupScreen, settingsData, updateSettingD
                             <div className={styles.HostOptionIconCnt}
                                 onClick={(e)=>{
                                     
+                                    e.stopPropagation()
 
                                     const newOptionActiveArr = [...optionActiveArr]
                                     newOptionActiveArr[index] = !newOptionActiveArr[index]
@@ -413,8 +442,6 @@ function AddOption({optionData, setShowPopupScreen, settingsData, updateSettingD
                                 }}
                             >
                                 <BsThreeDotsVertical />
-
-                                
                             </div>
                             {
                                 optionActiveArr[index] ? 
@@ -434,6 +461,7 @@ function AddOption({optionData, setShowPopupScreen, settingsData, updateSettingD
                                             onClick={(e)=>{
                                                 handleDeleteClick({updateSettingData, settingsData, 
                                                     key, deleteItem: item})
+                                                setToastData(removeToastData)
                                             }}
                                         >
                                             Delete
@@ -453,12 +481,14 @@ function AddOption({optionData, setShowPopupScreen, settingsData, updateSettingD
     )
 }
 
-function ToggleOption({settingsData, optionData, updateSettingData}){
+function ToggleOption({settingsData, optionData, updateSettingData, setToastData}){
     const {
         key,
         optionType,
         subHeadingText,
-        descText
+        descText,
+        enableToastData, 
+        disableToastData,
     } = optionData
 
     const isActive = settingsData[key]
@@ -477,9 +507,12 @@ function ToggleOption({settingsData, optionData, updateSettingData}){
                 <div className={styles.OptionToggle}
                     onClick={async ()=>{
                         const newSettingsData = {...settingsData}
-                        newSettingsData[optionData.key] = !isActive
+                        const newIsActive = !isActive 
+                        newSettingsData[optionData.key] = newIsActive
                         
-                        updateSettingData(newSettingsData)
+                        await updateSettingData(newSettingsData)
+                        if (newIsActive) setToastData(enableToastData)
+                        else setToastData(disableToastData)
                     }}
                 >
                     <div 

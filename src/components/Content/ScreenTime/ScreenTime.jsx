@@ -94,52 +94,51 @@ const ScreenTime = ()=>{
         isDataAllLoaded ? 
         <>
             
-            {/* <FloatingBtn 
-                setShowSitesTimeLimitScreen={setShowSitesTimeLimitScreen}
-            /> */}
-
             <div className="screen-time-cnt">
 
                 {
                     toastMsg ?
-                    <PopupToast 
+                    <PopupToast
                         key={'popup-toast'}
-                        toastMsg={toastMsg}
-                        toastColorCode={toastColorCode}
+                        toastData={toastData}
                         setToastData={setToastData}
                     /> : null
                 }
                 {
-                    showTimeLimitInput ?
-                    <PopupFull
-                        setClosePopup={()=>{
-                            setShowTimeLimitInput(false)
-                        }}
-                    >
-                        <TimeLimitInput 
-                            showTimeLimitInput={showTimeLimitInput}
-                            setShowTimeLimitInput={setShowTimeLimitInput}
-                            setToastData={setToastData}
-                            setScreenTimeLimit={setScreenTimeLimit}
-                        />
-                    </PopupFull> :
                     showSitesTimeLimitScreen ?
-                    <PopupFull
-                        setClosePopup={()=>{
+                    <PopupFull 
+                        setClosePopup={()=> {
                             setShowSitesTimeLimitScreen(false)
                         }}
                     >
                         <SiteTimeLimitScreen 
-                            showTimeLimitInput={(hostname)=>{
-                                setShowTimeLimitInput(hostname)
-                            }}
+                            showTimeLimitInput={(hostname)=> setShowTimeLimitInput(hostname)}
                             toastMsg={toastMsg}
-                            setClosePopup={()=>{
-                                setShowSitesTimeLimitScreen(false)
-                            }}
+                            setClosePopup={()=> setShowSitesTimeLimitScreen(false)}
                             screenTimeLimit={screenTimeLimit}
-                        />
-                    </PopupFull> : null
+                        > 
+                            {
+                                showTimeLimitInput ?
+                                <TimeLimitInput 
+                                    showTimeLimitInput={showTimeLimitInput}
+                                    setShowTimeLimitInput={setShowTimeLimitInput}
+                                    setToastData={setToastData}
+                                    setScreenTimeLimit={setScreenTimeLimit}
+                                    setClosePopup={()=>setShowTimeLimitInput(false)}
+                                /> : null
+                            }
+                        
+                        </SiteTimeLimitScreen >
+                    </PopupFull> : 
+                    showTimeLimitInput ?
+                    <TimeLimitInput 
+                        showTimeLimitInput={showTimeLimitInput}
+                        setShowTimeLimitInput={setShowTimeLimitInput}
+                        setToastData={setToastData}
+                        setScreenTimeLimit={setScreenTimeLimit}
+                        setClosePopup={()=>setShowTimeLimitInput(false)}
+                    />  :
+                    null
                 }
                 <div className='set-screen-time-btn-cnt'
                     onClick={()=>{

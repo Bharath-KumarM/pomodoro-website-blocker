@@ -112,8 +112,7 @@ const FocusMode = ()=>{
                     toastData[0] ?
                     <PopupToast 
                         key={'popup-toast'}
-                        toastMsg={toastMsg}
-                        toastColorCode={toastColorCode}
+                        toastData={toastData}
                         setToastData={setToastData}
                     /> : null
                 }

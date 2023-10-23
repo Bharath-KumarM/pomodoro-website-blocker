@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useRef } from 'react'
 import { useState, useEffect } from 'react'
-import Btn2Cnt from '../../utilities/Btn2Cnt'
+import Btn2Cnt from '../../../utilities/Btn2Cnt'
 import './PomodoroRun.scss'
 
 import ProgressBar from './ProgressBar'

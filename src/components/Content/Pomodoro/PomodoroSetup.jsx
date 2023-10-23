@@ -1,5 +1,5 @@
 import styles from "./PomodoroSetup.module.scss"
-import Btn2Cnt from "../../utilities/Btn2Cnt"
+import Btn2Cnt from "../../../utilities/Btn2Cnt"
 import { useEffect, useRef, useState } from "react"
 
 

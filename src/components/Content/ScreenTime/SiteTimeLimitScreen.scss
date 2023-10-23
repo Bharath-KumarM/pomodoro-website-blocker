@@ -1,4 +1,4 @@
-@import '../../utilities/variables';
+@import '../../../utilities/variables';
 
 .sites-time-limit-screen{
     display: flex;
@@ -91,6 +91,10 @@
             overflow-y: scroll;
             &::-webkit-scrollbar {
                 width: 5px;
+            }
+            li.no-recent-site{
+                padding: 20px 0;
+                color: $font-color2;
             }
             .header-cnt{
                 width: 100%;

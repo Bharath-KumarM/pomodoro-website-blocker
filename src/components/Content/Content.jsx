@@ -10,7 +10,7 @@ import {MdTimer as ScreenTimeIcon} from "react-icons/md"
 
 // Components 
 import NavOpts from "../NavOpt/NavOpts"
-import Pomodoro from "../Pomodoro/Pomodoro"
+import Pomodoro from "./Pomodoro/Pomodoro"
 import ScreenTime from "./ScreenTime/ScreenTime"
 import BlockSites from "./BlockSites/BlockSites"
 import FocusMode from "./FocusMode/FocusMode"

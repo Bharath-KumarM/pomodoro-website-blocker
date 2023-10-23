@@ -103,8 +103,7 @@ const BlockSites = ()=>{
                 toastMsg ? 
                 <PopupToast 
                     key={'popup-toast'}
-                    toastMsg={toastMsg}
-                    toastColorCode={toasColorCode}
+                    toastData={toastData}
                     setToastData={setToastData}
                 /> : null 
             }

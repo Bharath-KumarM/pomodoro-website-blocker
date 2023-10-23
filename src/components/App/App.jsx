@@ -10,11 +10,13 @@ import { getCurrTab } from '../../utilities/chrome-tools/chromeApiTools'
  import { checkLocalBlockedScreenDataByTabId } from '../../localStorage/localBlockedScreenData';
  import { checkLocalRestrictedScreenDataByTabId } from '../../localStorage/localRestrictedScreenData';
  import { checkLocalTimeLimitScreenDataByTabId } from '../../localStorage/localTimeLimitScreenData';
+import { BodyClickContext } from '../context'
 
 
 function App() {
 
-  const [navSelect, setNavSelect] = useState('setting') // 'block-site' || 'focus-mode' || 'screen-time' || 'setting'
+  const [navSelect, setNavSelect] = useState('screen-time') // '' || 'block-site' || 'focus-mode' || 'screen-time' || 'setting'
+  const [bodyClickCount, setBodyClickCount] = useState(0)
 
   useEffect(()=>{
     const getNavSelect = async ()=>{
@@ -52,16 +54,22 @@ function App() {
 
 
   return (
-    <div className={style.App}> 
-      <Header 
-        setNavSelect={setNavSelect}
-      />
-      <Content 
-        navSelect={navSelect}
-        setNavSelect={setNavSelect}
-      />
-      <Footer />
-    </div>
+    <BodyClickContext.Provider value={bodyClickCount}>
+      <div className={style.App}
+        onClick={()=>{
+          setBodyClickCount(b=>b+1)
+        }}
+      > 
+        <Header 
+          setNavSelect={setNavSelect}
+        />
+        <Content 
+          navSelect={navSelect}
+          setNavSelect={setNavSelect}
+        />
+        <Footer />
+      </div>
+    </BodyClickContext.Provider>
   )
 }
 
