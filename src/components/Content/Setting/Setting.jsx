@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react"
 import styles from "./Setting.module.scss"
-import { getLocalSettingsData, setLocalSettingsData } from "../../../localStorage/localSettingsData"
+import { getLocalSettingsData, setLocalSettingsData, updateLocalSettingsData } from "../../../localStorage/localSettingsData"
 import { PopupFull, PopupToast } from "../../../utilities/PopupScreens"
 import { getHost, isValidUrl } from "../../../utilities/simpleTools"
 
@@ -43,10 +43,11 @@ const privacyOptionsData = {
                 const newSettingsData = {...settingsData}
                 newSettingsData[key] = newSettingsData[key].filter((item)=>item != deleteItem)
                             
-                updateSettingData(newSettingsData)
+                updateSettingData(newSettingsData, key)
             },
-            addToastData: ['The site is ignored', 'green'],
-            removeToastData: ['The site is removed', 'red']
+            addToastData: ['The site is ignored', 'red'],
+            removeToastData: ['The site is removed', 'green'],
+
         },
 
 
@@ -57,8 +58,10 @@ const Setting = ({setNavSelect})=>{
     const [showPopUpScreen, setShowPopupScreen] = useState(null) // null || 'ignore-sites' ||
     const [toastData, setToastData] = useState([null, null]) //* Toast Message from bottom
 
-    const updateSettingData = async (newSettingData)=>{
-        await setLocalSettingsData({settingsData: newSettingData})
+    const updateSettingData = async (newSettingData, updatedDataKey)=>{
+        const updateLocalSettingsDataForKey = updateLocalSettingsData[updatedDataKey]
+        await updateLocalSettingsDataForKey(newSettingData[updatedDataKey])
+
         setSettingsData(newSettingData)
         return null;
     }
@@ -71,12 +74,10 @@ const Setting = ({setNavSelect})=>{
         return <div>Loading...</div>
     }
 
-    const [toastMsg, toastColorCode] = toastData
-
     return (
         <div className={styles.OutterCnt}>
             {
-                    toastMsg ?
+                    toastData[0] ?
                     <PopupToast
                         key={'popup-toast'}
                         toastData={toastData}
@@ -168,6 +169,7 @@ const IgnoreSiteList = ({setClosePopup, settingsData, updateSettingData, setToas
         })
     }, [])
 
+
     let serachTextToValidHostName = null
     let isSearchTextValidSite = false
     if (isValidUrl(searchText)){
@@ -236,7 +238,7 @@ const IgnoreSiteList = ({setClosePopup, settingsData, updateSettingData, setToas
                             const newSettingsData = {...settingsData}
                             newSettingsData['ignore-sites'] = [...ignoreSites, serachTextToValidHostName]
                     
-                            await updateSettingData(newSettingsData)
+                            await updateSettingData(newSettingsData, 'ignore-sites')
                             setSearchText('')
                             setToastData(['The site is ignored', 'green'])
                         }}
@@ -274,10 +276,10 @@ const IgnoreSiteList = ({setClosePopup, settingsData, updateSettingData, setToas
                                     const newSettingsData = {...settingsData}
                                     newSettingsData['ignore-sites'] = ignoreSites.filter((site)=>site!=hostname)
                             
-                                    await updateSettingData(newSettingsData)
+                                    await updateSettingData(newSettingsData, 'ignore-sites')
                                     setSearchText('')
 
-                                    setToastData(['The site is ignored', 'green'])
+                                    setToastData(['The site is removed', 'red'])
                                 }}
                             >
                                 <div className={styles.SiteItemCnt}>
@@ -327,9 +329,9 @@ const IgnoreSiteList = ({setClosePopup, settingsData, updateSettingData, setToas
                                     const newSettingsData = {...settingsData}
                                     newSettingsData['ignore-sites'] = [...ignoreSites, hostname]
                             
-                                    await updateSettingData(newSettingsData)
+                                    await updateSettingData(newSettingsData, 'ignore-sites')
                                     setSearchText('')
-                                    setToastData(['The site is removed', 'red'])
+                                    setToastData(['The site is ignored', 'green'])
 
                                 }}
                             >
@@ -505,12 +507,15 @@ function ToggleOption({settingsData, optionData, updateSettingData, setToastData
                     </span>
                 </div>
                 <div className={styles.OptionToggle}
-                    onClick={async ()=>{
+                    onClick={async (e)=>{
+                        e.stopPropagation()
+
                         const newSettingsData = {...settingsData}
                         const newIsActive = !isActive 
-                        newSettingsData[optionData.key] = newIsActive
+                        newSettingsData[key] = newIsActive
                         
-                        await updateSettingData(newSettingsData)
+                        await updateSettingData(newSettingsData, key)
+
                         if (newIsActive) setToastData(enableToastData)
                         else setToastData(disableToastData)
                     }}

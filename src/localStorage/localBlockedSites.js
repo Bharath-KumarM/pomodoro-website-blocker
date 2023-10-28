@@ -11,10 +11,6 @@ export const initializeLocalBlockedSites = async ()=>{
 export const getLocalBlockedSites = async ()=>{
     return await chrome.storage.local.get('blockedSites')
 }
-export const getLocalBlockedSitesByHostname = async (hostname)=>{
-    const {blockedSites} = await getLocalBlockedSites()
-    return blockedSites[hostname] ?? null
-}
 
 export const setLocalBlockedSites = async (blockedSites)=>{
     return await chrome.storage.local.set({blockedSites})

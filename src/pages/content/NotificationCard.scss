@@ -25,22 +25,34 @@
 
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     
-    animation: fade 4s ease;
-    @keyframes fade {
+    animation: fadein 2s ease;
+    @keyframes fadein {
         0%{
             opacity: 1; 
             transform: translateY(-250%); //slide in start
         }
 
-        25%{
+        50%{
             transform: translateY(0); //slide in end
         }
-        100%{
+        
+        80%{
             opacity: 1; //fade out start
         }
     }
     
-
+    &.slide-up-animation{
+        animation: fadeout 1s ease;
+        @keyframes fadeout {
+            0%{
+                transform: translateY(0); //slide in end
+            }
+            
+            100%{
+                transform: translateY(-250%); //slide in start
+            }
+        }
+    }
     
     margin: 15px;
     width: 300px;
@@ -146,6 +158,47 @@
             }
         
     
+        }
+
+        .checkbox-cnt{
+            margin: 10px 0;
+            width: 225px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+
+            align-self: center;
+
+            .checkbox{
+                width: 25px;
+                height: 25px;
+
+                accent-color: $accent-color0;
+            }
+
+            .checkbox-desc-cnt{
+                .checkbox-desc{
+                    color: $font-color1;
+                    font-size: 12px;
+                }
+                .checkbox-more{
+                    cursor: pointer;
+
+                    font-size: 13px;
+                    color: $accent-color2;
+                    text-decoration: underline;
+
+                    &:hover{
+                        color: $accent-color0;
+
+                    }
+    
+                }
+            }
+
+
         }
     
         section.message-cnt{

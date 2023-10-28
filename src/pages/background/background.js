@@ -68,6 +68,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
       updateBadgeIcon,
       updateLocalTimeLimitScreenDataByTabMsg,
       handleTurnOffLocalTakeABreakTrackerforRestrict,
+      handleTurnOffLocalTakeABreakBefore,
       createTakeABreak
      } = request
 
@@ -101,6 +102,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
     turnOffLocalTakeABreakTrackerforRestrict({isForceTurnOff: true, shouldRefreshSites: true}).then(()=>{
       sendResponse(true)
     })
+  }
+
+  if (handleTurnOffLocalTakeABreakBefore) {
+    chrome.alarms.clear('takeABreakForRestrictBefore2minute')
+    chrome.alarms.clear('takeABreakForRestrictBefore1minute')
+    sendResponse(true)
   }
   
   if(createTakeABreak){

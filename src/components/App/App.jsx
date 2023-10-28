@@ -15,7 +15,7 @@ import { BodyClickContext } from '../context'
 
 function App() {
 
-  const [navSelect, setNavSelect] = useState('screen-time') // '' || 'block-site' || 'focus-mode' || 'screen-time' || 'setting'
+  const [navSelect, setNavSelect] = useState('setting') // '' || 'block-site' || 'focus-mode' || 'screen-time' || 'setting'
   const [bodyClickCount, setBodyClickCount] = useState(0)
 
   useEffect(()=>{

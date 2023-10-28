@@ -3,63 +3,77 @@ import {IoMdClose} from "react-icons/io"
 
 import extensionIcon from './logo_3.png'
 import { useEffect, useRef, useState } from 'react';
+import { updateLocalSettingsData } from '../../localStorage/localSettingsData';
 
-
+const COUNT_TILL = 10
+let cardCount = 0
 
 function NotificationCard({
-    getNotificationData
+    createNotificationData
 }){
     const [notificationData, setNotificationData] = useState(null)
     const [counter, setCounter] = useState(0)
-    const outterCntRef = useRef(null)
     const isHoveringRef = useRef(false)
-    const intervalIdRef = useRef(null)
-
 
     useEffect(()=>{
-        const COUNT_TILL = 10
+
+        if (notificationData === null){
+            return (()=>{
+
+            })
+        }
+
+        const intervalIdRef = setInterval(()=>{
+            if (isHoveringRef.current === true) {
+                return null;
+            }
+
+            setCounter( c => {
+                if ( c > COUNT_TILL ){
+                    clearInterval(intervalIdRef)
+                    setNotificationData(null)
+                    return 0
+                }
+                return c + 1
+            })
+            
+        }, 1*1000)
 
 
+        return (()=>{
+            clearInterval(intervalIdRef)
+        })
 
-        function handleMessage(request, sender, sendResponse){
+    }, [notificationData])
+
+    useEffect(()=>{
+
+        function handleMessage(request){
             const {
                 takeABreakForRestrictRemainingMinutes
             } = request
-
-    
+            
+            
             if (takeABreakForRestrictRemainingMinutes){
-                setNotificationData(getNotificationData(takeABreakForRestrictRemainingMinutes))
-
-                isHoveringRef.current = false 
-                clearInterval(intervalIdRef.current)
-
-                intervalIdRef.current = setInterval(()=>{
-
-                    if (!isHoveringRef.current) {
-                        setCounter( c => {
-                            let nextCount = c + 1
-                            if ( nextCount >= COUNT_TILL ){
-                                clearInterval(intervalIdRef.current)
-                                setNotificationData(null)
-                                return 0
-                            }
-                            return nextCount
-                        })
-                    }
-                }, 1*1000)
-
+                updateNotificationData(takeABreakForRestrictRemainingMinutes)
             }
         }
 
         chrome.runtime.onMessage.addListener(handleMessage)
         
-        
-
         return ()=>{
             chrome.runtime.onMessage.removeListener(handleMessage)
-            clearInterval(intervalIdRef.current)
         }
+
     }, [])
+
+    const updateNotificationData = (data)=>{
+        isHoveringRef.current = false 
+        const tempNotificationData = createNotificationData(data)
+        setCounter(0)
+        setNotificationData(tempNotificationData)
+    }
+
 
     const handleMouseEnter = (event) => {
         isHoveringRef.current = true
@@ -70,59 +84,90 @@ function NotificationCard({
 
     const {headingMsg, paraMsg, optionArr, updateBadgeIcon} = notificationData || {}
     
-    const COUNT_TILL = 10
-    const progressPercentage = ( counter / COUNT_TILL ) * 100
+    let progressPercentage = ( counter / COUNT_TILL ) * 100
+    progressPercentage = progressPercentage > 100 ? 100 : progressPercentage
 
-    const shouldShowCard = Boolean(notificationData) && progressPercentage <= 100
+
+    const shouldShowCard = Boolean(notificationData)
+    const shouldStartSlideUpAnimation = (counter - COUNT_TILL) > 0
 
     return (
-        <div ref={outterCntRef}>
+        shouldShowCard ?
+        <> 
             <style >
                 {notificationCardStyle}
             </style>
-            {
-                shouldShowCard ? 
+            <div 
+                className={`outter-cnt ${ shouldStartSlideUpAnimation ? 'slide-up-animation' : '' }`}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+            >
                 <div 
-                    className={`outter-cnt`}
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                >
-                    <div 
-                        className='cnt'
-                    > 
-                        <Header 
-                            setShouldShowCard={(n)=>{
-                                setCounter(0)
-                                setNotificationData(n)
-                            }}
-                        />
-                        <MessageCnt 
-                            headingMsg={headingMsg}
-                            paraMsg={paraMsg}
-                        />
-                        <OptionBtn 
-                            optionArr={optionArr}
-                            setShouldShowCard={(n)=>{
-                                setCounter(0)
-                                setNotificationData(n)
-                            }}
-                            updateBadgeIcon={updateBadgeIcon}
-                        />
+                    className='cnt'
+                > 
+                    <Header 
+                        handleCloseBtnClick={()=>{
+                            setCounter(0)
+                            setNotificationData(null)
+                        }}
+                    />
+                    <MessageCnt 
+                        headingMsg={headingMsg}
+                        paraMsg={paraMsg}
+                    />
+                    <NeverShowNotificationCheckBox 
+                    />
+                    <OptionBtn 
+                        optionArr={optionArr}
+                        setShouldShowCard={(n)=>{
+                            setCounter(0)
+                            setNotificationData(n)
+                        }}
+                        updateBadgeIcon={updateBadgeIcon}
+                    />
 
 
-                    </div> 
-                    <ProgressBar 
-                        progressPercentage={progressPercentage}
-                    /> 
-                </div>
-                : null
-            }
-        </div>
+                </div> 
+                <ProgressBar 
+                    progressPercentage={progressPercentage}
+                /> 
+            </div>
+        </> : 
+        null
     )
+        
+    
 }
 
 export default NotificationCard
 
+function NeverShowNotificationCheckBox({}){
+
+    const key = 'should-show-notification'
+
+    return (
+        <div className='checkbox-cnt'>
+            <input className='checkbox' type="checkbox" 
+                value={key}
+                onClick={async (e)=>{
+                    const newIsChecked = e.target.checked 
+                    const shouldNotificationShow = !newIsChecked
+
+                    const updateShouldShowNotification = updateLocalSettingsData[key]
+                    await updateShouldShowNotification(shouldNotificationShow)
+                }}
+            />
+            <span className='checkbox-desc-cnt'>
+                <span className='checkbox-desc'>
+                    Never show this again, can be reset under ⚙️settings. 
+                </span>
+                <span className='checkbox-more'>
+                    more
+                </span>
+            </span>
+        </div>
+    )
+}
 
 function ProgressBar({progressPercentage}){
 
@@ -181,7 +226,7 @@ function MessageCnt({headingMsg, paraMsg}){
     )
 }
 
-function Header ({setShouldShowCard}){
+function Header ({handleCloseBtnClick}){
 
     return (
         <div className={'header'}>
@@ -199,7 +244,7 @@ function Header ({setShouldShowCard}){
             </div>
             <button
                 className='close-btn'
-                onClick={()=>setShouldShowCard(false)}
+                onClick={()=>handleCloseBtnClick()}
             >
                 <IoMdClose />
             </button>

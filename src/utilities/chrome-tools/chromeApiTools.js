@@ -10,14 +10,17 @@ export async function getCurrTab(){
     return currTab
 }
 
-
-export async function checkScreenTimeSurpassedLimit(hostname){    
+export async function getScreenTimeLimitInMinutesByHostnme(hostname){
     const timeLmitOfSite = await getLocalScreenTimeLimitByHostname(hostname)
     if (!timeLmitOfSite) return false;
 
     const [hours, minutes] = timeLmitOfSite
     const totalScreenTimeLimitInMinutes = (hours*60) + (minutes)
 
+    return totalScreenTimeLimitInMinutes
+}
+
+export async function getScreenTimeTrackerInMinutesByHostname(hostname){
     let {screenTimeTracker} = await chrome.storage.local.get('screenTimeTracker')
     const dateString = getDateString(0) //Current day's date
 
@@ -25,6 +28,27 @@ export async function checkScreenTimeSurpassedLimit(hostname){
         return false
     }
     const totalScreenTimeTrackerInMinutes = Math.round(screenTimeTracker[dateString][hostname])
+
+    return totalScreenTimeTrackerInMinutes
+}
+
+export async function getScreenTimeSurpassedPercentage(hostname){    
+    const totalScreenTimeLimitInMinutes = await getScreenTimeLimitInMinutesByHostnme(hostname)
+    const totalScreenTimeTrackerInMinutes = await getScreenTimeTrackerInMinutesByHostname(hostname)
+
+    if ([totalScreenTimeLimitInMinutes, totalScreenTimeTrackerInMinutes].includes(false)){
+        return false
+    }
+
+    return Math.round((totalScreenTimeTrackerInMinutes / totalScreenTimeLimitInMinutes) * 100 )
+}
+export async function checkScreenTimeSurpassedLimit(hostname){    
+    const totalScreenTimeLimitInMinutes = await getScreenTimeLimitInMinutesByHostnme(hostname)
+    const totalScreenTimeTrackerInMinutes = await getScreenTimeTrackerInMinutesByHostname(hostname)
+
+    if ([totalScreenTimeLimitInMinutes, totalScreenTimeTrackerInMinutes].includes(false)){
+        return false
+    }
 
     return totalScreenTimeLimitInMinutes < totalScreenTimeTrackerInMinutes
 }

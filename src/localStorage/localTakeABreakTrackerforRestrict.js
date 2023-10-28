@@ -1,4 +1,5 @@
 import { refreshAllRestrictedScreenTabs, refreshAllRestrictedSites } from "../utilities/chrome-tools/refreshTabs"
+import { getLocalSettingsData } from "./localSettingsData"
 
 // todo: change TakeABreakTrackerforRestrict to takeABreakTrackerforRestrict
 export const initializeLocalTakeABreakTrackerforRestrict = async ()=>{
@@ -50,18 +51,29 @@ export const handleTakeABreakClick = async (timeInMinutes)=>{
             when: currTimeObj + (timeInMinutes*minToSecConvertor*1000),
         }
     )
-    await chrome.alarms.create(
-        `takeABreakForRestrictBefore2minute`,
-        {
-            when: currTimeObj + ((timeInMinutes - 2)*minToSecConvertor*1000),
-        }
-    )
-    await chrome.alarms.create(
-        `takeABreakForRestrictBefore1minute`,
-        {
-            when: currTimeObj + ((timeInMinutes - 1)*minToSecConvertor*1000),
-        }
-    )
+    const {settingsData} = await getLocalSettingsData()
+    const shouldShowNotification = settingsData['should-show-notification']
+
+    if (shouldShowNotification){
+        console.log('alarms created for break notification!!!')
+        await chrome.alarms.create(
+            `takeABreakForRestrictBefore2minute`,
+            {
+                when: currTimeObj + ((timeInMinutes - 2)*minToSecConvertor*1000),
+            }
+        )
+        await chrome.alarms.create(
+            `takeABreakForRestrictBefore1minute`,
+            {
+                when: currTimeObj + ((timeInMinutes - 1)*minToSecConvertor*1000),
+            }
+        )
+    }
+    else{
+        console.log('alarms NOT created for break notification!!!')
+
+    }
+
 
 
 }
