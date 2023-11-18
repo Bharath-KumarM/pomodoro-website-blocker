@@ -11,6 +11,12 @@ export const getLocalFocusModeTracker = async ()=>{
     return await chrome.storage.local.get('focusModeTracker')
 }
 
+export async function checkFocusModeTracker(){
+  const {focusModeTracker} = await getLocalFocusModeTracker()
+  const isFocusModeOn = focusModeTracker ? true : false
+  return isFocusModeOn
+}
+
 export async function turnOnLocalFocusModeTracker(){
     chrome.storage.local.set({focusModeTracker: true})
     await refreshAllRestrictedSites()

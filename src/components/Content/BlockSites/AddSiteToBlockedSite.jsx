@@ -4,7 +4,7 @@ import { FiPlus } from "react-icons/fi"
 import { MdOutlineSubdirectoryArrowLeft as ArrowIcon } from "react-icons/md"
 import { useEffect, useRef, useState } from 'react'
 import { getHost, isValidUrl } from '../../../utilities/simpleTools'
-import { updateLocalBlockedSites } from '../../../localStorage/localBlockedSites'
+import { handleBlockUnblockSite } from '../../../localStorage/localSiteTagging'
 
 // *Copied from AddRestrictedSites
 const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites})=>{
@@ -38,12 +38,11 @@ const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites
 
 
     const handleAddBtnClick = async (hostname)=>{
-        const response = await updateLocalBlockedSites(hostname)
-        if (!response){
-            setToastData(['Already blocked', 'red'])
-        }else{
-            setToastData(['Blocked the site', 'green'])
-        }
+        handleBlockUnblockSite({
+            hostname, shouldBlockSite: true, setToastData
+        })
+
+
         getUpdatedBlockedSites(null)
         inputRef.current.value = ''
         setUserInput('')

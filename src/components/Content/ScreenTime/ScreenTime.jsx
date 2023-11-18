@@ -12,10 +12,10 @@ import { PopupFull, PopupToast } from '../../../utilities/PopupScreens';
 import TimeLimitInput from './TimeLimitInput';
 import SiteTimeLimitScreen from './SitesTimeLimitScreen';
 
-import { getLocalScreenTimeLimit } from '../../../localStorage/localScreenTimeLimit';
 import { getLocalScreenTimeTracker } from '../../../localStorage/localScreenTimeTracker';
 import { getLocalVisitTrackerForDay } from '../../../localStorage/localVisitTracker';
 import Loader from '../../../utilities/Loader';
+import { getScreenTimeLimit } from '../../../localStorage/localSiteTagging';
 
 
 
@@ -66,7 +66,7 @@ const ScreenTime = ()=>{
 
     useEffect(()=>{
         const getData = async ()=>{
-            let {screenTimeLimit} = await getLocalScreenTimeLimit()
+            let screenTimeLimit = await getScreenTimeLimit()
             setScreenTimeLimit(screenTimeLimit)
         }
 

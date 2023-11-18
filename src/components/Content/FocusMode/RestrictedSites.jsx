@@ -6,9 +6,11 @@ import { TbBarrierBlock } from "react-icons/tb"
 import { BiMemoryCard as SaveIcon } from "react-icons/bi"
 import { useEffect, useState } from 'react';
 import { getCurrTab, getRecentHostnames } from '../../../utilities/chrome-tools/chromeApiTools';
-import { getHost } from '../../../utilities/simpleTools';
-import { delLocalRestrictedSites, getLocalRestrictedSites, updateLocalRestrictedSites } from '../../../localStorage/localRestrictedSites';
+import { getHost, isValidUrl } from '../../../utilities/simpleTools';
 import Loader from '../../../utilities/Loader';
+import { getRestrictedSites as  getLocalRestrictedSites, handleRestrictUnRestrictSite} from '../../../localStorage/localSiteTagging';
+import { getLocalSettingsData } from '../../../localStorage/localSettingsData';
+
 
 
 
@@ -23,7 +25,7 @@ const RestrictedSites = ({setToastData})=>{
     })
 
     const getRestrictedSites = async ()=>{
-        const {restrictedSites: tempRestrictedSites} = await getLocalRestrictedSites()
+        const tempRestrictedSites = await getLocalRestrictedSites()
         setRestrictedSites(tempRestrictedSites)
         setDataLoadedStatus(prevDataLoadedStatus => ({...prevDataLoadedStatus, restrictedSites: true}))
     }
@@ -41,8 +43,7 @@ const RestrictedSites = ({setToastData})=>{
         getRecentSites()
     }, [])
 
-    const restrictedSiteArr = restrictedSites ? Object.keys(restrictedSites).map(tempHostname=>tempHostname) : []
-    const validMoreSitesToRestrict = recentSites.filter((recentSite)=>!restrictedSiteArr.includes(recentSite))
+    const validMoreSitesToRestrict = recentSites.filter((recentSite)=>!restrictedSites.includes(recentSite))
     
 
 
@@ -73,11 +74,11 @@ const RestrictedSites = ({setToastData})=>{
                 Your restricted sites
             </h3>
             {   
-                restrictedSiteArr.length ?
+                restrictedSites.length ?
                 <div className="restricted-site-table">
                     {
-                        restrictedSiteArr.map((tempHostname, index)=>{
-                            const tempFavIconUrl = restrictedSites[tempHostname][0]
+                        restrictedSites.map((tempHostname, index)=>{
+                            const tempFavIconUrl = null
                             return (
                             <div key={tempHostname} className="item flex-center">
                                 <RestrictedCheckBox 
@@ -140,46 +141,59 @@ export default RestrictedSites
 
 const AddCurrSiteToRestrictedSite = ({restrictedSites, getRestrictedSites, setToastData})=>{
     const [currSite, setCurrSite] = useState(null)
-    const [favIconURL, setFavIconUrl] = useState(null)
+
     useEffect(()=>{
-        getCurrTab().then(({url, favIconUrl})=>{
-            if (url && url.startsWith('http')){
-                if (restrictedSites && !restrictedSites[getHost(url)]){
-                    setCurrSite(url)
-                    setFavIconUrl(favIconUrl)
-                }
-                else{
-                    setCurrSite(null)
-                    setFavIconUrl(null)
-                }
+        getCurrTab().then(async ({url, favIconUrl})=>{
+            if (!url.startsWith('http')){
+                setCurrSite(null)
+                return null
             }
+
+            const hostname = getHost(url)
+            const ignoreSites = await getLocalSettingsData({key: 'ignore-sites'})
+            if (ignoreSites.includes(hostname)){
+                setCurrSite(null)
+                return null
+            }
+            
+            if (restrictedSites.includes(hostname)){
+                setCurrSite(null)
+                return null
+            }
+
+            setCurrSite(url)
         })
     }, [restrictedSites])
+
+    if (currSite === null){
+        return null
+    }
+
     return (
-        currSite !== null ? 
         <div className='add-curr-site-to-restrited-site'>
             <div className="icon-cnt">
-                <img src={`http://www.google.com/s2/favicons?domain=${getHost(currSite)}&sz=${128}`} alt="icon" />
+                <img src={`http://www.google.com/s2/favicons?domain=${currSite}&sz=${128}`} alt="icon" />
             </div>
             <div className="site-cnt">
                 <div className="site" 
-                    title={getHost(currSite)}
+                    title={currSite}
                 >
-                    {getHost(currSite)}
+                    {currSite}
                 </div>
                 <div className="desc"
                     onClick={async ()=>{
-                        const isRestricted = await updateLocalRestrictedSites(getHost(currSite), favIconURL)
+                        const isRestricted = await handleRestrictUnRestrictSite({
+                            hostname: currSite,
+                            shouldRestrictSite: true,
+                            setToastData: setToastData
+                        })
                         getRestrictedSites(null)
-                        if (isRestricted) setToastData(['Restricted the site', 'green'])
-                        else setToastData(['Already restricted', 'red'])
                     }}
                 >
                     Restrict the current site
                 </div>
             </div>
         </div>
-        : null
     )
 }
 
@@ -195,9 +209,11 @@ const AddMoreCheckBox = ({tempHostname, getRestrictedSites, setToastData})=>{
 
                 // *Wait for 250ms for UI 
                 setTimeout(async ()=>{
-                    const isRestricted = await updateLocalRestrictedSites(tempHostname)
-                    if (isRestricted) setToastData(['Restricted the site', 'green'])
-                    else setToastData(['Already Restricted', 'red'])
+                    const {isSiteRestricted} = await handleRestrictUnRestrictSite({
+                        hostname: tempHostname, 
+                        shouldRestrictSite: true, 
+                        setToastData
+                    })
 
                     getRestrictedSites()
                 }, 100)
@@ -219,9 +235,11 @@ const RestrictedCheckBox = ({tempHostname, getRestrictedSites, setToastData})=>{
                 
                 // *Wait for 250ms for UI 
                 setTimeout(async ()=>{
-                    const isUnrestricted = await delLocalRestrictedSites(tempHostname)
-                    if (isUnrestricted) setToastData(['Unrestricted the site', 'red'])
-                    else setToastData(['Never restricted', 'red'])
+                    const {isSiteRestricted} = await handleRestrictUnRestrictSite({
+                        hostname: tempHostname,
+                        shouldRestrictSite: false,
+                        setToastData
+                    })
                     getRestrictedSites()
                 }, 100)
             }}

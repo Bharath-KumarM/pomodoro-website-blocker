@@ -15,7 +15,7 @@ import { BodyClickContext } from '../context'
 
 function App() {
 
-  const [navSelect, setNavSelect] = useState('screen-time') // '' || 'block-site' || 'focus-mode' || 'screen-time' || 'setting'
+  const [navSelect, setNavSelect] = useState('') // '' || 'block-site' || 'focus-mode' || 'screen-time' || 'setting'
   const [bodyClickCount, setBodyClickCount] = useState(0)
 
   useEffect(()=>{
@@ -23,6 +23,10 @@ function App() {
       
       // todo: check this query behaviour
       const {id: tabId} = await getCurrTab()
+
+      if (!tabId){
+        setNavSelect('block-site')
+      }
       
       // *Blocked Site
       const isCurrTabBlocked = await checkLocalBlockedScreenDataByTabId(tabId)

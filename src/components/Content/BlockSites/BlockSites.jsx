@@ -16,17 +16,15 @@ import { PopupToast } from "../../../utilities/PopupScreens"
 import { getLocalBlockedScreenDataByTabId } from '../../../localStorage/localBlockedScreenData'
 import { getLocalRestrictedScreenDataByTabId } from '../../../localStorage/localRestrictedScreenData'
 import { getLocalTimeLimitScreenDataByTabId } from '../../../localStorage/localTimeLimitScreenData'
-import { 
-    checkLocalBlockedSitesByHostname,
-    updateLocalBlockedSites, 
-    delLocalBlockedSites, 
- } from '../../../localStorage/localBlockedSites'
+import { checkSiteTagging, handleBlockUnblockSite } from "../../../localStorage/localSiteTagging"
+import { getLocalSettingsData } from "../../../localStorage/localSettingsData"
 
 
 // In popup screen, it creates the UI to block current website.
 const BlockSites = ()=>{
     const [currTab, setCurrTab] = useState(null)
     const [isBlocked, setIsBlocked] = useState(null)
+    const [isSiteIgnored, setIsSiteIgnored] = useState(false)
     const [toastData, setToastData] = useState([]) //* Toast Message from bottom
 
 
@@ -72,7 +70,14 @@ const BlockSites = ()=>{
         }
 
         setCurrTab(tempCurrTab)
-        const tempIsBlocked  = await checkLocalBlockedSitesByHostname(hostname)
+
+        const ignoreSites = await getLocalSettingsData({key: 'ignore-sites'})
+        if (ignoreSites.includes(hostname)){
+            setIsSiteIgnored(true)
+        }
+
+        // const tempIsBlocked  = await checkLocalBlockedSitesByHostname(hostname)
+        const tempIsBlocked = await checkSiteTagging({hostname, checkBlockedSite: true})
         setIsBlocked(tempIsBlocked)
     }
     useEffect( ()=>{
@@ -81,21 +86,22 @@ const BlockSites = ()=>{
 
     // *waits for current tab details
     if (!currTab) return <div>Loading...</div>
-    const isValidSite = currTab.url ? currTab.url.startsWith('http') : true
 
+    const isBlockableWebpage = Boolean(currTab.url) && currTab.url.startsWith('http')
+
+    let invalidSiteMessage = null
+    if (isBlockableWebpage === false){
+        invalidSiteMessage = 'This site cannot be blocked'
+    }
+    if (isSiteIgnored === true){
+        invalidSiteMessage = 'This site is ignored by you, check ⚙️settings option.'
+    }
     const hostname = currTab.url ? (new URL(currTab.url)).hostname : currTab.hostname // todo: what does it do?
     const handleBlockBtnClick = async ()=>{
-        if (isBlocked){
-            const isSiteUnblocked = await delLocalBlockedSites(hostname)
-            if (isSiteUnblocked) setToastData(['Unblocked the site', 'green'])
-            else setToastData(['Error: Site never blocked', 'red'])
-        }else{
-            const isSiteBlocked = await updateLocalBlockedSites(hostname, currTab.favIconUrl)
-            if (isSiteBlocked) setToastData(['Blocked the site', 'green'])
-            else setToastData(['Error: Site already blocked', 'green'])
-        }
+        const shouldBlockSite = !isBlocked
+        handleBlockUnblockSite({hostname, shouldBlockSite , setToastData})
 
-        setIsBlocked(prevIsBlocked=>!prevIsBlocked)
+        setIsBlocked(shouldBlockSite)
     }
     return (
         <>
@@ -109,15 +115,15 @@ const BlockSites = ()=>{
             }
             <div className='block-site-cnt'>
                 {
-                    isValidSite ? 
+                    invalidSiteMessage ? 
+                    <InvalidSiteDetails 
+                        message={invalidSiteMessage}
+                    /> : 
                     <SiteDetails  // Shows Current site info(like blocked or not and screen time) 
                         isBlocked={isBlocked}
                         currTab={currTab}
                         hostName={hostname}
                         handleBlockBtnClick={handleBlockBtnClick} 
-                    /> : 
-                    <InvalidSiteDetails 
-                        hostName={hostname}
                     />
                 }
                 {/* Blocked sites list view */}
@@ -179,7 +185,7 @@ function SiteDetails({isBlocked, currTab, hostName, handleBlockBtnClick}){
     </div>  
     )
 }
-function InvalidSiteDetails({hostName}){
+function InvalidSiteDetails({message}){
 
     return (
     <div className="content">
@@ -193,12 +199,15 @@ function InvalidSiteDetails({hostName}){
             <FireIcon />
         </div>
         <div className="invalid-site-msg">
-            <InfoIcon />
+            <div className="icon">
+                <InfoIcon />
+            </div>
             <h3>
-                This site cannot be blocked
+                {message}
             </h3>
         </div>
     </div>  
+    // This site cannot be blocked 
     )
 }
 export default BlockSites

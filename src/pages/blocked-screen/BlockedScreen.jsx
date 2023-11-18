@@ -3,13 +3,9 @@ import { MdOutlineArrowDropDown as DropDownIcon} from 'react-icons/md';
 import './BlockedScreen.scss';
 
 import { getLocalBlockedScreenDataByTabId } from '../../localStorage/localBlockedScreenData'
-
-import { 
-    checkLocalBlockedSitesByHostname, 
-    delLocalBlockedSites
-} from '../../localStorage/localBlockedSites'
 import { NavBarInScreen } from '../../utilities/NavBarInScreen';
 import { EndNoteInScreen } from '../../utilities/EndNoteInScreen';
+import { checkSiteTagging, handleBlockUnblockSite } from '../../localStorage/localSiteTagging';
 
 
 const countDownMsg = [
@@ -74,8 +70,13 @@ const BlockedScreen = ()=>{
         }
         const [tempHostname, tempFavIcon, tempUrl] = blockedScreenDataOfCurrTab
 
-        const isBlockedSite = await checkLocalBlockedSitesByHostname(tempHostname)
-        if (!isBlockedSite){
+
+        const isBlockedSite = await checkSiteTagging({
+            hostname: tempHostname,
+            checkBlockedSite: true
+        })
+
+        if (isBlockedSite === false){
             // *Got unblocked - refresh with a blocked url
             window.location = tempUrl
             // chrome.tabs.update(tabId, {url: tempUrl})
@@ -96,10 +97,14 @@ const BlockedScreen = ()=>{
     }
 
     async function handleUnblockBtnClick(){
-        const isSiteUnblockSucessFul = await delLocalBlockedSites(hostname)
-        if(isSiteUnblockSucessFul){
-            chrome.tabs.update(tabId, {url})
-        }
+
+        const isSiteUnblockSuccessFul = handleBlockUnblockSite({
+            hostname, 
+            shouldBlockSite: false,
+            setToastData: ([toastMessage, toastColor])=>{
+                console.log({toastMessage})
+            }
+        })
     }
 
     return (

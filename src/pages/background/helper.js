@@ -1,5 +1,5 @@
-import { checkLocalRestrictedSitesByHostname } from "../../localStorage/localRestrictedSites"
 import { getLocalScreenTimeTrackerForDayByHostname } from "../../localStorage/localScreenTimeTracker"
+import { checkRestrictedSites } from "../../localStorage/localSiteTagging"
 import { getLocalTakeABreakTrackerforRestrict } from "../../localStorage/localTakeABreakTrackerforRestrict"
 
 // Generic Helper functions
@@ -67,7 +67,7 @@ export async function handleUpdateBadgeIcon({tabId, hostname}){
   chrome.action.setBadgeBackgroundColor({tabId, color: [159, 255, 239, 255] });
   chrome.action.setBadgeText({tabId, text: badgeText})
 
-  const isRestrictedSite = await checkLocalRestrictedSitesByHostname(hostname)
+  const isRestrictedSite = await checkRestrictedSites(hostname)
   const takeABreakTimeLeft = await getTakeABreakTrackerforRestrictData()
   if (takeABreakTimeLeft && isRestrictedSite){
 

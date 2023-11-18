@@ -27,9 +27,12 @@
             align-items: center;
             justify-content: center;
             gap: 5px;
-            svg{
-                height: 20px;
-                width: 20px;
+            width: 70%;
+            .icon{
+                svg{
+                    height: 20px;
+                    width: 20px;
+                }
             }
             h3{
                 font-size: 14px;

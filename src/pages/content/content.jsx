@@ -12,6 +12,7 @@ import { getLocalTakeABreakTrackerforRestrict } from '../../localStorage/localTa
 
 
 const DEBUG = false
+console.log('content script running')
 
 let START_TIME = null
 let IS_FOCUSED = false
@@ -60,13 +61,15 @@ chrome.runtime.onMessage.addListener( (request, sender, sendResponse) => {
         if (audibleInfo){
             const {audible} = audibleInfo
             // Audio events
-            if (audible){
+            if (audible === 'check'){
+                checkCurrentTabAudibleActive()
+            }
+            else if (audible){
                 handleAudibleActive()
             }else{
                 handleAudibleNotActive()
             }
             sendResponse({isMessageReceived: 'good'})
-            return true;
         }
     }
   );

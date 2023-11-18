@@ -5,8 +5,8 @@ import { RiCloseLine } from 'react-icons/ri'
 
 import { pad2 } from '../../../utilities/simpleTools'
 import { useEffect, useState } from 'react'
-import { delLocalScreenTimeLimit, getLocalScreenTimeLimitByHostname, updateLocalScreenTimeLimit } from '../../../localStorage/localScreenTimeLimit'
 import { PopupFull } from '../../../utilities/PopupScreens'
+import { getScreenTimeLimit, handleScreenTimeLimtUpdate } from '../../../localStorage/localSiteTagging'
 
 
 const hrValues = Array.from({length: 24}, (_ ,index)=>pad2(index))
@@ -20,7 +20,7 @@ const TimeLimitInput = ({showTimeLimitInput: hostname, setShowTimeLimitInput, se
     useEffect(()=>{
         const getData = async ()=>{
 
-            let screenTimeLimitOfHostname = await getLocalScreenTimeLimitByHostname(hostname)
+            let screenTimeLimitOfHostname = await getScreenTimeLimit(hostname)
             
             // Time Limit is unavailable
             if (!screenTimeLimitOfHostname) return;
@@ -118,11 +118,14 @@ const TimeLimitInput = ({showTimeLimitInput: hostname, setShowTimeLimitInput, se
                             return null;
                         }
                         const storeData = async ()=>{
-                            await updateLocalScreenTimeLimit(hostname, [tempHours, tempMinutes])
+                            await handleScreenTimeLimtUpdate({
+                                hostname,
+                                timeLimitData: [tempHours, tempMinutes],
+                                shouldAddTimeLimit: true,
+                                setToastData
+                            })
                             
                             setShowTimeLimitInput(false)
-                            setToastData(['Screen time set', 'green'])
-
                             setScreenTimeLimit(null)
                         }
 
@@ -134,10 +137,11 @@ const TimeLimitInput = ({showTimeLimitInput: hostname, setShowTimeLimitInput, se
                     isLimited ?
                     <div className="remove-cnt"
                         onClick={async ()=>{
-                            const isScreenTimeLimitDeleted = await delLocalScreenTimeLimit(hostname);
-
-                            if (isScreenTimeLimitDeleted) setToastData(['Time limit removed', 'red']);
-                            else setToastData(['Time limit never exist', 'red']);
+                            await handleScreenTimeLimtUpdate({
+                                hostname,
+                                shouldAddTimeLimit: false,
+                                setToastData
+                            })
 
                             setShowTimeLimitInput(false);
                             setScreenTimeLimit(null);

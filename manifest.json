@@ -21,16 +21,6 @@
     "default_popup": "src/pages/popup/popup.html"
   },
   "options_page": "src/pages/popup/popup.html",
-  "content_scripts": [
-    {
-        "matches": [
-            "*://*/*"
-        ],
-        "js": [
-          "src/pages/content/content.jsx"
-        ]
-    }
-  ],
   "icons": {
     "16": "logo_3.png",
     "32": "logo_3.png",

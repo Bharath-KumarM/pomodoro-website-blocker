@@ -5,8 +5,6 @@ import { delLocalBlockedScreenDataByTabId, updateLocalBlockedScreenDataByTab } f
 import { delLocalRestrictedScreenDataByTabId, updateLocalRestrictedScreenDataByTab } from '../../localStorage/localRestrictedScreenData'
 import { delLocalTimeLimitScreenDataByTabId, updateLocalTimeLimitScreenDataByTab } from '../../localStorage/localTimeLimitScreenData'
 
-import {checkLocalBlockedSitesByHostname, setLocalBlockedSites, updateLocalBlockedSites} from '../../localStorage/localBlockedSites'
-import { checkLocalRestrictedSitesByHostname, getLocalRestrictedSites } from '../../localStorage/localRestrictedSites'
 import { getLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker'
 import { getLocalTakeABreakTrackerforRestrict, handleTakeABreakClick, turnOffLocalTakeABreakTrackerforRestrict } from '../../localStorage/localTakeABreakTrackerforRestrict'
 import { handleOnInstallEvent } from './installEvents'
@@ -16,9 +14,15 @@ import { incrementLocalVisitTracker } from '../../localStorage/localVisitTracker
 import { handleUpdateBadgeIcon } from './helper'
 import { createWelcomeScreencreenTab } from '../../utilities/chrome-tools/forceTabs'
 import { getHost } from '../../utilities/simpleTools'
+import { checkRestrictedSites, checkSiteTagging, getRestrictedSites, handleBlockUnblockSite } from '../../localStorage/localSiteTagging'
 
+import { registerContentScripts } from '../../utilities/contentScript'
+import { getLocalSettingsData } from '../../localStorage/localSettingsData'
 
 console.log('Script running from background!!!')
+// Periodically updated data
+let settingsData;
+getLocalSettingsData({}).then(val=> settingsData = val)
 
 chrome.action.setBadgeBackgroundColor({ color: [175, 227, 255, 255] });
 
@@ -76,7 +80,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
   }
 
   if (checkCurrentTabAudible){
-    sendResponse({audible: sender.tab.audible})
+    if (settingsData['should-count-screen-time-bg-audio'] === false){
+      sendResponse({audible: false})
+    } else {
+      sendResponse({audible: sender.tab.audible})
+    }
   }
 
   if (updateBadgeIcon){
@@ -127,7 +135,7 @@ chrome.alarms.onAlarm.addListener(async ({name})=>{
       turnOffLocalTakeABreakTrackerforRestrict({isForceTurnOff: false, shouldRefreshSites: true})
     }
     else{
-      let {restrictedSites} = await getLocalRestrictedSites()
+      let restrictedSites = await getRestrictedSites()
 
       let takeABreakForRestrictRemainingMinutes
       if (name === 'takeABreakForRestrictBefore2minute'){
@@ -140,7 +148,7 @@ chrome.alarms.onAlarm.addListener(async ({name})=>{
         return null
       }
 
-      for (const hostname in restrictedSites){
+      for (const hostname of restrictedSites){
         const tabs = await chrome.tabs.query({url: `*://${hostname}/*` })
         for (const {id} of tabs){
           const response = await chrome.tabs.sendMessage(id, {takeABreakForRestrictRemainingMinutes})
@@ -151,6 +159,7 @@ chrome.alarms.onAlarm.addListener(async ({name})=>{
 })
 
 //* Handles URL updates
+// Todo: is it readly needed? isn't runAt fast enough? 
 chrome.webNavigation.onBeforeNavigate.addListener( async (details)=>{
     const {tabId, url, frameType} = details
     if (frameType === "outermost_frame"){
@@ -161,8 +170,9 @@ chrome.webNavigation.onBeforeNavigate.addListener( async (details)=>{
 )
 chrome.tabs.onUpdated.addListener( async ( tabId, {url, audible}, tab )=>{
   if (audible !== undefined){
-    
-    handleAudibleUpdate({tabId, url: tab.url, audible})
+    if (settingsData['should-count-screen-time-bg-audio']){
+      handleAudibleUpdate({tabId, url: tab.url, audible})
+    }
   }
   if (url){
     handleUrlUpdateForVisitCount({tabId, url})
@@ -182,13 +192,37 @@ chrome.tabs.onRemoved.addListener( async (tabId, removeInfo)=>{
 chrome.contextMenus.onClicked.addListener((info, tab)=>{
   if (info.pageUrl){
     const hostname = getHost(info.pageUrl)
-    updateLocalBlockedSites(hostname)
+    handleBlockUnblockSite({
+      hostname,
+      shouldBlockSite: true,
+    })
   }
 })
+
+registerContentScripts()
+
+
+chrome.storage.onChanged.addListener((changes, namespace) => {
+  for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+    if (key === 'settingsData'){
+      handleSetiingsDataChange(newValue)
+    }
+    // console.log(
+    //   `Storage key "${key}" in namespace "${namespace}" changed.`,
+    //   `Old value was "${oldValue}", new value is "${newValue}".`
+    // );
+  }
+});
 
 // Helper functions
 async function handleAudibleUpdate({tabId, url, audible}){
   const response = await chrome.tabs.sendMessage(tabId, {audibleInfo: {audible}});
+
+}
+
+async function handleSetiingsDataChange(newSettingsData){
+
+  settingsData = newSettingsData
 
 }
 async function handleUrlUpdateForVisitCount({tabId, url}){
@@ -213,7 +247,7 @@ async function handleUrlUpdate({tabId, url}){
   const hostname = new URL(url).hostname;
   const favIconUrl = `http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`;
   
-  const isBlockedSite = await checkLocalBlockedSitesByHostname(hostname)
+  const isBlockedSite = await checkSiteTagging({hostname, checkBlockedSite: true})
 
   if (isBlockedSite){
     updateLocalBlockedScreenDataByTab(tabId, [hostname, favIconUrl, url])
@@ -222,7 +256,7 @@ async function handleUrlUpdate({tabId, url}){
 
   //* Focus mode & Restriction site load handeling
   const {focusModeTracker} = await getLocalFocusModeTracker()
-  const isRestricted = await checkLocalRestrictedSitesByHostname(hostname)
+  const isRestricted = await checkRestrictedSites(hostname)
   const isCurrTimeFocusScheduled = await checkFocusScheduleActive()
   const {takeABreakTrackerforRestrict} = await getLocalTakeABreakTrackerforRestrict()
 
@@ -239,5 +273,3 @@ async function handleUrlUpdate({tabId, url}){
     return null;
   }
 }
-
-
