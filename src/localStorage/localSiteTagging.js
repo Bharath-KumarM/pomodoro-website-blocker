@@ -5,16 +5,8 @@ import { isValidUrl } from "../utilities/simpleTools"
 import { checkFocusModeTracker, getLocalFocusModeTracker } from "./localFocusModeTracker"
 
 
-export async function initializingLocalSiteTagging() {
-    const siteTagging = await getLocalSiteTagging()
-
-    if (siteTagging === undefined){
-        setLocalSiteTagging({})
-    }
-}
-
 export async function getLocalSiteTagging(){
-    const {siteTagging} = await chrome.storage.local.get('siteTagging')
+    const {siteTagging} = await chrome.storage.local.get('siteTagging') || {siteTagging: {}}
     return siteTagging
 }
 

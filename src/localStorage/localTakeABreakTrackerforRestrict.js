@@ -1,14 +1,8 @@
 import { refreshAllRestrictedScreenTabs, refreshAllRestrictedSites } from "../utilities/chrome-tools/refreshTabs"
 
 // todo: change TakeABreakTrackerforRestrict to takeABreakTrackerforRestrict
-export const initializeLocalTakeABreakTrackerforRestrict = async ()=>{
-    const {takeABreakTrackerforRestrict} = await chrome.storage.local.get('takeABreakTrackerforRestrict')
-    if (takeABreakTrackerforRestrict === undefined){
-      await chrome.storage.local.set({takeABreakTrackerforRestrict: false})
-    }
-}
 export const getLocalTakeABreakTrackerforRestrict = async ()=>{
-    return await chrome.storage.local.get('takeABreakTrackerforRestrict')
+    return await chrome.storage.local.get('takeABreakTrackerforRestrict') || {takeABreakTrackerforRestrict: false}
 }
 
 export const setLocalTakeABreakTrackerforRestrict = async (takeABreakTrackerforRestrict)=>{
@@ -16,6 +10,7 @@ export const setLocalTakeABreakTrackerforRestrict = async (takeABreakTrackerforR
     return true;
 
 }
+//todo: refactor better
 export const turnOffLocalTakeABreakTrackerforRestrict = async ({isForceTurnOff, shouldRefreshSites})=>{
     await setLocalTakeABreakTrackerforRestrict(false)
     if (shouldRefreshSites){

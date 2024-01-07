@@ -2,14 +2,8 @@ import { forceBlockedScreenByTabId } from "../utilities/chrome-tools/forceTabs"
 
 // *blockedScreenData
 
-export const initializeLocalBlockedScreenData = async ()=>{
-    const {blockedScreenData} = await chrome.storage.local.get('blockedScreenData')
-    if (blockedScreenData === undefined){
-      await chrome.storage.local.set({blockedScreenData: {}})
-    }
-}
 export const getLocalBlockedScreenData = async ()=>{
-    return await chrome.storage.local.get('blockedScreenData')
+    return await chrome.storage.local.get('blockedScreenData') || {blockedScreenData: {}}
 }
 export const getLocalBlockedScreenDataByTabId = async (tabId)=>{
     const {blockedScreenData} = await getLocalBlockedScreenData()

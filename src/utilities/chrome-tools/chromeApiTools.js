@@ -35,7 +35,7 @@ export async function checkScreenTimeSurpassedLimit(hostname){
 }
 
 export const getRecentHostnames = async (n=-30)=>{
-    const {visitTracker: tracker} = await getLocalVisitTracker()
+    const tracker = await getLocalVisitTracker()
     const ignoreSites = await getLocalSettingsData({key: 'ignore-sites'})
 
     let hostnames = []

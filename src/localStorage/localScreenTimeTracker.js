@@ -1,23 +1,18 @@
 import { getDateString } from "../utilities/date"
 
 // *screenTimeTracker
-export const initializeLocalScreenTimeTracker = async ()=>{
-    const {screenTimeTracker} = await chrome.storage.local.get('screenTimeTracker')
-    if (screenTimeTracker === undefined){
-      await chrome.storage.local.set({screenTimeTracker: {}})
-    }
-}
 export const getLocalScreenTimeTracker = async ()=>{
-    return await chrome.storage.local.get('screenTimeTracker')
+    const {screenTimeTracker} = await chrome.storage.local.get('screenTimeTracker')
+    return screenTimeTracker ?? {}
 }
 
 export const getLocalScreenTimeTrackerForDayByHostname = async (dateString, hostname)=>{
-    const {screenTimeTracker} = await getLocalScreenTimeTracker()
+    const screenTimeTracker = await getLocalScreenTimeTracker()
 
     return Math.round(screenTimeTracker?.[dateString]?.[hostname] ?? 0);
 }
 export const getLocalScreenTimeTrackerForDay = async (dateString, hostname)=>{
-    const {screenTimeTracker} = await getLocalScreenTimeTracker()
+    const screenTimeTracker = await getLocalScreenTimeTracker()
 
     return screenTimeTracker?.[dateString] ?? {};
 }
@@ -29,7 +24,7 @@ export const setLocalScreenTimeTracker = async (screenTimeTracker)=>{
 // Cleans all data older than last 60 days
 export const cleanLocalScreenTimeTracker = async ()=>{
 
-    const {screenTimeTracker} = await getLocalScreenTimeTracker()
+    const screenTimeTracker = await getLocalScreenTimeTracker()
 
     // Note: reversed for date compare
     const dateXDaysAgo = getDateString(-30).split('-').reverse().join('-')

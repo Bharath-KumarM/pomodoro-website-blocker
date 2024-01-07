@@ -2,17 +2,8 @@ import { getAllTabs } from "../utilities/chrome-tools/chromeApiTools"
 import { refreshAllTabsByHostname } from "../utilities/chrome-tools/refreshTabs"
 import { updateContentScripts } from "../utilities/contentScript"
 
-export const initializLocalSettingsData = async ()=>{
-    const {settingsData} = await chrome.storage.local.get('settingsData')
-
-    // Runs only once
-    if (settingsData === undefined){
-      resetLocalSettingsData()
-    }
-}
-
 export async function getLocalSettingsData({key=null}){
-    const {settingsData} = await chrome.storage.local.get('settingsData')
+    const {settingsData} = await chrome.storage.local.get('settingsData') || await resetLocalSettingsData()
 
     if (key === null){
       return settingsData
@@ -54,10 +45,11 @@ export async function updateLocalSettingsData({
   await setLocalSettingsData(settingsData)
 
 
+  // todo: create functions to add and remove sites
   if (key === 'ignore-sites'){
     // handle ignore-sites update
-    await refreshAllTabsByHostname(optionalData)
     await updateContentScripts()
+    await refreshAllTabsByHostname(optionalData)
 
   }
 

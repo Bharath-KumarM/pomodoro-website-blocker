@@ -35,7 +35,7 @@ const ScreenTime = ()=>{
 
     useEffect(()=>{
         const getInfo = async (day)=>{
-            let {screenTimeTracker} = await getLocalScreenTimeTracker()
+            let screenTimeTracker = await getLocalScreenTimeTracker()
 
             const dateString = getDateString(day)
             const fullDate = getFullDate(day)

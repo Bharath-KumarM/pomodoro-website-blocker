@@ -3,6 +3,14 @@ import contentScript from '../pages/content/content?script'
 
 
 export async function registerContentScripts(){
+    const contentScripts = await chrome.scripting.getRegisteredContentScripts({
+      ids: ["session-script"]
+    })
+
+    if (contentScripts.length > 0){
+      return true
+    }
+
     const ignoreSites = await getLocalSettingsData({
         key: 'ignore-sites'
     })
@@ -32,17 +40,23 @@ export async function updateContentScripts(){
         return `*://${sites}/*`
     })
 
+    const registeredContentScripts = await chrome.scripting.getRegisteredContentScripts()
+    console.log({registeredContentScripts})
 
-    await chrome.scripting.updateContentScripts(
-        [{
-          id: "session-script",
-          js: [contentScript],
-          matches: ["*://*/*"],
-          excludeMatches,
-        //   excludeMatches: ["*://www.google.com/*", "*://www.youtube.com/*"],
-          runAt: "document_start",
-        }]
-      )
+    try {
+      await chrome.scripting.updateContentScripts(
+          [{
+            id: "session-script",
+            js: [contentScript],
+            matches: ["*://*/*"],
+            excludeMatches,
+          //   excludeMatches: ["*://www.google.com/*", "*://www.youtube.com/*"],
+            runAt: "document_start",
+          }]
+        )
+    } catch {
+      registerContentScripts()
+    }
     
     return true
 }

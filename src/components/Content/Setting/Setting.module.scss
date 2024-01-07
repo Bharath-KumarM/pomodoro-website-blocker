@@ -10,7 +10,7 @@
     width: 100%;
     gap: 10px;
 
-    .IgnoreSiteList{
+    .CheckedSiteList{
         display: flex;
         justify-content: center;
         align-items: center;
@@ -185,11 +185,42 @@
                             width: 30px;
                             height: 30px;
                         }
-    
+
                         .HostName{
                             overflow: hidden;
                             text-overflow: ellipsis;
                         }
+
+                        .TextCnt{
+                            display: flex;
+                            gap: 5px;
+                            flex-direction: column;
+
+                            .HostName{
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                            }
+                            .RemoveDesc{
+                                font-size: 12px;
+                                color: $icon-red2;
+
+                                &:hover{
+                                    text-decoration: underline;
+                                    cursor: pointer;
+                                }
+
+                            }
+                            .RemovedDesc{
+                                font-size: 12px;
+                                color: $font-color2;
+
+                                &:hover{
+                                    text-decoration: underline;
+                                    cursor: no-drop;
+                                }
+                            }
+                        }
+    
                     }
                     .icon-btn{
                             border-left: solid 2px $font-color1;

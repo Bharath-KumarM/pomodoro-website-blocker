@@ -1,8 +1,8 @@
-import { createHelpScreencreenTab, createWelcomeScreencreenTab } from '../../utilities/chrome-tools/forceTabs';
+import { createHelpScreenTab } from '../../utilities/chrome-tools/forceTabs';
 import style from './Header.module.scss'
 import extensionIcon from '../../../logo_3.png'
 
-import {MdSettings as SettingsIcon} from "react-icons/md"
+import {MdSettings as SettingsIcon, MdHelp as HelpIcon} from "react-icons/md"
 
 
 const Header = ({setNavSelect})=>{
@@ -10,6 +10,12 @@ const Header = ({setNavSelect})=>{
     return (
         <div className={style.header}>
             <div className={style.headerOuterCnt}>
+                <div className={style.helpIconCnt}
+                    onClick={()=> createHelpScreenTab()}
+                    title='Help'
+                >
+                    <HelpIcon />
+                </div>
                 <div className={style.headerCnt}>
                     <img 
                         className={style.extentionIconImg}
@@ -18,8 +24,7 @@ const Header = ({setNavSelect})=>{
                     <h3  
                         className={style.title}
                         onClick={()=>{
-                            // createWelcomeScreencreenTab()
-                            createHelpScreencreenTab()
+                            createHelpScreenTab()
                         }}
                     >
                         Be Focused
@@ -28,6 +33,7 @@ const Header = ({setNavSelect})=>{
                 </div>
                 <div className={style.settingIconCnt}
                     onClick={()=> setNavSelect('setting')}
+                    title='Settings'
                 >
                     <SettingsIcon />
                 </div>

@@ -71,6 +71,32 @@
             }
             
         }
+        .helpIconCnt{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 30px;
+            height: 100%;
+    
+            position: absolute;
+            left: 0px;
+    
+            svg{
+                width: 20px;
+                height: 20px;
+                path{
+    
+                }
+            }
+            -webkit-transition: transform 0.3s;
+
+            &:hover{
+                cursor: pointer;
+                transition: transform 0.3s ease-in;
+                transform: rotateZ(360deg);
+            }
+        }
         .settingIconCnt{
             display: flex;
             align-items: center;
