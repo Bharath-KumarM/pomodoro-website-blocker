@@ -51,7 +51,8 @@ function App() {
       setNavSelect('block-site')
     }
     if (navSelect === ''){
-      getNavSelect()
+      setNavSelect('screen-time')
+      // getNavSelect()
     }
 
   }, [])

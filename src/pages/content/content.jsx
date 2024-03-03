@@ -166,7 +166,7 @@ async function endTimeCounting(){
 
     if ( IS_AUDIBLE === true || IS_FOCUSED === true ){
         if (IS_DEBUG_ACTIVE){
-            console.log('Either IS_AUDIBLE or IS_FOCUSED is true')
+            console.log((IS_AUDIBLE ? 'Still audio palying🔉' : 'Still focusing🎯'))
         }
         return null;
     }
@@ -174,6 +174,9 @@ async function endTimeCounting(){
     clearInterval(INTERVAL_ID)
 
     const spentTimeInMinutes = (new Date - START_TIME) ? (new Date - START_TIME)/(1000*60) : 0
+    if (IS_DEBUG_ACTIVE){
+        console.log('Added ' + spentTimeInMinutes + ' minutes screentime')
+    }
     START_TIME = null
 
     const dateString = getDateString(0)

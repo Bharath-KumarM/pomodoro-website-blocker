@@ -134,7 +134,7 @@
             .heading{
                 width: min(90%,600px);
                 background-color: $bg-color2;
-                padding: 10px 0;
+                padding: 10px;
     
                 display: flex;
                 gap: 10px;
@@ -145,8 +145,11 @@
                     height: 20px;
                 }
                 &.sticky {
+                    background-color: $bg-color2;
+                    width: 100%;
                     position: sticky;
-                    top: 0;
+                    top: 35px;
+                    z-index: 1;
                   }
             }
             .add-btn-cnt{

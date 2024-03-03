@@ -8,7 +8,6 @@
     flex-direction: column;
 
     width: 100%;
-    gap: 10px;
 
     .CheckedSiteList{
         display: flex;
@@ -286,7 +285,7 @@
         flex-direction: column;
 
         width: 100%;
-        padding: 5px;
+        padding: 0 10px;
         
         
         .OptionHeading{
@@ -306,7 +305,7 @@
     
             border-radius: 5px;
 
-            background-color: $bg-color3;
+            background-color: $bg-color1;
             padding: 5px;
             gap: 10px;
 
@@ -317,7 +316,7 @@
                 justify-content: flex-start;
         
                 width: 100%;
-                padding: 10px 0;
+                padding: 10px;
 
                 .OptionDescCnt{
                     width: 80%;
@@ -389,7 +388,7 @@
                 justify-content: flex-start;
         
                 width: 100%;
-                padding: 10px 0;
+                padding: 10px;
 
                 .AddOptionTitleCnt{
                     display: flex;
@@ -547,12 +546,7 @@
                                     background-color: $bg-color1;
                                 }
 
-                                border-bottom: 1px solid $bg-color5;
-                                
-                                &:last-child{
-                                    border-bottom: 0;
-                                }
-                                
+                                border: 1px solid $bg-color5;
                             }
                             
                         }

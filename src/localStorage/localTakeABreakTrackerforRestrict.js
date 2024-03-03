@@ -35,7 +35,7 @@ export const turnOnLocalTakeABreakTrackerforRestrict = async (takeABreakTrackerf
 export const handleTakeABreakClick = async (timeInMinutes)=>{
     const currTimeObj = Date.now()
 
-    const minToSecConvertor = 5 // 60 is default value for debugging quick, change inside getTakeABreakTrackerforRestrictData as well
+    const minToSecConvertor = 60 // 60 is default value for debugging quick, change inside getTakeABreakTrackerforRestrictData as well
 
     turnOnLocalTakeABreakTrackerforRestrict(currTimeObj + (timeInMinutes*minToSecConvertor*1000))
 

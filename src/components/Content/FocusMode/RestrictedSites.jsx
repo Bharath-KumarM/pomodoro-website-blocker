@@ -45,10 +45,6 @@ const RestrictedSites = ({setToastData})=>{
 
     const validMoreSitesToRestrict = recentSites.filter((recentSite)=>!restrictedSites.includes(recentSite))
     
-
-
-
-
     return (
         Object.values(dataLoadedStatus).includes(false) ? 
         <Loader /> :
@@ -56,7 +52,7 @@ const RestrictedSites = ({setToastData})=>{
             <div className="sticky">
                 <div className='heading'> 
                     <TbBarrierBlock />
-                    <h3>Restricted Sites</h3> 
+                    <h3>Distracted Sites</h3> 
                 </div>
 
             </div>
@@ -71,7 +67,7 @@ const RestrictedSites = ({setToastData})=>{
                 recentSites={recentSites}
             />
             <h3 className='site-table-heading restricted sticky'>
-                Your restricted sites
+                Distracted sites
             </h3>
             {   
                 restrictedSites.length ?
@@ -102,7 +98,7 @@ const RestrictedSites = ({setToastData})=>{
                 </div>
             }
             <h3 className='site-table-heading more sticky'>
-                Recent sites to restrict
+                Recent sites
             </h3>
             {
                 recentSites.length > 0 ? 
@@ -143,7 +139,12 @@ const AddCurrSiteToRestrictedSite = ({restrictedSites, getRestrictedSites, setTo
     const [currSite, setCurrSite] = useState(null)
 
     useEffect(()=>{
-        getCurrTab().then(async ({url, favIconUrl})=>{
+        getCurrTab().then(async (currTab)=>{
+            if (!currTab){
+                return null
+            }
+            const {url, favIconUrl} = currTab
+
             if (!url.startsWith('http')){
                 setCurrSite(null)
                 return null
@@ -161,7 +162,7 @@ const AddCurrSiteToRestrictedSite = ({restrictedSites, getRestrictedSites, setTo
                 return null
             }
 
-            setCurrSite(url)
+            setCurrSite(hostname)
         })
     }, [restrictedSites])
 
@@ -190,7 +191,7 @@ const AddCurrSiteToRestrictedSite = ({restrictedSites, getRestrictedSites, setTo
                         getRestrictedSites(null)
                     }}
                 >
-                    Restrict the current site
+                    Add as distracted site
                 </div>
             </div>
         </div>

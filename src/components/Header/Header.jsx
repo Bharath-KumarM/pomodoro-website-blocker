@@ -2,7 +2,8 @@ import { createHelpScreenTab } from '../../utilities/chrome-tools/forceTabs';
 import style from './Header.module.scss'
 import extensionIcon from '../../../logo_3.png'
 
-import {MdSettings as SettingsIcon, MdHelp as HelpIcon} from "react-icons/md"
+import {MdSettings as SettingsIcon} from "react-icons/md"
+import { IoHelp } from "react-icons/io5";
 
 
 const Header = ({setNavSelect})=>{
@@ -14,7 +15,7 @@ const Header = ({setNavSelect})=>{
                     onClick={()=> createHelpScreenTab()}
                     title='Help'
                 >
-                    <HelpIcon />
+                    <IoHelp />
                 </div>
                 <div className={style.headerCnt}>
                     <img 

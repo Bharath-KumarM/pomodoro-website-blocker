@@ -1,4 +1,3 @@
-import {ImBlocked} from "react-icons/im"
 import { FiPlus } from "react-icons/fi"
 
 import { useEffect, useState, useRef } from "react"
@@ -36,14 +35,6 @@ const BlockedSitesList = ({setToastData}) => {
 
     return (
     <>
-        {/* Inside the container */}
-        <hr className="hr-line"></hr>
-        <div className="sticky-ele">
-            <div className="heading">
-                <ImBlocked />
-                <h3> Block Sites </h3>
-            </div>
-        </div>
         <AddCurrSiteToBlockedSite 
             setToastData={setToastData}
             blockedSites={blockedSites}
@@ -271,7 +262,7 @@ const AddCurrSiteToBlockedSite = ({blockedSites,getUpdatedBlockedSites, setToast
                         getUpdatedBlockedSites()
                     }}
                 >
-                    Block the current site
+                    Block the site
                 </div>
             </div>
         </div>

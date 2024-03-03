@@ -1,0 +1,37 @@
+@import '../../../utilities/variables';
+
+
+.NavBarCnt{
+    width: 100%;
+    position: sticky;
+    top: 0;
+    background-color: $bg-color2;
+    z-index: 2;
+
+    padding: 10px 5px;
+    // margin: 0 0 10px 0;
+    
+    .NavBar{
+        align-self: flex-start;
+        display: flex;
+        gap: 10px;
+        
+        span{
+            font-size: 13px;
+            
+            &.Nav{
+                &:hover{
+                    cursor: pointer;
+                    text-decoration: underline;
+                }
+            }
+        }    
+    }
+    
+    .Line{
+        width: 95%;
+        border: 1px solid $bg-color5;
+        align-self: center;
+        margin: 5px 0 0 0;
+    }
+}

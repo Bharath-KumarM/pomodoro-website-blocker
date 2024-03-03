@@ -12,7 +12,7 @@ import { getScreenTimeLimit, handleScreenTimeLimtUpdate } from '../../../localSt
 const hrValues = Array.from({length: 24}, (_ ,index)=>pad2(index))
 const minValues = Array.from({length: 12}, (_ ,index)=>pad2(index*5))
 
-const TimeLimitInput = ({showTimeLimitInput: hostname, setShowTimeLimitInput, setScreenTimeLimit, setToastData, setClosePopup})=>{
+const TimeLimitInput = ({hostname, setShowTimeLimitInput, setScreenTimeLimit, setToastData, setClosePopup})=>{
     const [hours, setHours] = useState(0)
     const [minutes, setMinutes] = useState(30)
     const [isLimited, setIsLimited] = useState(false)
@@ -107,13 +107,13 @@ const TimeLimitInput = ({showTimeLimitInput: hostname, setShowTimeLimitInput, se
                     // className={isUserInputValid ? 'set-input active' : 'set-input'}
                     className={'set-input active'}
                     type="submit" 
-                    onClick={(e)=>{
+                    onClick={async (e)=>{
                         const [tempHours, tempMinutes] = [parseInt(hours), parseInt(minutes)]
                         if (tempHours === 0 && tempMinutes === 0){
                             setToastData(['Zero minutes can\'t be set', 'red']) 
                             
                             setShowTimeLimitInput(false)
-                            setScreenTimeLimit(null)
+                            setScreenTimeLimit(await getScreenTimeLimit())
 
                             return null;
                         }
@@ -126,7 +126,7 @@ const TimeLimitInput = ({showTimeLimitInput: hostname, setShowTimeLimitInput, se
                             })
                             
                             setShowTimeLimitInput(false)
-                            setScreenTimeLimit(null)
+                            setScreenTimeLimit(await getScreenTimeLimit())
                         }
 
                         storeData()
@@ -144,7 +144,7 @@ const TimeLimitInput = ({showTimeLimitInput: hostname, setShowTimeLimitInput, se
                             })
 
                             setShowTimeLimitInput(false);
-                            setScreenTimeLimit(null);
+                            setScreenTimeLimit(await getScreenTimeLimit())
                             
                         }}
                     >

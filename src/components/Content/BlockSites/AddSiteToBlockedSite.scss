@@ -126,10 +126,19 @@
 
             &:hover{
                 background-color: $bg-color4;
+                &.ignored {
+                    background-color: $accent-red-color2;
+                }
             }
             
             &.select{
                 background-color: $bg-color4;
+                &.ignored {
+                    background-color: $accent-red-color2;
+                }
+            }
+            &.ignored {
+                background-color: $accent-red-color1;
             }
 
             .option-icon{
@@ -141,6 +150,11 @@
                 font-size: 14px;
                 overflow: hidden;
                 text-overflow: ellipsis;
+
+                &.ignored{
+                    color: $bg-color-red1;
+                    text-decoration: line-through;
+                }
 
                 
             }

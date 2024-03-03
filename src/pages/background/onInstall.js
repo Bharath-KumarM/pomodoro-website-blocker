@@ -41,13 +41,29 @@ export async function handleOnInstall ({id, previousVersion, reason}){
 
 //* For debug only
 export async function updateDailyLocalStorageBackup(){
+  // restoreLocalStorageBackup({date: '01-02-2024'})
+
   let { dailyLocalStorageBackup } = await chrome.storage.local.get('dailyLocalStorageBackup')
   dailyLocalStorageBackup = dailyLocalStorageBackup ?? {}
 
+
   const currDate = getDateString()
   if (dailyLocalStorageBackup[currDate] !== undefined){
-      console.log({dailyLocalStorageBackup})
       return false
+  }
+
+  // Delete older date backups
+  const dates = Object.keys(dailyLocalStorageBackup)
+  if (dates.length > 10){
+    const reformatDates = dates.map(date => date.split('-').reverse().join('-'))
+    reformatDates.sort((a, b) => (a > b ? -1 : 1))
+    const filteredDates = reformatDates.slice().map(reformatDate => reformatDate.split('-').reverse().join('-'))
+
+    filteredDates.map((date, index)=> {
+      if (index >= 10){
+        delete dailyLocalStorageBackup[date]
+      }
+    })
   }
 
   const siteTagging = await getLocalSiteTagging()
@@ -61,7 +77,7 @@ export async function updateDailyLocalStorageBackup(){
   }
 
   await chrome.storage.local.set({dailyLocalStorageBackup})
-  console.log({dailyLocalStorageBackup})
+
   return true
 }
 

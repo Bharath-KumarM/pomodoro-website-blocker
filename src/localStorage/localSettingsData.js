@@ -8,7 +8,6 @@ export async function getLocalSettingsData({key=null}){
     if (key === null){
       return settingsData
     }
-
     return settingsData[key]
 }
 

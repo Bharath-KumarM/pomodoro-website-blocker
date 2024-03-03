@@ -79,7 +79,7 @@ export async function handleUpdateBadgeIcon({tabId, hostname}){
   const takeABreakTimeLeft = await getTakeABreakTrackerforRestrictData()
   if (takeABreakTimeLeft && isRestrictedSite){
 
-    const badgeText = `+${createScreentimeTextForBadge(takeABreakTimeLeft)}`
+    const badgeText = `${createScreentimeTextForBadge(takeABreakTimeLeft)}`
 
     chrome.action.setBadgeBackgroundColor({tabId, color: [61, 255, 139, 255] });
     chrome.action.setBadgeText({tabId, text: badgeText})
@@ -99,7 +99,7 @@ const getTakeABreakTrackerforRestrictData = async ()=>{
         return false
       }
       else{
-          const minToSecConvertor = 5 // 60 is default value for debugging
+          const minToSecConvertor = 60 // 60 is default value for debugging
 
           const newTimeDiff = Math.ceil((takeABreakTrackerforRestrict - new Date().getTime())/(1000*minToSecConvertor))
           return newTimeDiff

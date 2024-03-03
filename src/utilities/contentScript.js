@@ -41,8 +41,7 @@ export async function updateContentScripts(){
     })
 
     const registeredContentScripts = await chrome.scripting.getRegisteredContentScripts()
-    console.log({registeredContentScripts})
-
+    
     try {
       await chrome.scripting.updateContentScripts(
           [{

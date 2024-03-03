@@ -10,15 +10,26 @@
     padding: 5px 2px;
     gap: 10px;
 
+    margin: 5px;
+
     width: 100px;
 
     border-radius: 5px;
     border-bottom: 3px solid transparent;
+
+    transition: background-color 175ms;
+
+    &:hover{
+        background-color: $bg-color4;
+    }
     
     &.active{
         border-color: $accent-bg-light-color1;
         background-color: $bg-color3;
-        animation: expand 300ms ease-in;
+
+        svg{
+            fill: $font-accent-color1;
+        }
 
         @keyframes expand {
             0%{
@@ -52,5 +63,6 @@
 }
 
 .desc{
-    font-size: 0.8rem;
+    // font-size: 0.8rem;
+    font-size: 12px;
 }

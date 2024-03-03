@@ -6,18 +6,26 @@ import { FaHourglass, FaRegHourglass, FaHourglassHalf } from "react-icons/fa";
 import { GrCircleInformation } from "react-icons/gr";
 import { MdClose } from "react-icons/md";
 import { getHost, isValidUrl } from '../../../utilities/simpleTools';
+import { getScreenTimeLimit } from '../../../localStorage/localSiteTagging';
+import TimeLimitInput from './TimeLimitInput';
 
-const SiteTimeLimitScreen = ({toastMsg, setClosePopup, showTimeLimitInput, screenTimeLimit, children})=>{
+// const SiteTimeLimitScreen = ({setClosePopup, setShowTimeLimitInput, children})=>{
+const SiteTimeLimitScreen = ({setClosePopup, setToastData})=>{
     const [recentSites, setRecentSites] = useState(null)
+    const [screenTimeLimit, setScreenTimeLimit] = useState(null)
     const [searchText, setSearchText] = useState('')
+    const [showTimeLimitInput, setShowTimeLimitInput] = useState(null)
 
     useEffect(()=>{
-        getRecentHostnames().then((tempRecentSites)=>{
-            setRecentSites(tempRecentSites)
-        })
+        const getData = async () => {
+            setRecentSites(await getRecentHostnames())
+            setScreenTimeLimit(await getScreenTimeLimit())
+        }
+
+        getData()
     }, [])
 
-    if (recentSites === null) {
+    if (recentSites === null || screenTimeLimit === null) {
         return (
             <div>
                 Loading...
@@ -42,7 +50,14 @@ const SiteTimeLimitScreen = ({toastMsg, setClosePopup, showTimeLimitInput, scree
     return (
         <>
             {
-                children
+                showTimeLimitInput ?
+                <TimeLimitInput 
+                    hostname={showTimeLimitInput}
+                    setShowTimeLimitInput={setShowTimeLimitInput}
+                    setToastData={setToastData}
+                    setScreenTimeLimit={setScreenTimeLimit}
+                    setClosePopup={()=>setShowTimeLimitInput(null)}
+                /> : null
             }
             <div className='sites-time-limit-screen'
                 onClick={(e)=>{
@@ -87,7 +102,7 @@ const SiteTimeLimitScreen = ({toastMsg, setClosePopup, showTimeLimitInput, scree
                                 </div>
                                 <div className='icon-btn'
                                     onClick={()=> {
-                                        showTimeLimitInput(getHost(searchText))
+                                        setShowTimeLimitInput(getHost(searchText))
                                     }}
 
                                 >
@@ -122,7 +137,9 @@ const SiteTimeLimitScreen = ({toastMsg, setClosePopup, showTimeLimitInput, scree
                             recentSitesWithScreenTime.map(([hostname, timeLimit])=>{
                                 
                                 return (
-                                    <li className='site-item'>
+                                    <li className='site-item'
+                                        key={hostname}
+                                    >
                                         <div className="cnt">
                                             <img className='site-item-icon' 
                                                 src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} 
@@ -134,7 +151,7 @@ const SiteTimeLimitScreen = ({toastMsg, setClosePopup, showTimeLimitInput, scree
                                         </div>
                                         <div className='icon-btn'
                                             onClick={()=> {
-                                                showTimeLimitInput(hostname)
+                                                setShowTimeLimitInput(hostname)
                                             }}
 
                                         >

@@ -14,7 +14,7 @@ export const getLocalVisitTrackerForDayByHostname = async (hostname, dateString)
 export const getLocalVisitTrackerForDay = async (dateString)=>{
     const visitTracker = await getLocalVisitTracker ()
 
-    return Math.round(visitTracker?.[dateString] ?? {});
+    return visitTracker?.[dateString] ?? {};
 }
 
 export const setLocalVisitTracker = async (visitTracker)=>{

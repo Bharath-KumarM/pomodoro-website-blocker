@@ -151,13 +151,13 @@ export async function getScreenTimeLimit(hostname=null){
     const screenTimeLimit = {}
     const siteTagging = await getLocalSiteTagging()
 
-    let hostTimeLimitData = null
+    let singleSiteTimeLimitData = null
 
     for (const site of Object.keys(siteTagging)){
         const [isBlocked, isRestricted, timeLimitData] = siteTagging[site] 
         if (hostname){
             if (hostname === site && timeLimitData){
-                hostTimeLimitData = timeLimitData
+                singleSiteTimeLimitData = timeLimitData
                 break
             }
         } else {
@@ -168,7 +168,7 @@ export async function getScreenTimeLimit(hostname=null){
     }
 
     if (hostname){
-        return hostTimeLimitData
+        return singleSiteTimeLimitData
     } else {
         return screenTimeLimit
     }
@@ -249,7 +249,6 @@ export async function handleBlockUnblockSite({hostname, shouldBlockSite, setToas
 
     setToastData && toastData && setToastData(toastData)
 
-
     return isRequestSuccessful
 }
 
@@ -272,7 +271,7 @@ export async function handleRestrictUnRestrictSite({hostname, shouldRestrictSite
             isRequestSuccessful = true
             break
         default:
-            toastData = ['Restrcited site is invalid', 'red']
+            toastData = ['Distracted site is added', 'red']
             break
     }
 

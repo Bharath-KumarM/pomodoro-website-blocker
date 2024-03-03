@@ -11,7 +11,10 @@ import { getRecentHostnames } from "../../../utilities/chrome-tools/chromeApiToo
 import { FaHourglass, FaRegHourglass } from "react-icons/fa"
 import { BodyClickContext } from '../../context'
 import { checkHostnameArrReference, delHostnameReference } from "../../../utilities/localStorageRelatedUtilities"
-import { getBlockedSites, getRestrictedSites, handleBlockUnblockSite, handleRestrictUnRestrictSite, updateLocalSiteTagging } from "../../../localStorage/localSiteTagging"
+import { getBlockedSites, getRestrictedSites, getTimelimitedSites, handleBlockUnblockSite, handleRestrictUnRestrictSite, updateLocalSiteTagging } from "../../../localStorage/localSiteTagging"
+import TimeLimitInput from "../ScreenTime/TimeLimitInput"
+import SiteTimeLimitScreen from "../ScreenTime/SitesTimeLimitScreen"
+import NavBar from "../NavBar/NavBar"
 
 
 // todo: create a structure for valid option values
@@ -21,18 +24,20 @@ const sectionDataCollection = [
         options: [
             {
                 key: 'ignore-sites',
-                optionType: 'add-sites', // toggle, multiple-option
-                subHeadingText: '🧹Ignore sites',
+                optionType: 'add-sites',
+                getData: async () => {
+                    return await getLocalSettingsData({key: 'ignore-sites'})
+                },
+                subHeadingText: 'Ignore sites',
                 descText: `Added sites are NOT tracked by 
                 the extension in any means`,
-                handleDeleteClick: async ({setSettingsData, settingsData, key, deleteItem})=>{
-                    const newSettingsData = await updateLocalSettingsData({
+                handleDeleteClick: async ({deleteItem})=>{
+                    const settingsData = await getLocalSettingsData({})
+                    await updateLocalSettingsData({
                         key: 'ignore-sites',
-                        data:  settingsData[key].filter((item)=> item != deleteItem),
+                        data:  settingsData['ignore-sites'].filter((item)=> item != deleteItem),
                         optionalData: deleteItem
                     })
-                                
-                    setSettingsData(newSettingsData)
                 },
                 addToastData: ['The site is ignored', 'green'],
                 removeToastData: ['The site is removed', 'red'],
@@ -42,22 +47,29 @@ const sectionDataCollection = [
                         const ignoreSites = await getLocalSettingsData({
                             key:  'ignore-sites',
                         })
+                        const newIgnoreSites = ignoreSites.filter((site)=> site != uncheckedSite)
                         await updateLocalSettingsData({
                             key: 'ignore-sites',
-                            data:  ignoreSites.filter((site)=> site != uncheckedSite),
+                            data:  newIgnoreSites,
                             optionalData: uncheckedSite
                         })
 
+                        return newIgnoreSites
                     },
                     handleChecked: async ({checkedSite, setToastData})=>{
                         const ignoreSites = await getLocalSettingsData({
                             key:  'ignore-sites',
                         })
+
+                        ignoreSites.push(checkedSite)
+
                         await updateLocalSettingsData({
                             key: 'ignore-sites',
-                            data:  ignoreSites.push(checkedSite),
+                            data:  ignoreSites,
                             optionalData: checkedSite
                         })
+
+                        return ignoreSites
                     },
                     getCheckedSites: async ()=>{
                         return await getLocalSettingsData({
@@ -70,7 +82,13 @@ const sectionDataCollection = [
             },
             {
                 key: 'should-show-notification',
-                optionType: 'toggle', // toggle || multiple-option
+                optionType: 'toggle',
+                getIsActive: async ()=>{
+                    return await getLocalSettingsData({key: 'should-show-notification'})
+                },
+                updateIsActive: async (isActive)=>{
+                    return await updateLocalSettingsData({key: 'should-show-notification', data: isActive})
+                },
                 subHeadingText: 'Show notificaiton on webpages',
                 descText: `Notification card might be showed inside webpages before restricting or time limit exceeding,
                 to warn you`,
@@ -79,7 +97,13 @@ const sectionDataCollection = [
             },
             {
                 key: 'access-webpage',
-                optionType: 'toggle', // toggl || multiple-option
+                optionType: 'toggle', 
+                getIsActive: async ()=>{
+                    return await getLocalSettingsData({key: 'access-webpage'})
+                },
+                updateIsActive: async (isActive)=>{
+                    return await updateLocalSettingsData({key: 'access-webpage', data: isActive})
+                },
                 subHeadingText: 'Give webpage access permission',
                 descText: `This permission helps the extension to show the Notification Card in webpages.`,
                 enableToastData: ['Webpage access enabled', 'green'],
@@ -92,7 +116,13 @@ const sectionDataCollection = [
         options: [
             {
                 key: 'should-count-screen-time-bg-audio',
-                optionType: 'toggle', // toggle || multiple-option
+                optionType: 'toggle',
+                getIsActive: async ()=>{
+                    return await getLocalSettingsData({key: 'should-count-screen-time-bg-audio'})
+                },
+                updateIsActive: async (isActive)=>{
+                    return await updateLocalSettingsData({key: 'should-count-screen-time-bg-audio', data: isActive})
+                },
                 subHeadingText: 'Background audio - count screen time',
                 descText: `Consider screen time even when a tab play auido in background`,
                 enableToastData: ['Turned on', 'green'],
@@ -105,7 +135,10 @@ const sectionDataCollection = [
         options: [
             {
                 key: 'block-list',
-                optionType: 'add-sites', // toggle, multiple-option
+                optionType: 'add-sites',
+                getData: async () => {
+                    return []
+                },
                 subHeadingText: 'Blocked site list',
                 descText: `The sites are blocked by this extention to avoid distraction`,
                 popupData: {
@@ -137,10 +170,13 @@ const sectionDataCollection = [
             {
                 key: 'restricted-list',
                 optionType: 'add-sites', 
-                subHeadingText: 'Restricted site list',
-                descText: `The sites are restricted by this extention while you are in focus mode`,
+                getData: async () => {
+                    return []
+                },
+                subHeadingText: 'Distracted site list',
+                descText: `The sites are distracted by this extention while you are in focus mode`,
                 popupData: {
-                    headingText: 'Restricted site list',
+                    headingText: 'Distracted site list',
                     handleUnchecked: async ({uncheckedSite, setToastData})=>{
                         await handleRestrictUnRestrictSite({
                             hostname: uncheckedSite,
@@ -165,36 +201,39 @@ const sectionDataCollection = [
                     shouldShowRemoveData: false
                 }
             },
+            {
+                key: 'time-limited-list',
+                optionType: 'add-sites', 
+                getData: async () => {
+                    return []
+                },
+                subHeadingText: 'Screen time limited sites',
+                descText: `A certain time limit is set for sites for each day.`,
+                popupData: {
+                    key: 'time-limited-list',
+                    headingText: 'Screen time limited sites',
+                    handleUnchecked: async ({uncheckedSite, setToastData})=>{
+    
+                        return await getTimelimitedSites()
+                    },
+                    handleChecked: async ({checkedSite, setToastData})=>{
+                        return await getTimelimitedSites()
+
+                    },
+                    getCheckedSites: async ()=>{
+                        return await getTimelimitedSites()
+                    },
+                    shouldShowRemoveData: false,
+                    shouldShowTimeLimit: true
+                }
+            },
         ]
     },
-
-
-
 ]
 
-const SettingsHeading = ({setNavSelect}) =>{
-
-    return (
-        <h2 className={styles.Heading} onClick={()=> setNavSelect('block-site')}>
-            <span className={styles.Title}>Home</span>
-            <span >{'>'}</span>
-            <span className={styles.Title}>Setting</span>
-        </h2>
-    )
-    
-}
 const Setting = ({setNavSelect})=>{
-    const [settingsData, setSettingsData] = useState(null)
     const [popupScreenData, setPopupScreenData] = useState(null)
     const [toastData, setToastData] = useState([null, null]) //* Toast Message from bottom
-
-    useEffect(()=>{
-        getLocalSettingsData({}).then((sD) => setSettingsData(sD))
-    }, [])
-
-    if (settingsData === null){
-        return <div>Loading...</div>
-    }
 
     const [toastMsg, toastColorCode] = toastData
 
@@ -212,6 +251,11 @@ const Setting = ({setNavSelect})=>{
                 popupScreenData && 
                 <PopupFull setClosePopup={()=>setPopupScreenData(null)}>
                     {
+                        popupScreenData.key === 'time-limited-list' ?
+                        <SiteTimeLimitScreen 
+                            setToastData={setToastData}
+                            setClosePopup={()=>setPopupScreenData(null)}
+                        />  :
                         <CheckListPopup 
                             popupScreenData={popupScreenData}
                             setClosePopup={()=>{
@@ -222,8 +266,9 @@ const Setting = ({setNavSelect})=>{
                     }
                 </PopupFull> 
             }
-            <SettingsHeading 
-                setNavSelect={setNavSelect} 
+            <NavBar 
+                setNavSelect={setNavSelect}
+                navDetailsArr={[['Settings', 'settings']]}
             />
             {
                 sectionDataCollection.map(sectionData => {
@@ -238,9 +283,9 @@ const Setting = ({setNavSelect})=>{
                             {
                                 sectionData.options.map((optionData)=>{
                                     const {
-                                        optionType, 
-                                        popupData, 
-                                        optionDataItems, 
+                                        optionType,  
+                                        getIsActive, 
+                                        setIsActive,
                                         key
                                     }  = optionData
                 
@@ -248,23 +293,16 @@ const Setting = ({setNavSelect})=>{
                                     optionType === 'toggle' ?
                                     <ToggleOption 
                                         key={optionData.key}
-                                        settingsData={settingsData}
                                         optionData={optionData}
-                                        setSettingsData={setSettingsData}
                                         setToastData={setToastData}
-                                        
-                                        /> :
+                                        /> : 
                                     optionType === 'add-sites' ? 
                                     <AddOption 
-                                        optionData={optionData}
                                         key={key}
-                                        optionDataItems={optionDataItems}
+                                        optionData={optionData}
+                                        popupScreenData={popupScreenData}
                                         setPopupScreenData={setPopupScreenData}
-                                        settingsData={settingsData}
-                                        setSettingsData={setSettingsData}
                                         setToastData={setToastData}
-                                        popupData={popupData}
-                
                                     /> : null
                                 )
                 
@@ -283,33 +321,33 @@ const Setting = ({setNavSelect})=>{
 
 export default Setting
 
-function AddOption({optionData, setPopupScreenData, settingsData, setSettingsData, setToastData, popupData}){
-    const addedItems = settingsData[optionData.key] ?? []
+function AddOption({optionData, popupScreenData, setPopupScreenData, setToastData}){
+    const {
+        key,
+        subHeadingText,
+        descText,
+        handleDeleteClick,
+        removeToastData,
+        getData,
+        popupData
+    } = optionData
+
+    const [addedItems, setAddedItems] = useState([])
     const bodyClickCount = useContext(BodyClickContext)
     const [optionActiveArr, setOptionActive] = useState(addedItems.map(s=>false))
 
     useEffect(()=>{
         if (optionActiveArr.includes(true)){
-            setOptionActive(settingsData[optionData.key].map(s=>false))
+            setOptionActive(addedItems.map(s=>false))
         }
     }, [bodyClickCount])
 
     useEffect(()=>{
-        setOptionActive(addedItems.map(s=>false))
-    }, [settingsData[optionData.key]])
-
-    const {
-        key,
-        optionType,
-        subHeadingText,
-        descText,
-        handleDeleteClick,
-        addToastData, 
-        removeToastData,
-    } = optionData
-
-
-
+        getData().then(val=>{
+            setAddedItems(val)
+            setOptionActive(val.map(s=>false))
+        })
+    }, [popupScreenData])
 
     return (
     <div className={styles.AddOptionCnt}>
@@ -379,15 +417,21 @@ function AddOption({optionData, setPopupScreenData, settingsData, setSettingsDat
                                 >
                                     Edit
                                 </div>
-                                <div className={styles.HostOption}
-                                    onClick={(e)=>{
-                                        handleDeleteClick({setSettingsData, settingsData, 
-                                            key, deleteItem: item})
-                                        setToastData(removeToastData)
-                                    }}
-                                >
-                                    Delete
-                                </div>
+                                {
+                                    handleDeleteClick && 
+                                    <div className={styles.HostOption}
+                                        onClick={async (e)=>{
+                                            await handleDeleteClick({deleteItem: item})
+                                            const value = await getData()
+
+                                            setAddedItems(value)
+                                            setOptionActive(value.map(s=>false))
+                                            setToastData(removeToastData)
+                                        }}
+                                    >
+                                        Delete
+                                    </div>
+                                }
                             </div> : null
                         }
         
@@ -403,17 +447,24 @@ function AddOption({optionData, setPopupScreenData, settingsData, setSettingsDat
     )
 }
 
-function ToggleOption({settingsData, optionData, setSettingsData, setToastData}){
+function ToggleOption({optionData, setToastData}){
     const {
         key,
-        optionType,
+        getIsActive,
+        updateIsActive
+    } = optionData
+    const [isActive, setIsActive] = useState(null)
+
+    useEffect(()=>{
+        getIsActive().then((tempIsActive)=>setIsActive(tempIsActive))
+    })
+    const {
         subHeadingText,
         descText,
         enableToastData, 
         disableToastData,
     } = optionData
 
-    const isActive = settingsData[key]
 
 
     return (
@@ -430,12 +481,8 @@ function ToggleOption({settingsData, optionData, setSettingsData, setToastData})
                     onClick={async ()=>{
                         const newIsActive = !isActive 
 
-                        const newSettingsData = await updateLocalSettingsData({
-                            key: optionData.key,
-                            data: newIsActive,
-                        })
-                        setSettingsData(newSettingsData)
-
+                        await updateIsActive(newIsActive)
+                        setIsActive(newIsActive)
 
                         if (newIsActive) setToastData(enableToastData)
                         else setToastData(disableToastData)
@@ -489,11 +536,17 @@ const CheckListPopup = ({
 
     const handleBeforeUnchecked = async (uncheckedSite)=>{
         const tempCheckedSiteList = await handleUnchecked({uncheckedSite, setToastData})
+        const tempHostnameArrReference = await checkHostnameArrReference(tempCheckedSiteList)
+
+        setHostnameReferenceArr(tempHostnameArrReference)
         setCheckedSites(tempCheckedSiteList)
+
         setSearchText('')
     }
     const handleBeforeChecked = async (checkedSite)=>{
         const tempCheckedSiteList = await handleChecked({checkedSite, setToastData})
+
+        setHostnameReferenceArr(await checkHostnameArrReference(tempCheckedSiteList))
         setCheckedSites(tempCheckedSiteList)
         setSearchText('')
     }
@@ -563,7 +616,7 @@ const CheckListPopup = ({
                         title={serachTextToValidHostName}
 
                         onClick={async () => {
-                            handleBeforeUnchecked({})
+                            handleBeforeUnchecked(serachTextToValidHostName)
                         }}
                         >
                         <div className={styles.SiteItemCnt}>
@@ -596,7 +649,7 @@ const CheckListPopup = ({
                                 key={hostname}
                                 title={hostname}
                                 onClick={async () => {
-                                    handleBeforeUnchecked()
+                                    handleBeforeUnchecked(hostname)
                                 }}
                             >
                                 <div className={styles.SiteItemCnt}>
@@ -628,7 +681,7 @@ const CheckListPopup = ({
                                                         const isDeleted = await delHostnameReference(hostname)
 
                                                         const hostnameArrReference = await checkHostnameArrReference(checkedSites)
-                                                        setCheckedSites(hostnameArrReference)
+                                                        setHostnameReferenceArr(hostnameArrReference)
 
                                                     }}
                                                 >
