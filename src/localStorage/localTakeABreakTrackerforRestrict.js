@@ -2,14 +2,8 @@ import { refreshAllRestrictedScreenTabs, refreshAllRestrictedSites } from "../ut
 import { getLocalSettingsData } from "./localSettingsData"
 
 // todo: change TakeABreakTrackerforRestrict to takeABreakTrackerforRestrict
-export const initializeLocalTakeABreakTrackerforRestrict = async ()=>{
-    const {takeABreakTrackerforRestrict} = await chrome.storage.local.get('takeABreakTrackerforRestrict')
-    if (takeABreakTrackerforRestrict === undefined){
-      await chrome.storage.local.set({takeABreakTrackerforRestrict: false})
-    }
-}
 export const getLocalTakeABreakTrackerforRestrict = async ()=>{
-    return await chrome.storage.local.get('takeABreakTrackerforRestrict')
+    return await chrome.storage.local.get('takeABreakTrackerforRestrict') || {takeABreakTrackerforRestrict: false}
 }
 
 export const setLocalTakeABreakTrackerforRestrict = async (takeABreakTrackerforRestrict)=>{
@@ -17,6 +11,7 @@ export const setLocalTakeABreakTrackerforRestrict = async (takeABreakTrackerforR
     return true;
 
 }
+//todo: refactor better
 export const turnOffLocalTakeABreakTrackerforRestrict = async ({isForceTurnOff, shouldRefreshSites})=>{
     await setLocalTakeABreakTrackerforRestrict(false)
     if (shouldRefreshSites){
@@ -41,7 +36,7 @@ export const turnOnLocalTakeABreakTrackerforRestrict = async (takeABreakTrackerf
 export const handleTakeABreakClick = async (timeInMinutes)=>{
     const currTimeObj = Date.now()
 
-    const minToSecConvertor = 5 // 60 is default value for debugging quick, change inside getTakeABreakTrackerforRestrictData as well
+    const minToSecConvertor = 60 // 60 is default value for debugging quick, change inside getTakeABreakTrackerforRestrictData as well
 
     turnOnLocalTakeABreakTrackerforRestrict(currTimeObj + (timeInMinutes*minToSecConvertor*1000))
 

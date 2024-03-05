@@ -8,9 +8,8 @@
     flex-direction: column;
 
     width: 100%;
-    gap: 10px;
 
-    .IgnoreSiteList{
+    .CheckedSiteList{
         display: flex;
         justify-content: center;
         align-items: center;
@@ -185,11 +184,42 @@
                             width: 30px;
                             height: 30px;
                         }
-    
+
                         .HostName{
                             overflow: hidden;
                             text-overflow: ellipsis;
                         }
+
+                        .TextCnt{
+                            display: flex;
+                            gap: 5px;
+                            flex-direction: column;
+
+                            .HostName{
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                            }
+                            .RemoveDesc{
+                                font-size: 12px;
+                                color: $icon-red2;
+
+                                &:hover{
+                                    text-decoration: underline;
+                                    cursor: pointer;
+                                }
+
+                            }
+                            .RemovedDesc{
+                                font-size: 12px;
+                                color: $font-color2;
+
+                                &:hover{
+                                    text-decoration: underline;
+                                    cursor: no-drop;
+                                }
+                            }
+                        }
+    
                     }
                     .icon-btn{
                             border-left: solid 2px $font-color1;
@@ -255,7 +285,7 @@
         flex-direction: column;
 
         width: 100%;
-        padding: 5px;
+        padding: 0 10px;
         
         
         .OptionHeading{
@@ -275,7 +305,7 @@
     
             border-radius: 5px;
 
-            background-color: $bg-color3;
+            background-color: $bg-color1;
             padding: 5px;
             gap: 10px;
 
@@ -286,7 +316,7 @@
                 justify-content: flex-start;
         
                 width: 100%;
-                padding: 10px 0;
+                padding: 10px;
 
                 .OptionDescCnt{
                     width: 80%;
@@ -358,7 +388,7 @@
                 justify-content: flex-start;
         
                 width: 100%;
-                padding: 10px 0;
+                padding: 10px;
 
                 .AddOptionTitleCnt{
                     display: flex;
@@ -516,12 +546,7 @@
                                     background-color: $bg-color1;
                                 }
 
-                                border-bottom: 1px solid $bg-color5;
-                                
-                                &:last-child{
-                                    border-bottom: 0;
-                                }
-                                
+                                border: 1px solid $bg-color5;
                             }
                             
                         }

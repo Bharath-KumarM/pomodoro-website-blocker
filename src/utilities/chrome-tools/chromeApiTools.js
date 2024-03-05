@@ -1,5 +1,6 @@
 
-import { getLocalScreenTimeLimitByHostname } from "../../localStorage/localScreenTimeLimit"
+import { getLocalSettingsData } from "../../localStorage/localSettingsData"
+import { getScreenTimeLimit } from "../../localStorage/localSiteTagging"
 import { getLocalVisitTracker } from "../../localStorage/localVisitTracker"
 import { getDateString } from "../date"
 
@@ -10,8 +11,13 @@ export async function getCurrTab(){
     return currTab
 }
 
-export async function getScreenTimeLimitInMinutesByHostnme(hostname){
-    const timeLmitOfSite = await getLocalScreenTimeLimitByHostname(hostname)
+export async function getAllTabs(){
+    return await chrome.tabs.query({})
+}
+
+
+export async function checkScreenTimeSurpassedLimit(hostname){    
+    const timeLmitOfSite = await getScreenTimeLimit(hostname)
     if (!timeLmitOfSite) return false;
 
     const [hours, minutes] = timeLmitOfSite
@@ -54,7 +60,8 @@ export async function checkScreenTimeSurpassedLimit(hostname){
 }
 
 export const getRecentHostnames = async (n=-30)=>{
-    const {visitTracker: tracker} = await getLocalVisitTracker()
+    const tracker = await getLocalVisitTracker()
+    // const ignoreSites = await getLocalSettingsData({key: 'ignore-sites'})
 
     let hostnames = []
     for ( let i=n; i<=0; i++ ){
@@ -63,7 +70,8 @@ export const getRecentHostnames = async (n=-30)=>{
     }
 
     hostnames.reverse()
-    const uniqueHostnames = [...new Set(hostnames)]
+    return [...new Set(hostnames)]
+    // const uniqueHostnames = [...new Set(hostnames)].filter(hostname=> !ignoreSites.includes(hostname))
 
-    return uniqueHostnames
+    // return uniqueHostnames
 }

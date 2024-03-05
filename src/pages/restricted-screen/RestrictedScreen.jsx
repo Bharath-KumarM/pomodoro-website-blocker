@@ -6,11 +6,11 @@ import './RestrictedScreen.scss';
 import { getCurrScheduleDesc, getActiveFocusScheduledIndexes } from '../../utilities/focusModeHelper';
 
 import { getLocalRestrictedScreenDataByTabId } from '../../localStorage/localRestrictedScreenData'
-import { checkLocalRestrictedSitesByHostname, delLocalRestrictedSites } from '../../localStorage/localRestrictedSites';
 import { getLocalFocusModeTracker, turnOffLocalFocusModeTracker } from '../../localStorage/localFocusModeTracker';
 import { getLocalTakeABreakTrackerforRestrict, handleTakeABreakClick } from '../../localStorage/localTakeABreakTrackerforRestrict';
 import { NavBarInScreen } from '../../utilities/NavBarInScreen';
 import { EndNoteInScreen } from '../../utilities/EndNoteInScreen';
+import { checkRestrictedSites, handleRestrictUnRestrictSite } from '../../localStorage/localSiteTagging';
 
 
 
@@ -81,7 +81,8 @@ const RestrictedScreen = ()=>{
         const [tempHostname, tempFavIcon, tempUrl] = currTabRestrictedScreenData
 
         // the site removed from restriction, so reload and force the actual site
-        const isRestrictedSite = await checkLocalRestrictedSitesByHostname(tempHostname)
+        const isRestrictedSite = await checkRestrictedSites(tempHostname)
+
         if (!isRestrictedSite){
             chrome.tabs.update(tabId, {url: tempUrl}); 
             return
@@ -128,7 +129,10 @@ const RestrictedScreen = ()=>{
         turnOffLocalFocusModeTracker()
     }
     const handleUnrestrictSite = async ()=>{
-        await delLocalRestrictedSites(hostname)
+        await handleRestrictUnRestrictSite({
+            hostname,
+            shouldRestrictSite: false
+        })
     }
 
 

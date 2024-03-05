@@ -18,10 +18,11 @@ import { delLocalScheduleDataByIndex, getLocalScheduleData } from '../../../loca
 import { getLocalFocusModeTracker, turnOffLocalFocusModeTracker, turnOnLocalFocusModeTracker } from '../../../localStorage/localFocusModeTracker';
 import { getLocalTakeABreakTrackerforRestrict, handleTakeABreakClick, turnOffLocalTakeABreakTrackerforRestrict } from '../../../localStorage/localTakeABreakTrackerforRestrict';
 import Loader from '../../../utilities/Loader';
+import NavBar from '../NavBar/NavBar';
 
 
 
-const FocusMode = ()=>{
+const FocusMode = ({setNavSelect})=>{
     const [scheduleData, setScheduleData] = useState([])
     const [isFocusModeOn, setIsFocusModeOn] = useState(null)
     const [foucsModeBreakTimeDiff, setFoucsModeBreakTimeDiff] = useState(false)
@@ -106,164 +107,170 @@ const FocusMode = ()=>{
     return (
         Object.values(dataLoadedStatus).includes(false) ? 
         <Loader /> :
-        <div className="focus-mode-outer-cnt">
-            <div className="focus-mode-cnt">
-                {
-                    toastData[0] ?
-                    <PopupToast 
-                        key={'popup-toast'}
-                        toastData={toastData}
-                        setToastData={setToastData}
-                    /> : null
-                }
-                {
-                    isPopScreenOpen ? 
-                    // Popup Screen
-                    <PopupFull
-                        setClosePopup={()=> {
-                            if (decisionScreenData){
-                                const {onNoBtnClick} = decisionScreenData
-                                onNoBtnClick()
-                            }else{
-                                setEditTimeInputIndex(-1)
-                            }
-                        }}
-                    >
-                        {
-                            isTimeInputActive ?
-                            <TimeInputPopup 
-                                getScheduleData={getScheduleData}
-                                editTimeInputIndex={editTimeInputIndex}
-                                setEditTimeInputIndex={setEditTimeInputIndex}
-                                isNewSchedule={(editTimeInputIndex === scheduleData.length)}
-                                setToastData={setToastData}
-                            /> :
-                            isDecisionScreenDataThere ?
-                            <DescisionYesNoPopup 
-                                data={decisionScreenData}
-                            />
-                            : null
-                        }
-                    
-                    </PopupFull> 
-                    : null
-                }
-                <div className="start-stop cnt flex-center">
-                    <div className='start-stop-btn-cnt'>
-                        <button 
-                            className = {
-                                `start-stop btn ${foucsModeBreakTimeDiff ? 'focus-break-active' : isFocusModeOn ? 'focused' : '' }`
-                            }
-                            onClick={()=>handleFocusModeBtnClick()}
+        <>
+            <NavBar 
+                setNavSelect={setNavSelect}
+                navDetailsArr={[['Focus Mode', 'focus-mode']]}
+            />
+            <div className="focus-mode-outer-cnt">
+                <div className="focus-mode-cnt">
+                    {
+                        toastData[0] ?
+                        <PopupToast 
+                            key={'popup-toast'}
+                            toastData={toastData}
+                            setToastData={setToastData}
+                        /> : null
+                    }
+                    {
+                        isPopScreenOpen ? 
+                        // Popup Screen
+                        <PopupFull
+                            setClosePopup={()=> {
+                                if (decisionScreenData){
+                                    const {onNoBtnClick} = decisionScreenData
+                                    onNoBtnClick()
+                                }else{
+                                    setEditTimeInputIndex(-1)
+                                }
+                            }}
                         >
                             {
-                                foucsModeBreakTimeDiff ? "💤You took a break"  :
-                                isFocusModeOn === false ? '✨Start focusing': 
-                                isFocusModeOn === true ? '🚫Stop focusing' :
-                                'Loading'
-                            }
-                        </button>
-                    </div>
-                    <>
-                        {
-                            foucsModeBreakTimeDiff || activeFocusScheduledIndexes.length || isFocusModeOn ?
-                            <div className='break-cnt flex-center'>
-                                <div className="info-icon-cnt">
-                                    <BiInfoCircle />
-                                </div>
-                                <div className="desc">
-                                    {   
-                                        // take a break description
-                                        foucsModeBreakTimeDiff && activeFocusScheduledIndexes.length ?
-                                        `Schedule resumes in ${foucsModeBreakTimeDiff} minutes` :
-                                        foucsModeBreakTimeDiff && !activeFocusScheduledIndexes.length ?
-                                        `Focus Mode resumes in ${foucsModeBreakTimeDiff} minutes` :
-
-                                        // Focus active description
-                                        isFocusModeOn && activeFocusScheduledIndexes.length ?
-                                        `Focus mode & Schedule active` :
-                                        activeFocusScheduledIndexes.length ?
-                                        `Scheduled focus is active now` :
-                                        isFocusModeOn ?
-                                        'Focus mode is ON' :
-                                        
-                                        // Focus inactive description
-                                        null
-                                    }
-                                </div>
-                            </div> : 
-                            null
-                        }
-                        {
-                            !foucsModeBreakTimeDiff ? null :
-                            <div className="option-cnt">
-                                <div className="resume-cnt"
-                                    onClick={async ()=>{
-                                        // forcfully turning off
-                                        turnOffLocalTakeABreakTrackerforRestrict({isForceTurnOff: true, shouldRefreshSites: true})
-                                        if (isFocusModeOn) {
-                                            setToastData(['Focus Mode resumed', 'green'])
-                                        } else {
-                                            setToastData(['Scheduled restict resumed', 'green'])
-                                        }
-
-                                        setFoucsModeBreakTimeDiff(false)
-                                        window.close()
-                                    }}
-                                >
-                                    Resume focus now
-                                </div>
-                                <hr />
-                                <div className="wait-cnt"
-                                    onClick={async ()=>{
-                                        await turnOffLocalTakeABreakTrackerforRestrict({isForceTurnOff: true, shouldRefreshSites: false})
-                                        await handleTakeABreakClick(foucsModeBreakTimeDiff + 5)
-                                        window.close()
-                                    }}
-                                >
-                                    Wait for 5 more minutes
-                                </div>
-                            </div>
-                        }
-
-                    </>
-                </div>
-                <div className="schedule-cnt">
-                    <div className='heading sticky'>
-                        <BsCalendarCheckFill />
-                        <h3>
-                            Schedule
-                        </h3>
-                    </div>
-                    <div className='add-btn-cnt' 
-                        title='Add new Schedule'
-                        onClick={()=>setEditTimeInputIndex(scheduleData.length)}
-                    >
-                        <FiPlus />
-                    </div>
-                    <div className="schedule-list">
-                        {scheduleData.map((scheduleItemData, index)=> {
-                            return (
-                                <ScheduleItem 
-                                    scheduleItemData={scheduleItemData} 
-                                    index={index} 
+                                isTimeInputActive ?
+                                <TimeInputPopup 
                                     getScheduleData={getScheduleData}
+                                    editTimeInputIndex={editTimeInputIndex}
                                     setEditTimeInputIndex={setEditTimeInputIndex}
+                                    isNewSchedule={(editTimeInputIndex === scheduleData.length)}
                                     setToastData={setToastData}
-                                    key={index}
-                                    activeFocusScheduledIndexes={activeFocusScheduledIndexes}
-                                    setDecisionScreenData={setDecisionScreenData}
+                                /> :
+                                isDecisionScreenDataThere ?
+                                <DescisionYesNoPopup 
+                                    data={decisionScreenData}
                                 />
-                            ) 
-                        })}
-                    </div>
+                                : null
+                            }
+                        
+                        </PopupFull> 
+                        : null
+                    }
+                    <div className="start-stop cnt flex-center">
+                        <div className='start-stop-btn-cnt'>
+                            <button 
+                                className = {
+                                    `start-stop btn ${foucsModeBreakTimeDiff ? 'focus-break-active' : isFocusModeOn ? 'focused' : '' }`
+                                }
+                                onClick={()=>handleFocusModeBtnClick()}
+                            >
+                                {
+                                    foucsModeBreakTimeDiff ? "💤You took a break"  :
+                                    isFocusModeOn === false ? '✨Start focusing': 
+                                    isFocusModeOn === true ? '🚫Stop focusing' :
+                                    'Loading'
+                                }
+                            </button>
+                        </div>
+                        <>
+                            {
+                                foucsModeBreakTimeDiff || activeFocusScheduledIndexes.length || isFocusModeOn ?
+                                <div className='break-cnt flex-center'>
+                                    <div className="info-icon-cnt">
+                                        <BiInfoCircle />
+                                    </div>
+                                    <div className="desc">
+                                        {   
+                                            // take a break description
+                                            foucsModeBreakTimeDiff && activeFocusScheduledIndexes.length ?
+                                            `Schedule resumes in ${foucsModeBreakTimeDiff} minutes` :
+                                            foucsModeBreakTimeDiff && !activeFocusScheduledIndexes.length ?
+                                            `Focus Mode resumes in ${foucsModeBreakTimeDiff} minutes` :
 
+                                            // Focus active description
+                                            isFocusModeOn && activeFocusScheduledIndexes.length ?
+                                            `Focus mode & Schedule active` :
+                                            activeFocusScheduledIndexes.length ?
+                                            `Scheduled focus is active now` :
+                                            isFocusModeOn ?
+                                            'Focus mode is ON' :
+                                            
+                                            // Focus inactive description
+                                            null
+                                        }
+                                    </div>
+                                </div> : 
+                                null
+                            }
+                            {
+                                !foucsModeBreakTimeDiff ? null :
+                                <div className="option-cnt">
+                                    <div className="resume-cnt"
+                                        onClick={async ()=>{
+                                            // forcfully turning off
+                                            turnOffLocalTakeABreakTrackerforRestrict({isForceTurnOff: true, shouldRefreshSites: true})
+                                            if (isFocusModeOn) {
+                                                setToastData(['Focus Mode resumed', 'green'])
+                                            } else {
+                                                setToastData(['Scheduled restict resumed', 'green'])
+                                            }
+
+                                            setFoucsModeBreakTimeDiff(false)
+                                            window.close()
+                                        }}
+                                    >
+                                        Resume focus now
+                                    </div>
+                                    <hr />
+                                    <div className="wait-cnt"
+                                        onClick={async ()=>{
+                                            await turnOffLocalTakeABreakTrackerforRestrict({isForceTurnOff: true, shouldRefreshSites: false})
+                                            await handleTakeABreakClick(foucsModeBreakTimeDiff + 5)
+                                            window.close()
+                                        }}
+                                    >
+                                        Wait for 5 more minutes
+                                    </div>
+                                </div>
+                            }
+
+                        </>
+                    </div>
+                    <div className="schedule-cnt">
+                        <div className='heading sticky'>
+                            <BsCalendarCheckFill />
+                            <h3>
+                                Schedule
+                            </h3>
+                        </div>
+                        <div className='add-btn-cnt' 
+                            title='Add new Schedule'
+                            onClick={()=>setEditTimeInputIndex(scheduleData.length)}
+                        >
+                            <FiPlus />
+                        </div>
+                        <div className="schedule-list">
+                            {scheduleData.map((scheduleItemData, index)=> {
+                                return (
+                                    <ScheduleItem 
+                                        scheduleItemData={scheduleItemData} 
+                                        index={index} 
+                                        getScheduleData={getScheduleData}
+                                        setEditTimeInputIndex={setEditTimeInputIndex}
+                                        setToastData={setToastData}
+                                        key={index}
+                                        activeFocusScheduledIndexes={activeFocusScheduledIndexes}
+                                        setDecisionScreenData={setDecisionScreenData}
+                                    />
+                                ) 
+                            })}
+                        </div>
+
+                    </div>
+                    <RestrictedSites 
+                        setToastData={setToastData}
+                    />
                 </div>
-                <RestrictedSites 
-                    setToastData={setToastData}
-                />
             </div>
-        </div>
+        </>
     )
 }
 

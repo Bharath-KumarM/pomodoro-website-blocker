@@ -12,7 +12,8 @@ import { getLocalSettingsData } from '../../localStorage/localSettingsData';
 
 
 
-const DEBUG = true
+const IS_DEBUG_ACTIVE = true
+console.log('content script running')
 
 let START_TIME = null
 let IS_FOCUSED = false
@@ -61,13 +62,15 @@ chrome.runtime.onMessage.addListener( (request, sender, sendResponse) => {
         if (audibleInfo){
             const {audible} = audibleInfo
             // Audio events
-            if (audible){
+            if (audible === 'check'){
+                checkCurrentTabAudibleActive()
+            }
+            else if (audible){
                 handleAudibleActive()
             }else{
                 handleAudibleNotActive()
             }
             sendResponse({isMessageReceived: 'good'})
-            return true;
         }
     }
   );
@@ -76,13 +79,20 @@ chrome.runtime.onMessage.addListener( (request, sender, sendResponse) => {
 
 async function checkCurrentTabAudibleActive(){
 
-    if (DEBUG){
+    if (IS_DEBUG_ACTIVE){
         console.log('checkCurrentTabAudibleActive')
+    }
+
+    const shouldCountScreenTimeBgAudio = await getLocalSettingsData('should-count-screen-time-bg-audio')
+    if (shouldCountScreenTimeBgAudio === false){
+        return false
     }
 
     const { audible } = await chrome.runtime.sendMessage({
         checkCurrentTabAudible: true
     })
+
+    console.log({audible})
 
     if (audible){
         handleAudibleActive()
@@ -90,8 +100,8 @@ async function checkCurrentTabAudibleActive(){
 }
 // handler functions
 function handleFocus(){
-    if (DEBUG){
-        console.log('handleFocus')
+    if (IS_DEBUG_ACTIVE){
+        console.log('focus started ✨')
     }
 
     IS_FOCUSED = true
@@ -99,16 +109,16 @@ function handleFocus(){
 }
 function handleUnFocus(){
 
-    if (DEBUG){
-        console.log('handleUnFocus')
+    if (IS_DEBUG_ACTIVE){
+        console.log('focus stopped 💤')
     }
     IS_FOCUSED = false
     endTimeCounting()
 }
 
 function handleAudibleActive(){
-    if (DEBUG){
-        console.log('handleAudibleActive')
+    if (IS_DEBUG_ACTIVE){
+        console.log('audio active 🔊')
     }
 
     IS_AUDIBLE = true;
@@ -116,8 +126,8 @@ function handleAudibleActive(){
 
 }
 function handleAudibleNotActive(){
-    if (DEBUG){
-        console.log('handleAudibleNotActive')
+    if (IS_DEBUG_ACTIVE){
+        console.log('audio not active 🔇')
     }
 
     IS_AUDIBLE = false
@@ -127,8 +137,8 @@ function handleAudibleNotActive(){
 
 // time counting functions
 async function startTimeCounting(){
-    if (DEBUG){
-        console.log('startTimeCounting')
+    if (IS_DEBUG_ACTIVE){
+        console.log('start time counting 🏃🏼‍♂️')
     }
 
     updateBadgeIcon({hostname})
@@ -144,8 +154,8 @@ async function startTimeCounting(){
 }
 async function endTimeCounting(){
 
-    if (DEBUG){
-        console.log('endTimeCounting')
+    if (IS_DEBUG_ACTIVE){
+        console.log('end time counting 🚫')
     }
 
 
@@ -155,8 +165,8 @@ async function endTimeCounting(){
     }
 
     if ( IS_AUDIBLE === true || IS_FOCUSED === true ){
-        if (DEBUG){
-            console.log('Either IS_AUDIBLE or IS_FOCUSED is true')
+        if (IS_DEBUG_ACTIVE){
+            console.log((IS_AUDIBLE ? 'Still audio palying🔉' : 'Still focusing🎯'))
         }
         return null;
     }
@@ -164,10 +174,13 @@ async function endTimeCounting(){
     clearInterval(INTERVAL_ID)
 
     const spentTimeInMinutes = (new Date - START_TIME) ? (new Date - START_TIME)/(1000*60) : 0
+    if (IS_DEBUG_ACTIVE){
+        console.log('Added ' + spentTimeInMinutes + ' minutes screentime')
+    }
     START_TIME = null
 
     const dateString = getDateString(0)
-    let {screenTimeTracker} = await getLocalScreenTimeTracker()
+    let screenTimeTracker = await getLocalScreenTimeTracker()
 
     if (screenTimeTracker[dateString] === undefined){
         screenTimeTracker[dateString] = {}
@@ -186,7 +199,7 @@ async function endTimeCounting(){
 }
 
 async function periodicRefresh(){
-    if (DEBUG){
+    if (IS_DEBUG_ACTIVE){
         console.log('periodic refresh running!!! at ', new Date())
     }
 
@@ -204,7 +217,7 @@ async function periodicRefresh(){
     }
 
     const dateString = getDateString(0)
-    let {screenTimeTracker} = await getLocalScreenTimeTracker()
+    let screenTimeTracker = await getLocalScreenTimeTracker()
 
     if (screenTimeTracker[dateString] === undefined){
         screenTimeTracker[dateString] = {}
@@ -246,9 +259,7 @@ async function checkAndForceTimeLimitScreen(){
 }
 
 async function updateBadgeIcon({hostname}){
-    const {isBadgeUpdated} = await chrome.runtime.sendMessage(
-        {updateBadgeIcon: {hostname}}
-    )
+    await chrome.runtime.sendMessage({updateBadgeIcon: {hostname}})
 }
 
 function getFavIconUrl(hostname){
@@ -269,7 +280,7 @@ async function debugAddMinutesToScreenTime(hostname, timeInMinutes){
         return null;
     }
 
-    let {screenTimeTracker} = await getLocalScreenTimeTracker()
+    let screenTimeTracker = await getLocalScreenTimeTracker()
 
     const dateString = getDateString(0)
     if (screenTimeTracker[dateString] === undefined){

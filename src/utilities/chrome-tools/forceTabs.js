@@ -14,13 +14,18 @@ export async function forceTimeLimitScreenByTabId(tabId) {
         url: chrome.runtime.getURL(`/src/pages/time-limit-screen/time-limit-screen.html`)
     });
 }
-export async function createWelcomeScreencreenTab() {
+export async function createWelcomeScreenTab() {
     chrome.tabs.create({
         url: chrome.runtime.getURL(`/src/pages/welcome-screen/welcome-screen.html`)
     });
 }
-export async function createHelpScreencreenTab() {
+export async function createHelpScreenTab() {
     chrome.tabs.create({
         url: chrome.runtime.getURL(`/src/pages/help-screen/help-screen.html`)
+    });
+}
+export async function createPopupScreenTab() {
+    chrome.tabs.create({
+        url: chrome.runtime.getURL(`/src/pages/popup/popup.html`)
     });
 }

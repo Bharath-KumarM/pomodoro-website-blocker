@@ -5,14 +5,14 @@ import { RiCloseLine } from 'react-icons/ri'
 
 import { pad2 } from '../../../utilities/simpleTools'
 import { useEffect, useState } from 'react'
-import { delLocalScreenTimeLimit, getLocalScreenTimeLimitByHostname, updateLocalScreenTimeLimit } from '../../../localStorage/localScreenTimeLimit'
 import { PopupFull } from '../../../utilities/PopupScreens'
+import { getScreenTimeLimit, handleScreenTimeLimtUpdate } from '../../../localStorage/localSiteTagging'
 
 
 const hrValues = Array.from({length: 24}, (_ ,index)=>pad2(index))
 const minValues = Array.from({length: 12}, (_ ,index)=>pad2(index*5))
 
-const TimeLimitInput = ({showTimeLimitInput: hostname, setShowTimeLimitInput, setScreenTimeLimit, setToastData, setClosePopup})=>{
+const TimeLimitInput = ({hostname, setShowTimeLimitInput, setScreenTimeLimit, setToastData, setClosePopup})=>{
     const [hours, setHours] = useState(0)
     const [minutes, setMinutes] = useState(30)
     const [isLimited, setIsLimited] = useState(false)
@@ -20,7 +20,7 @@ const TimeLimitInput = ({showTimeLimitInput: hostname, setShowTimeLimitInput, se
     useEffect(()=>{
         const getData = async ()=>{
 
-            let screenTimeLimitOfHostname = await getLocalScreenTimeLimitByHostname(hostname)
+            let screenTimeLimitOfHostname = await getScreenTimeLimit(hostname)
             
             // Time Limit is unavailable
             if (!screenTimeLimitOfHostname) return;
@@ -107,23 +107,26 @@ const TimeLimitInput = ({showTimeLimitInput: hostname, setShowTimeLimitInput, se
                     // className={isUserInputValid ? 'set-input active' : 'set-input'}
                     className={'set-input active'}
                     type="submit" 
-                    onClick={(e)=>{
+                    onClick={async (e)=>{
                         const [tempHours, tempMinutes] = [parseInt(hours), parseInt(minutes)]
                         if (tempHours === 0 && tempMinutes === 0){
                             setToastData(['Zero minutes can\'t be set', 'red']) 
                             
                             setShowTimeLimitInput(false)
-                            setScreenTimeLimit(null)
+                            setScreenTimeLimit(await getScreenTimeLimit())
 
                             return null;
                         }
                         const storeData = async ()=>{
-                            await updateLocalScreenTimeLimit(hostname, [tempHours, tempMinutes])
+                            await handleScreenTimeLimtUpdate({
+                                hostname,
+                                timeLimitData: [tempHours, tempMinutes],
+                                shouldAddTimeLimit: true,
+                                setToastData
+                            })
                             
                             setShowTimeLimitInput(false)
-                            setToastData(['Screen time set', 'green'])
-
-                            setScreenTimeLimit(null)
+                            setScreenTimeLimit(await getScreenTimeLimit())
                         }
 
                         storeData()
@@ -134,13 +137,14 @@ const TimeLimitInput = ({showTimeLimitInput: hostname, setShowTimeLimitInput, se
                     isLimited ?
                     <div className="remove-cnt"
                         onClick={async ()=>{
-                            const isScreenTimeLimitDeleted = await delLocalScreenTimeLimit(hostname);
-
-                            if (isScreenTimeLimitDeleted) setToastData(['Time limit removed', 'red']);
-                            else setToastData(['Time limit never exist', 'red']);
+                            await handleScreenTimeLimtUpdate({
+                                hostname,
+                                shouldAddTimeLimit: false,
+                                setToastData
+                            })
 
                             setShowTimeLimitInput(false);
-                            setScreenTimeLimit(null);
+                            setScreenTimeLimit(await getScreenTimeLimit())
                             
                         }}
                     >

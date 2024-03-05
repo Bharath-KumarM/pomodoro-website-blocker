@@ -4,17 +4,23 @@ import { FiPlus } from "react-icons/fi"
 import { MdOutlineSubdirectoryArrowLeft as ArrowIcon } from "react-icons/md"
 import { useEffect, useRef, useState } from 'react'
 import { getHost, isValidUrl } from '../../../utilities/simpleTools'
-import { updateLocalBlockedSites } from '../../../localStorage/localBlockedSites'
+import { handleBlockUnblockSite } from '../../../localStorage/localSiteTagging'
+import { getLocalSettingsData } from '../../../localStorage/localSettingsData'
 
 // *Copied from AddRestrictedSites
 const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites})=>{
     const [userInput, setUserInput] = useState('')
+    const [ignoreSites, setIgnoreSites] = useState([])
     const [optionSelectIndex, setOptionSelectIndex] = useState(0)
     const [validRecentSites, setValidRecentSites] = useState([])
 
     const optionCntRef = useRef(null)
-    const inputRef = useRef(null)
     let validRecentSiteRefs = useRef([])
+
+    useEffect(()=>{
+        getLocalSettingsData({key: 'ignore-sites'}).then((tempIgnoreSites) => setIgnoreSites(tempIgnoreSites))
+
+    })
 
     useEffect(()=>{
         let tempValidRecentSites = []
@@ -28,24 +34,18 @@ const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites
         // Empty the ref, eventually added in list render
         validRecentSiteRefs.current = validRecentSiteRefs.current.slice(0, tempValidRecentSites.length);
         setValidRecentSites(tempValidRecentSites)
+
     }, [userInput])
 
 
     let isUserInputValidUrl = isValidUrl(userInput)
 
-
-
-
-
     const handleAddBtnClick = async (hostname)=>{
-        const response = await updateLocalBlockedSites(hostname)
-        if (!response){
-            setToastData(['Already blocked', 'red'])
-        }else{
-            setToastData(['Blocked the site', 'green'])
-        }
+        handleBlockUnblockSite({
+            hostname, shouldBlockSite: true, setToastData
+        })
+
         getUpdatedBlockedSites(null)
-        inputRef.current.value = ''
         setUserInput('')
 
     }
@@ -80,10 +80,24 @@ const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites
                         className="site-input" 
                         onChange={(e)=>{
                             setUserInput(e.target.value)
+                            e.preventDefault()
                         }}
+                        value={userInput}
                         onKeyDown={(e)=>{
+                            if (['ArrowUp', 'ArrowDown'].includes(e.code)){
+                                e.preventDefault()
+                            }
+
+                            if (['Escape'].includes(e.code)){
+                                
+                            }
                             if (e.key === 'Enter'){
-                                handleAddBtnClick(validRecentSites[optionSelectIndex])
+                                if (ignoreSites.includes(validRecentSites[optionSelectIndex])){
+                                    setToastData(["Ignored site can't be added", 'red'])
+                                    setUserInput('')
+                                } else{
+                                    handleAddBtnClick(validRecentSites[optionSelectIndex])
+                                }
                             }
                             if (e.key === 'ArrowDown'){
 
@@ -123,8 +137,6 @@ const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites
                         }}
                         placeholder={"Type to block sites"}
                         list="site-list"
-                        ref={inputRef}
-
                     />
                 </div>
             </div>
@@ -141,12 +153,18 @@ const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites
                     }
                     {
                         validRecentSites.map((hostname, index)=>{
+                            const isSiteIgnored = ignoreSites.includes(hostname)
                             return (
                                 <li 
-                                    className={`option ${index === optionSelectIndex ? 'select': ''}`}
+                                    className={`option ${index === optionSelectIndex ? 'select': ''} ${isSiteIgnored ? 'ignored' : ''}`}
                                     key={index}
                                     onClick={()=>{
-                                        handleAddBtnClick(hostname)
+                                        if (isSiteIgnored){
+                                            setToastData(["Ignored site can't be added", 'red'])
+                                            setUserInput('')
+                                        } else{
+                                            handleAddBtnClick(hostname)
+                                        }
                                     }}
                                     ref={(ele)=>{
                                         validRecentSiteRefs.current[index] = ele
@@ -158,7 +176,7 @@ const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites
                                         alt="icon" 
                                     />
                                     <span
-                                        className='option-name'
+                                        className={`option-name ${isSiteIgnored ? 'ignored' : ''}`}
                                     >
                                         {hostname}
                                     </span>

@@ -1,25 +1,20 @@
 import { getDateString } from "../utilities/date"
 
 // *visitTracker
-export const initializeLocalVisitTracker = async ()=>{
-    const {visitTracker} = await chrome.storage.local.get('visitTracker')
-    if (visitTracker=== undefined){
-      await chrome.storage.local.set({visitTracker: {}})
-    }
-}
 export const getLocalVisitTracker = async ()=>{
-    return await chrome.storage.local.get('visitTracker')
+    const { visitTracker } = await chrome.storage.local.get('visitTracker')
+    return visitTracker ?? {}
 }
 
 export const getLocalVisitTrackerForDayByHostname = async (hostname, dateString)=>{
-    const {visitTracker} = await getLocalVisitTracker ()
+    const visitTracker = await getLocalVisitTracker ()
 
     return Math.round(visitTracker?.[dateString]?.[hostname] ?? 0);
 }
 export const getLocalVisitTrackerForDay = async (dateString)=>{
-    const {visitTracker} = await getLocalVisitTracker ()
+    const visitTracker = await getLocalVisitTracker ()
 
-    return Math.round(visitTracker?.[dateString] ?? {});
+    return visitTracker?.[dateString] ?? {};
 }
 
 export const setLocalVisitTracker = async (visitTracker)=>{
@@ -27,7 +22,7 @@ export const setLocalVisitTracker = async (visitTracker)=>{
 }
 
 export const incrementLocalVisitTracker = async (hostname) => {
-    const {visitTracker} = await getLocalVisitTracker ()
+    const visitTracker = await getLocalVisitTracker ()
     const dateString = getDateString()
 
     visitTracker[dateString] = visitTracker[dateString] ?? {}
@@ -43,7 +38,7 @@ export const incrementLocalVisitTracker = async (hostname) => {
 // Cleans all data older than last 60 days
 export const cleanLocalVisitTracker = async ()=>{
 
-    const {visitTracker} = await getLocalVisitTracker ()
+    const visitTracker = await getLocalVisitTracker ()
 
     // Note: reversed for date compare
     const dateXDaysAgo = getDateString(-30).split('-').reverse().join('-')

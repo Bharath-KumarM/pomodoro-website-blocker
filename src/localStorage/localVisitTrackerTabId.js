@@ -1,14 +1,9 @@
 import { getDateString } from "../utilities/date"
 
 // *visitTabIdTracker
-export const initializeLocalVisitTabIdTracker = async ()=>{
-    const {visitTabIdTracker} = await chrome.storage.local.get('visitTabIdTracker')
-    if (visitTabIdTracker === undefined){
-      await chrome.storage.local.set({visitTabIdTracker: {}})
-    }
-}
+
 export const getLocalVisitTabIdTracker = async ()=>{
-    return await chrome.storage.local.get('visitTabIdTracker')
+    return await chrome.storage.local.get('visitTabIdTracker') || {visitTabIdTracker: {}}
 }
 
 export const setLocalVisitTabIdTracker = async (visitTabIdTracker)=>{

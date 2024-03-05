@@ -6,7 +6,7 @@ import { MdOutlineSubdirectoryArrowLeft as ArrowIcon } from "react-icons/md"
 import { useEffect, useRef, useState } from 'react'
 import { getHost, isValidUrl } from '../../../utilities/simpleTools'
 
-import { updateLocalRestrictedSites } from '../../../localStorage/localRestrictedSites'
+import { handleRestrictUnRestrictSite } from '../../../localStorage/localSiteTagging'
 
 const AddRestrictedSites = ({setToastData, getRestrictedSites, recentSites})=>{
     const [userInput, setUserInput] = useState('')
@@ -39,12 +39,9 @@ const AddRestrictedSites = ({setToastData, getRestrictedSites, recentSites})=>{
 
 
     const handleAddBtnClick = async (hostname)=>{
-        const isRestricted = await updateLocalRestrictedSites(hostname)
-        if (!isRestricted){
-            setToastData(['Already added', 'red'])
-        }else{
-            setToastData(['Added the site', 'green'])
-        }
+        const {isSiteRestricted} = await handleRestrictUnRestrictSite({
+            hostname, shouldRestrictSite: true, setToastData
+        })
         getRestrictedSites(null)
         inputRef.current.value = ''
         setUserInput('')

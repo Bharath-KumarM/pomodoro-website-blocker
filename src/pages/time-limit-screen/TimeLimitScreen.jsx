@@ -4,9 +4,9 @@ import './TimeLimitScreen.scss';
 import { checkScreenTimeSurpassedLimit } from '../../utilities/chrome-tools/chromeApiTools';
 
 import { getLocalTimeLimitScreenDataByTabId } from '../../localStorage/localTimeLimitScreenData'
-import { delLocalScreenTimeLimit } from '../../localStorage/localScreenTimeLimit';
 import { NavBarInScreen } from '../../utilities/NavBarInScreen';
 import { EndNoteInScreen } from '../../utilities/EndNoteInScreen';
+import { handleScreenTimeLimtUpdate } from '../../localStorage/localSiteTagging';
 
 
 
@@ -97,7 +97,10 @@ const TimeLimitScreen = ()=>{
     }
 
     async function handleUnpauseSite() {
-        const isTimeLimitDeleted = await delLocalScreenTimeLimit(hostname)
+        await handleScreenTimeLimtUpdate({
+            hostname,
+            shouldAddTimeLimit: false,
+        })
     }
 
     return (

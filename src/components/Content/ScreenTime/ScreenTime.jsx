@@ -12,14 +12,15 @@ import { PopupFull, PopupToast } from '../../../utilities/PopupScreens';
 import TimeLimitInput from './TimeLimitInput';
 import SiteTimeLimitScreen from './SitesTimeLimitScreen';
 
-import { getLocalScreenTimeLimit } from '../../../localStorage/localScreenTimeLimit';
 import { getLocalScreenTimeTracker } from '../../../localStorage/localScreenTimeTracker';
 import { getLocalVisitTrackerForDay } from '../../../localStorage/localVisitTracker';
 import Loader from '../../../utilities/Loader';
+import { getScreenTimeLimit } from '../../../localStorage/localSiteTagging';
+import NavBar from '../NavBar/NavBar';
 
 
 
-const ScreenTime = ()=>{
+const ScreenTime = ({setNavSelect})=>{
 
     const [screenTimeData, setScreenTimeData] = useState(null)
     const [day, setDay] = useState(0)
@@ -35,7 +36,7 @@ const ScreenTime = ()=>{
 
     useEffect(()=>{
         const getInfo = async (day)=>{
-            let {screenTimeTracker} = await getLocalScreenTimeTracker()
+            let screenTimeTracker = await getLocalScreenTimeTracker()
 
             const dateString = getDateString(day)
             const fullDate = getFullDate(day)
@@ -66,14 +67,11 @@ const ScreenTime = ()=>{
 
     useEffect(()=>{
         const getData = async ()=>{
-            let {screenTimeLimit} = await getLocalScreenTimeLimit()
-            setScreenTimeLimit(screenTimeLimit)
+            setScreenTimeLimit(await getScreenTimeLimit())
         }
 
-        if (screenTimeLimit === null){
-            getData()
-        }
-    }, [screenTimeLimit])
+        getData()
+    }, [])
 
     const [toastMsg, toastColorCode] = toastData
 
@@ -92,116 +90,104 @@ const ScreenTime = ()=>{
 
     return (
         isDataAllLoaded ? 
-        <>
-            
-            <div className="screen-time-cnt">
+        <div className="screen-time-cnt">
 
-                {
-                    toastMsg ?
-                    <PopupToast
-                        key={'popup-toast'}
-                        toastData={toastData}
-                        setToastData={setToastData}
-                    /> : null
-                }
-                {
-                    showSitesTimeLimitScreen ?
-                    <PopupFull 
-                        setClosePopup={()=> {
-                            setShowSitesTimeLimitScreen(false)
-                        }}
-                    >
-                        <SiteTimeLimitScreen 
-                            showTimeLimitInput={(hostname)=> setShowTimeLimitInput(hostname)}
-                            toastMsg={toastMsg}
-                            setClosePopup={()=> setShowSitesTimeLimitScreen(false)}
-                            screenTimeLimit={screenTimeLimit}
-                        > 
-                            {
-                                showTimeLimitInput ?
-                                <TimeLimitInput 
-                                    showTimeLimitInput={showTimeLimitInput}
-                                    setShowTimeLimitInput={setShowTimeLimitInput}
-                                    setToastData={setToastData}
-                                    setScreenTimeLimit={setScreenTimeLimit}
-                                    setClosePopup={()=>setShowTimeLimitInput(false)}
-                                /> : null
-                            }
-                        
-                        </SiteTimeLimitScreen >
-                    </PopupFull> : 
-                    showTimeLimitInput ?
-                    <TimeLimitInput 
-                        showTimeLimitInput={showTimeLimitInput}
-                        setShowTimeLimitInput={setShowTimeLimitInput}
-                        setToastData={setToastData}
-                        setScreenTimeLimit={setScreenTimeLimit}
-                        setClosePopup={()=>setShowTimeLimitInput(false)}
-                    />  :
-                    null
-                }
-                <div className='set-screen-time-btn-cnt'
-                    onClick={()=>{
-
-                        setShowSitesTimeLimitScreen(true)
+            {
+                toastMsg ?
+                <PopupToast
+                    key={'popup-toast'}
+                    toastData={toastData}
+                    setToastData={setToastData}
+                /> : null
+            }
+            <NavBar 
+                setNavSelect={setNavSelect}
+                navDetailsArr={[['Screen time', 'screen-time']]}
+            />
+            {
+                showSitesTimeLimitScreen ?
+                <PopupFull 
+                    setClosePopup={()=> {
+                        setShowSitesTimeLimitScreen(false)
                     }}
                 >
-                    <p className="icon">
-                        <MdSettingsSuggest />
-                    </p>
-                    <p className="desc">
-                        Set Screen Time Limit
-                    </p>
-                </div>
-                <div className="screen-time-details-cnt">
-                    <h2 className="screen-time-detail">
-                        {totalTimeSpentDesc ? totalTimeSpentDesc : '0 minutes'}
-                    </h2>
-                    <p className="screen-time-day">
-                        {getDayAgo(day)}
-                    </p>
-                </div>
-                <Graph 
-                    totalScreenTimeWeekly={totalScreenTimeWeekly}
-                    weekDayNum={getDayNumber(day)}
-                    day={day}
-                    setDay={setDay}
-                />
-                <div className="day-cnt">
-                    <button 
-                        className="day-arrow left"
-                        onClick={()=>{
-                            setDay(prevDay => prevDay-1)
-                        }}
-                        >
-                        <LeftArrowIcon />
-                    </button>
-                    <div className="day-details">
-                        {fullDate}
-                    </div>
-                    <button 
-                        className="day-arrow right"
-                        onClick={()=>{
-                            setDay(prevDay => prevDay+1)
-                        }}
-                    >
-                        <RightArrowIcon />
-                    </button>
-                </div>
-                <div className="site-list-cnt">
-                    <ul className='site-list'>
-                        <SiteList 
-                            dayScreenTimeTracker={dayScreenTimeTracker}
-                            dayNoOfVisitsTracker={dayNoOfVisitsTracker}
-                            setShowTimeLimitInput={setShowTimeLimitInput}
-                            screenTimeLimit={screenTimeLimit}
-                            setToastData={setToastData}
-                        />
-                    </ul>
-                </div>
-            </div>
+                    <SiteTimeLimitScreen 
+                        setShowTimeLimitInput={setShowTimeLimitInput}
+                        setClosePopup={()=> setShowSitesTimeLimitScreen(false)}
+                        screenTimeLimit={screenTimeLimit}
+                        setToastData={setToastData}
+                    /> 
+                </PopupFull> : 
+                showTimeLimitInput ?
+                <TimeLimitInput 
+                    hostname={showTimeLimitInput}
+                    setShowTimeLimitInput={setShowTimeLimitInput}
+                    setToastData={setToastData}
+                    setScreenTimeLimit={setScreenTimeLimit}
+                    setClosePopup={()=>setShowTimeLimitInput(false)}
+                />  :
+                null
+            }
+            <div className='set-screen-time-btn-cnt'
+                onClick={()=>{
 
-        </> :
+                    setShowSitesTimeLimitScreen(true)
+                }}
+            >
+                <p className="icon">
+                    <MdSettingsSuggest />
+                </p>
+                <p className="desc">
+                    Set Screen Time Limit
+                </p>
+            </div>
+            <div className="screen-time-details-cnt">
+                <h2 className="screen-time-detail">
+                    {totalTimeSpentDesc ? totalTimeSpentDesc : '0 minutes'}
+                </h2>
+                <p className="screen-time-day">
+                    {getDayAgo(day)}
+                </p>
+            </div>
+            <Graph 
+                totalScreenTimeWeekly={totalScreenTimeWeekly}
+                weekDayNum={getDayNumber(day)}
+                day={day}
+                setDay={setDay}
+            />
+            <div className="day-cnt">
+                <button 
+                    className="day-arrow left"
+                    onClick={()=>{
+                        setDay(prevDay => prevDay-1)
+                    }}
+                    >
+                    <LeftArrowIcon />
+                </button>
+                <div className="day-details">
+                    {fullDate}
+                </div>
+                <button 
+                    className="day-arrow right"
+                    onClick={()=>{
+                        setDay(prevDay => prevDay+1)
+                    }}
+                >
+                    <RightArrowIcon />
+                </button>
+            </div>
+            <div className="site-list-cnt">
+                <ul className='site-list'>
+                    <SiteList 
+                        dayScreenTimeTracker={dayScreenTimeTracker}
+                        dayNoOfVisitsTracker={dayNoOfVisitsTracker}
+                        setShowTimeLimitInput={setShowTimeLimitInput}
+                        screenTimeLimit={screenTimeLimit}
+                        setToastData={setToastData}
+                    />
+                </ul>
+            </div>
+        </div> :
         <Loader />
     )
 }
@@ -225,7 +211,7 @@ const SiteList = ({dayScreenTimeTracker, dayNoOfVisitsTracker, setShowTimeLimitI
 
     const siteListArr = []
     for (const [site, minutesSpent] of dayScreenTimeTrackerArr){
-        const visitTimesDesc = dayNoOfVisitsTracker[site] ? `• ${dayNoOfVisitsTracker[site]} visits` : ''
+        const visitTimesDesc = dayNoOfVisitsTracker[site] ? `• ${dayNoOfVisitsTracker[site]} Opens` : ''
 
         const [screenTimeLimitHrs, screenTimeLimitMinutes] = screenTimeLimit?.[site] ?? [0, 0]
         const isTimeLimitExceeded = screenTimeLimit?.[site] && minutesSpent > ((screenTimeLimitHrs*60) + screenTimeLimitMinutes)

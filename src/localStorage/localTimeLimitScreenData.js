@@ -1,14 +1,9 @@
 import { forceTimeLimitScreenByTabId } from "../utilities/chrome-tools/forceTabs"
 
 // *timeLimitScreenData
-export const initializeLocalTimeLimitScreenData = async ()=>{
-    const {timeLimitScreenData} = await chrome.storage.local.get('timeLimitScreenData')
-    if (timeLimitScreenData === undefined){
-      await chrome.storage.local.set({timeLimitScreenData: {}})
-    }
-}
+
 export const getLocalTimeLimitScreenData = async ()=>{
-    return await chrome.storage.local.get('timeLimitScreenData')
+    return await chrome.storage.local.get('timeLimitScreenData') || {timeLimitScreenData: {}}
 }
 export const getLocalTimeLimitScreenDataByTabId = async (tabId)=>{
     const {timeLimitScreenData} = await getLocalTimeLimitScreenData()
