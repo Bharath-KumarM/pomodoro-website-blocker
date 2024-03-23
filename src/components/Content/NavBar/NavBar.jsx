@@ -12,14 +12,14 @@ const NavBar = ({setNavSelect, navDetailsArr}) => {
                     Dashboard
                 </span>
                 {
-                    navDetailsArr.map(([navPathName, navPathSelect])=>{
+                    navDetailsArr.map(([navPathName, onNavPathClick])=>{
 
                         return (
                             <React.Fragment key={navPathName}>
                                 <span>{'>'}</span>
                                 <span 
                                     className={styles.Nav}
-                                    onClick={()=>setNavSelect(navPathSelect)}
+                                    onClick={()=> onNavPathClick && onNavPathClick()}
                                 >
                                     {navPathName}
                                 </span>

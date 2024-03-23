@@ -1,21 +1,26 @@
-import './TimeLimitInput.scss'
+import './EditTimeLimit.scss'
 
 import { BiTime } from "react-icons/bi"
 import { RiCloseLine } from 'react-icons/ri'
 
 import { pad2 } from '../../../utilities/simpleTools'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { PopupFull } from '../../../utilities/PopupScreens'
 import { getScreenTimeLimit, handleScreenTimeLimtUpdate } from '../../../localStorage/localSiteTagging'
+import { LocalFavIconUrlDataContext } from '../../context'
 
 
 const hrValues = Array.from({length: 24}, (_ ,index)=>pad2(index))
 const minValues = Array.from({length: 12}, (_ ,index)=>pad2(index*5))
 
-const TimeLimitInput = ({hostname, setShowTimeLimitInput, setScreenTimeLimit, setToastData, setClosePopup})=>{
+const EditTimeLimit = ({hostname, setScreenTimeLimit, setToastData, setClosePopup})=>{
     const [hours, setHours] = useState(0)
     const [minutes, setMinutes] = useState(30)
     const [isLimited, setIsLimited] = useState(false)
+    const localFavIconUrlData = useContext(LocalFavIconUrlDataContext)
+    const getFavIcon = (hostname)=>{
+        return localFavIconUrlData[hostname] || getFavIconUrlFromGoogleApi(hostname)
+    }
 
     useEffect(()=>{
         const getData = async ()=>{
@@ -44,9 +49,7 @@ const TimeLimitInput = ({hostname, setShowTimeLimitInput, setScreenTimeLimit, se
             >
                 <button 
                     className='close btn'
-                    onClick={()=>{
-                        setShowTimeLimitInput(false)
-                    }}
+                    onClick={setClosePopup}
                 >
                     <RiCloseLine />
                 </button>
@@ -55,8 +58,8 @@ const TimeLimitInput = ({hostname, setShowTimeLimitInput, setScreenTimeLimit, se
                 </h2>
                 <div className="site-info">
                     <img className='site-icon' 
-                        src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} 
-                        alt="icon" 
+                        src={getFavIcon(hostname)} 
+                        alt={hostname}
                     />
                     <span className='hostname'>
                         {hostname}
@@ -112,7 +115,7 @@ const TimeLimitInput = ({hostname, setShowTimeLimitInput, setScreenTimeLimit, se
                         if (tempHours === 0 && tempMinutes === 0){
                             setToastData(['Zero minutes can\'t be set', 'red']) 
                             
-                            setShowTimeLimitInput(false)
+                            setClosePopup()
                             setScreenTimeLimit(await getScreenTimeLimit())
 
                             return null;
@@ -125,7 +128,7 @@ const TimeLimitInput = ({hostname, setShowTimeLimitInput, setScreenTimeLimit, se
                                 setToastData
                             })
                             
-                            setShowTimeLimitInput(false)
+                            setClosePopup()
                             setScreenTimeLimit(await getScreenTimeLimit())
                         }
 
@@ -143,7 +146,7 @@ const TimeLimitInput = ({hostname, setShowTimeLimitInput, setScreenTimeLimit, se
                                 setToastData
                             })
 
-                            setShowTimeLimitInput(false);
+                            setClosePopup()
                             setScreenTimeLimit(await getScreenTimeLimit())
                             
                         }}
@@ -153,9 +156,7 @@ const TimeLimitInput = ({hostname, setShowTimeLimitInput, setScreenTimeLimit, se
                     null
                 }
                 <div className="cancel-cnt"
-                    onClick={()=>{
-                        setShowTimeLimitInput(false)
-                    }}
+                    onClick={setClosePopup}
                 >
                     Cancel
                 </div>
@@ -165,4 +166,4 @@ const TimeLimitInput = ({hostname, setShowTimeLimitInput, setScreenTimeLimit, se
     )
 }
 
-export default TimeLimitInput
+export default EditTimeLimit

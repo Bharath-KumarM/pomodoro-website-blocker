@@ -1,4 +1,5 @@
 import { updateLocalBlockedScreenDataByTab } from "../../localStorage/localBlockedScreenData"
+import { getLocalFavIconUrlData } from "../../localStorage/localFavIconUrlData"
 import { getLocalFocusModeTracker } from "../../localStorage/localFocusModeTracker"
 import { updateLocalRestrictedScreenDataByTab } from "../../localStorage/localRestrictedScreenData"
 import { getLocalScreenTimeTrackerForDayByHostname } from "../../localStorage/localScreenTimeTracker"
@@ -9,6 +10,7 @@ import { incrementLocalVisitTracker } from "../../localStorage/localVisitTracker
 import { checkLocalVisitTabIdTrackerNewSession } from "../../localStorage/localVisitTrackerTabId"
 import { checkScreenTimeSurpassedLimit } from "../../utilities/chrome-tools/chromeApiTools"
 import { checkFocusScheduleActive } from "../../utilities/focusModeHelper"
+import { getFavIconUrlFromGoogleApi } from "../../utilities/simpleTools"
 
 // Generic Helper functions
 export function calculateReminingTime(pomoData){
@@ -114,7 +116,10 @@ export async function handleUrlUpdate({tabId, url}){
   if (!url || !url.startsWith('http')) return;
   
   const hostname = new URL(url).hostname;
-  const favIconUrl = `http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`;
+
+  const localFavIconUrlData = await getLocalFavIconUrlData()
+  const favIconUrl = localFavIconUrlData[hostname] ||  getFavIconUrlFromGoogleApi(hostname)
+
   
   const isBlockedSite = await checkSiteTagging({hostname, checkBlockedSite: true})
 
@@ -153,7 +158,6 @@ export async function handleUrlUpdateForVisitCount({tabId, url}){
   if (!url || !url.startsWith('http')) return;
   
   const hostname = new URL(url).hostname;
-  const favIconUrl = `http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`;
   
   const isNewSession = await checkLocalVisitTabIdTrackerNewSession(tabId, hostname)
   if (!isNewSession){

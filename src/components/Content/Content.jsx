@@ -16,6 +16,8 @@ import FocusMode from "./FocusMode/FocusMode"
 import Setting from "./Setting/Setting"
 import Loader from "../../utilities/Loader"
 import Dashboard from "./Dashboard/Dashboard"
+import { useEffect, useRef } from "react";
+import { ContentScrollCntEleRefContext } from "../context";
 
 
 
@@ -27,6 +29,9 @@ const navOptionData = [
 ] 
 
 const Content = ({navSelect, setNavSelect})=>{
+    const scrollCntEleRef = useRef(null)
+
+
     const navOptElements = navOptionData.map((details, index)=>{
         return (
             <NavOpts 
@@ -41,17 +46,22 @@ const Content = ({navSelect, setNavSelect})=>{
     return (
         <div className={styles.Cnt}>
             <div className={styles.ContentCnt}>
-                <div className={styles.ContentScrollCnt}>
-                    {
-                        navSelect === 'dashboard' ? <Dashboard /> :
-                        // navSelect === 'pomodoro' ? <Pomodoro /> :
-                        navSelect === 'focus-mode' ? <FocusMode setNavSelect={setNavSelect}  /> :
-                        navSelect === 'screen-time' ? <ScreenTime setNavSelect={setNavSelect}  /> : 
-                        navSelect === 'setting' ? <Setting setNavSelect={setNavSelect} /> :
-                        navSelect === 'block-site' ? <BlockSites setNavSelect={setNavSelect} /> : 
+                <div 
+                    className={styles.ContentScrollCnt}
+                    ref={scrollCntEleRef}
+                >
+                    <ContentScrollCntEleRefContext.Provider value={scrollCntEleRef}>
+                        {
+                            navSelect.startsWith('dashboard') ? <Dashboard /> :
+                            // navSelect === 'pomodoro' ? <Pomodoro /> :
+                            navSelect.startsWith('focus-mode') ? <FocusMode setNavSelect={setNavSelect}  /> :
+                            navSelect.startsWith('screen-time') ? <ScreenTime setNavSelect={setNavSelect} /> : 
+                            navSelect.startsWith('setting') ? <Setting setNavSelect={setNavSelect} /> :
+                            navSelect.startsWith('block-site') ? <BlockSites setNavSelect={setNavSelect} /> : 
 
-                        <Loader />
-                    }
+                            <Loader />
+                        }
+                    </ContentScrollCntEleRefContext.Provider>
                 </div>
             </div>
             <nav className={styles.Nav}>

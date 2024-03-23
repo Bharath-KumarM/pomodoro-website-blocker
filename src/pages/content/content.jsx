@@ -5,10 +5,11 @@ import NotificationCard from './NotificationCard'
 
 import { getLocalScreenTimeTracker, setLocalScreenTimeTracker } from "../../localStorage/localScreenTimeTracker";
 import { updateLocalTimeLimitScreenDataByTab } from "../../localStorage/localTimeLimitScreenData";
-import { checkScreenTimeSurpassedLimit, getScreenTimeSurpassedPercentage } from "../../utilities/chrome-tools/chromeApiTools";
+import { checkScreenTimeSurpassedLimit } from "../../utilities/chrome-tools/chromeApiTools";
 import { getDateString } from "../../utilities/date"
 import { getLocalTakeABreakTrackerforRestrict } from '../../localStorage/localTakeABreakTrackerforRestrict';
 import { getLocalSettingsData } from '../../localStorage/localSettingsData';
+import { getLocalFavIconUrlData } from '../../localStorage/localFavIconUrlData';
 
 
 
@@ -21,7 +22,6 @@ let IS_AUDIBLE = false
 let INTERVAL_ID
 
 const hostname = window.location.hostname;
-const favIconUrl = getFavIconUrl(hostname)
 const url = window.location.href
 
 // Initial focus
@@ -239,22 +239,28 @@ async function periodicRefresh(){
     return true;
 }
 
-async function checkAndForceTimeLimitScreen(){
-    
-    const screenTimeSurpassedPercentage = await getScreenTimeSurpassedPercentage(hostname)
-    console.log({screenTimeSurpassedPercentage})
+async function getFavIconUrl(hostname){
+    let link = document.querySelector("link[rel~='icon']")
 
+    if (link){
+        return link.href
+    }
+
+    const localFavIconUrlData = await getLocalFavIconUrlData()
+    return localFavIconUrlData[hostname]
+}
+
+async function checkAndForceTimeLimitScreen(){
     const isScreenTimeSurpassedLimit = await checkScreenTimeSurpassedLimit(hostname)
     if (!isScreenTimeSurpassedLimit){
         return false;
     }
 
+    const favIconUrl = await getFavIconUrl(hostname)
     const {tabId} = await chrome.runtime.sendMessage({getTabId: true})
     const {isLocalTimeLimitScreenDataByTabUpdated} = await chrome.runtime.sendMessage(
         {updateLocalTimeLimitScreenDataByTabMsg: [tabId, [hostname, favIconUrl, url]]}
     )
-
-
     return true;
 }
 
@@ -262,15 +268,7 @@ async function updateBadgeIcon({hostname}){
     await chrome.runtime.sendMessage({updateBadgeIcon: {hostname}})
 }
 
-function getFavIconUrl(hostname){
-    let link = document.querySelector("link[rel~='icon']")
 
-    if (!link){
-        return `http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`
-    }
-
-    return link.href
-}
 
 
 // ! Debug starts
@@ -298,77 +296,63 @@ async function debugAddMinutesToScreenTime(hostname, timeInMinutes){
 // ! Debug ends
 
 //* Notification card UI
-getLocalSettingsData().then(({settingsData})=>{
-    const shouldShowNotification = settingsData['should-show-notification']
-    if (shouldShowNotification){
-        initializeNotificationCardUI()
-    }
-})
+const htmlElement = document.getElementsByTagName('html')[0]
+const hostElement = document.createElement('be-focused')
+htmlElement.appendChild(hostElement)
 
-async function initializeNotificationCardUI(){
-    //* Notification card UI
-    const htmlElement = document.getElementsByTagName('html')[0]
-    const hostElement = document.createElement('be-focused')
-    htmlElement.appendChild(hostElement)
+const shadowRoot = hostElement.attachShadow({ mode: 'closed' });
+const RenderCntElement = document.createElement('div')
+shadowRoot.appendChild(RenderCntElement)
 
-    const shadowRoot = hostElement.attachShadow({ mode: 'closed' });
-    const RenderCntElement = document.createElement('div')
-    shadowRoot.appendChild(RenderCntElement)
-
-    RenderCntElement.style.position = 'fixed'
-    RenderCntElement.style.top = '0'
-    RenderCntElement.style.right = '0'
-    RenderCntElement.style.zIndex = '2147483642'
+RenderCntElement.style.position = 'fixed'
+RenderCntElement.style.top = '0'
+RenderCntElement.style.right = '0'
+RenderCntElement.style.zIndex = '2147483642'
 
 
-    function createNotificationData(takeABreakForRestrictRemainingMinutes){
-        return {
-            headingMsg: 'Ready to focus',
-            paraMsg: `Focus mode resumes in ${takeABreakForRestrictRemainingMinutes} minute`,
-            optionArr: [
-                {
-                    name: 'Resume now',
-                    handleClick: async ()=>{
-                        console.log('Resume now clicked!!!')
-                        await chrome.runtime.sendMessage(
-                            {handleTurnOffLocalTakeABreakTrackerforRestrict: true}
-                        )
+function getNotificationData(takeABreakForRestrictRemainingMinutes){
+    return {
+        headingMsg: 'Ready to focus',
+        paraMsg: `Focus mode resumes in ${takeABreakForRestrictRemainingMinutes} minute`,
+        optionArr: [
+            {
+                name: 'Resume now',
+                handleClick: async ()=>{
+                    console.log('Resume now clicked!!!')
+                    await chrome.runtime.sendMessage(
+                        {handleTurnOffLocalTakeABreakTrackerforRestrict: true}
+                    )
 
-                        return true;
-                    }
-                },
-                {
-                    name: 'Wait for 5+ more minutes',
-                    handleClick: async ()=>{
-                        await chrome.runtime.sendMessage(
-                            {
-                                createTakeABreak: {
-                                    timeInMinutes: 5+takeABreakForRestrictRemainingMinutes
-                                }
-                            }
-                        )
-                        return true;
-
-                    // remove the card
-                    }
+                    return true;
                 }
-            ],
-            updateBadgeIcon: ()=>{
-                updateBadgeIcon({hostname})
+            },
+            {
+                name: 'Wait for 5+ more minutes',
+                handleClick: async ()=>{
+                    await chrome.runtime.sendMessage(
+                        {
+                            createTakeABreak: {
+                                timeInMinutes: 5+takeABreakForRestrictRemainingMinutes
+                            }
+                        }
+                    )
+                    return true;
+
+                // remove the card
+                }
             }
+        ],
+        updateBadgeIcon: ()=>{
+            updateBadgeIcon({hostname})
         }
     }
-
-
-    ReactDOM.createRoot(RenderCntElement).render(
-        <StrictMode>
-            <NotificationCard 
-                createNotificationData={createNotificationData}
-            />
-        </StrictMode>
-    )
 }
 
 
-
-
+ReactDOM.createRoot(RenderCntElement).render(
+    <StrictMode>
+        <NotificationCard 
+            getNotificationData={getNotificationData}
+        />
+    </StrictMode>
+)

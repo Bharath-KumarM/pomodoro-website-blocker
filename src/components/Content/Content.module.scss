@@ -48,29 +48,35 @@
 }
 .ContentCnt{
     height: 100%;
+
+    background-color: $bg-color2;
+
     display: flex;
     align-items: center;
-
-    width: 100%;
+    justify-content: center;
     
     position: relative;
     
     min-height: 0;
     flex-grow: 1;
-    
+
+
+
 }
 .ContentScrollCnt{
     height: 100%;
-    width: 100%;
+    width: min(400px, 90%);
+
+
+
     display: flex;
     flex-direction: column;
 
-    background-color: $bg-color2;
     border-radius: 5px;
 
     align-items: center;
-    overflow-y: scroll;
 
+    
     .Heading{
         align-self: flex-start;
         margin: 10px;
@@ -80,10 +86,16 @@
             font-size: 16px;
         }
     }
-    
+
+
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+
     &::-webkit-scrollbar {
-        width: 5px;
+        width: 2px;
       }
+    
+
 }
 
 

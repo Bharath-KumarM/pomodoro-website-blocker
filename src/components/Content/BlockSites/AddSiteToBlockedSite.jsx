@@ -2,10 +2,11 @@ import './AddSiteToBlockedSite.scss'
 
 import { FiPlus } from "react-icons/fi"
 import { MdOutlineSubdirectoryArrowLeft as ArrowIcon } from "react-icons/md"
-import { useEffect, useRef, useState } from 'react'
-import { getHost, isValidUrl } from '../../../utilities/simpleTools'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { getFavIconUrlFromGoogleApi, getHost, isValidUrl } from '../../../utilities/simpleTools'
 import { handleBlockUnblockSite } from '../../../localStorage/localSiteTagging'
 import { getLocalSettingsData } from '../../../localStorage/localSettingsData'
+import { LocalFavIconUrlDataContext } from '../../context'
 
 // *Copied from AddRestrictedSites
 const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites})=>{
@@ -13,6 +14,11 @@ const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites
     const [ignoreSites, setIgnoreSites] = useState([])
     const [optionSelectIndex, setOptionSelectIndex] = useState(0)
     const [validRecentSites, setValidRecentSites] = useState([])
+
+    const localFavIconUrlData = useContext(LocalFavIconUrlDataContext)
+    const getFavIcon = (hostname)=>{
+        return localFavIconUrlData[hostname] || getFavIconUrlFromGoogleApi(hostname)
+    }
 
     const optionCntRef = useRef(null)
     let validRecentSiteRefs = useRef([])
@@ -37,9 +43,6 @@ const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites
 
     }, [userInput])
 
-
-    let isUserInputValidUrl = isValidUrl(userInput)
-
     const handleAddBtnClick = async (hostname)=>{
         handleBlockUnblockSite({
             hostname, shouldBlockSite: true, setToastData
@@ -47,8 +50,9 @@ const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites
 
         getUpdatedBlockedSites(null)
         setUserInput('')
-
     }
+
+    const hostname = getHost(userInput)
 
     return (
         <div className={`add-restricted-site-cnt`}
@@ -56,23 +60,14 @@ const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites
 
             <div key={0} className="item active">
                 {
-                    !userInput ?
-                    <>  
-                        <div className="cell plus-btn-cnt flex-center"
-                            title='add site'
-                        >
-                            <div className={`inner-cnt flex-center `}>
-                                <FiPlus />
-                            </div>
+                    !userInput &&
+                    <div className="cell plus-btn-cnt flex-center"
+                        title='add site'
+                    >
+                        <div className={`inner-cnt flex-center `}>
+                            <FiPlus />
                         </div>
-                        <div className='cell site-icon flex-center'>
-                            {
-                                isUserInputValidUrl ?
-                                <img src={`http://www.google.com/s2/favicons?domain=${getHost(userInput)}&sz=${128}`} alt="icon" />
-                                : null
-                            }
-                        </div>
-                    </> : null
+                    </div>
                 }
                 <div className="cell site-input-cnt flex-center">
                     <input 
@@ -152,8 +147,8 @@ const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites
                         </h3>
                     }
                     {
-                        validRecentSites.map((hostname, index)=>{
-                            const isSiteIgnored = ignoreSites.includes(hostname)
+                        validRecentSites.map((recentHostname, index)=>{
+                            const isSiteIgnored = ignoreSites.includes(recentHostname)
                             return (
                                 <li 
                                     className={`option ${index === optionSelectIndex ? 'select': ''} ${isSiteIgnored ? 'ignored' : ''}`}
@@ -163,7 +158,7 @@ const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites
                                             setToastData(["Ignored site can't be added", 'red'])
                                             setUserInput('')
                                         } else{
-                                            handleAddBtnClick(hostname)
+                                            handleAddBtnClick(recentHostname)
                                         }
                                     }}
                                     ref={(ele)=>{
@@ -172,13 +167,13 @@ const AddSiteToBlockedSite = ({setToastData, getUpdatedBlockedSites, recentSites
                                 >
                                     <img 
                                         className='option-icon'
-                                        src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} 
-                                        alt="icon" 
+                                        src={getFavIcon(recentHostname)} 
+                                        alt={recentHostname}
                                     />
                                     <span
                                         className={`option-name ${isSiteIgnored ? 'ignored' : ''}`}
                                     >
-                                        {hostname}
+                                        {recentHostname}
                                     </span>
                                     {
                                         index !== optionSelectIndex ? null :

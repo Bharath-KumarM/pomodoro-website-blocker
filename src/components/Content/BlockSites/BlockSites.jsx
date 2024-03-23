@@ -22,7 +22,7 @@ export const BlockSites = ({setNavSelect})=>{
             }
             <NavBar 
                 setNavSelect={setNavSelect}
-                navDetailsArr={[['Block site', 'block-site']]}
+                navDetailsArr={[['Block site', ()=>setNavSelect('block-site')]]}
             />
             <div className="block-site-cnt">
                 <div className="block-site-list-cnt">

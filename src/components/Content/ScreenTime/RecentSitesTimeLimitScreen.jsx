@@ -1,20 +1,25 @@
 import { useEffect, useRef, useState } from 'react'
-import './SiteTimeLimitScreen.scss'
+import './RecentSiteTimeLimitScreen.scss'
 import { getRecentHostnames } from '../../../utilities/chrome-tools/chromeApiTools'
 
 import { FaHourglass, FaRegHourglass, FaHourglassHalf } from "react-icons/fa";
 import { GrCircleInformation } from "react-icons/gr";
 import { MdClose } from "react-icons/md";
-import { getHost, isValidUrl } from '../../../utilities/simpleTools';
+import { getFavIconUrlFromGoogleApi, getHost, isValidUrl } from '../../../utilities/simpleTools';
 import { getScreenTimeLimit } from '../../../localStorage/localSiteTagging';
-import TimeLimitInput from './TimeLimitInput';
+import EditTimeLimit from './EditTimeLimit';
+import { LocalFavIconUrlDataContext } from '../../context';
 
-// const SiteTimeLimitScreen = ({setClosePopup, setShowTimeLimitInput, children})=>{
-const SiteTimeLimitScreen = ({setClosePopup, setToastData})=>{
+const RecentSitesTimeLimitScreen = ({setClosePopup, setToastData})=>{
     const [recentSites, setRecentSites] = useState(null)
     const [screenTimeLimit, setScreenTimeLimit] = useState(null)
     const [searchText, setSearchText] = useState('')
     const [showTimeLimitInput, setShowTimeLimitInput] = useState(null)
+
+    const localFavIconUrlData = useContext(LocalFavIconUrlDataContext)
+    const getFavIcon = (hostname)=>{
+        return localFavIconUrlData[hostname] || getFavIconUrlFromGoogleApi(hostname)
+    }
 
     useEffect(()=>{
         const getData = async () => {
@@ -26,32 +31,34 @@ const SiteTimeLimitScreen = ({setClosePopup, setToastData})=>{
     }, [])
 
     if (recentSites === null || screenTimeLimit === null) {
-        return (
-            <div>
-                Loading...
-            </div>
-        )
+        return <div>Loading...</div>
     }
     
-    let recentSitesFiltered = recentSites.filter((site)=> searchText === '' || site.search(searchText) > 0 )
+    const screenTimeLimitSitesArr = Object.keys(screenTimeLimit && {})
+    const allUniqueSites = removeDuplicatesInArr([...screenTimeLimitSitesArr, ...recentSites])
 
-    const recentSitesWithScreenTime = recentSitesFiltered.map((hostname)=> {
+    const sitesSearchFiltered = allUniqueSites.filter((site)=> searchText === '' || site.search(searchText) > 0 )
+
+    const sitesWithScreenTime = sitesSearchFiltered.map((hostname)=> {
         return [hostname, getTotalTimeInMin(screenTimeLimit?.[hostname] ?? [0, 0])];
     })
 
-    recentSitesWithScreenTime.sort( (a, b)=> -a[1] + b[1] )
+
+    sitesWithScreenTime.sort( (a, b)=> -a[1] + b[1] )
 
     let isSearchTextValidSite = false
+    let  hostname
     if (isValidUrl(searchText)){
         const searchTextAsHostname = getHost(searchText)
-        isSearchTextValidSite = recentSitesWithScreenTime.includes(searchTextAsHostname) !== true
+        hostname = searchTextAsHostname
+        isSearchTextValidSite = sitesWithScreenTime.includes(searchTextAsHostname) !== true
     }
 
     return (
         <>
             {
                 showTimeLimitInput ?
-                <TimeLimitInput 
+                <EditTimeLimit 
                     hostname={showTimeLimitInput}
                     setShowTimeLimitInput={setShowTimeLimitInput}
                     setToastData={setToastData}
@@ -89,11 +96,12 @@ const SiteTimeLimitScreen = ({setClosePopup, setToastData})=>{
                         </div>
                     </div>
                     <ul className='site-cnt'>
-                        {   isSearchTextValidSite ?
+                        {   
+                            isSearchTextValidSite ?
                             <li className='site-item'>
                                 <div className="cnt">
                                     <img className='site-item-icon' 
-                                        src={`http://www.google.com/s2/favicons?domain=${getHost(searchText)}&sz=${128}`} 
+                                        src={getFavIcon(getHost(searchText))} 
                                         alt="icon" 
                                     />
                                     <span className='hostname'>
@@ -115,7 +123,7 @@ const SiteTimeLimitScreen = ({setClosePopup, setToastData})=>{
                             </li> : null
                         }
                         {
-                            recentSitesWithScreenTime.length > 0 ?
+                            sitesWithScreenTime.length > 0 ?
                             <li className='header-cnt'
                                 key={'heading'}
                             >
@@ -134,7 +142,7 @@ const SiteTimeLimitScreen = ({setClosePopup, setToastData})=>{
 
                         }
                         {
-                            recentSitesWithScreenTime.map(([hostname, timeLimit])=>{
+                            sitesWithScreenTime.map(([hostname, timeLimit])=>{
                                 
                                 return (
                                     <li className='site-item'
@@ -142,8 +150,8 @@ const SiteTimeLimitScreen = ({setClosePopup, setToastData})=>{
                                     >
                                         <div className="cnt">
                                             <img className='site-item-icon' 
-                                                src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} 
-                                                alt="icon" 
+                                                src={getFavIcon(hostname)} 
+                                                alt={hostname}
                                             />
                                             <span className='hostname'>
                                                 {hostname}
@@ -183,7 +191,7 @@ const SiteTimeLimitScreen = ({setClosePopup, setToastData})=>{
     )
 }
 
-export default SiteTimeLimitScreen
+export default RecentSitesTimeLimitScreen
 
 
 const getTimeShowText  = ([hours, minutes]) => {
@@ -202,3 +210,5 @@ const getTimeShowText  = ([hours, minutes]) => {
 const getTotalTimeInMin = ([hours, minutes]) => {
     return (hours * 60) + minutes
 }
+
+const removeDuplicatesInArr = (arr) => [...new Set(arr)]

@@ -25,7 +25,14 @@ ChartJS.defaults.color = "rgb(212, 212, 212)";
 ChartJS.defaults.borderColor = "transparent";
 
 
-const createOptions = (isUnitHr)=>{
+const createOptions = (dataType, isUnitHr)=>{
+
+    let stepSize
+    if (dataType === 'screen-time'){
+        stepSize  = isUnitHr ? 1 : 20
+    } else if (dataType === 'opens'){
+        stepSize = 1
+    }
 
     return {
         scales: {
@@ -38,9 +45,13 @@ const createOptions = (isUnitHr)=>{
                 ticks: {
                     // Add units
                     callback: function(value, index, ticks) {
-                        return value + (isUnitHr ? 'h' : 'm');  
+                        if (dataType === 'screen-time'){
+                            return value + (isUnitHr ? 'h' : 'm');  
+                        } else if (dataType === 'opens'){
+                            return value
+                        }
                     },
-                    stepSize: (isUnitHr ? 1 : 20),
+                    stepSize,
                 },
             },
             x: {
@@ -61,9 +72,16 @@ const createOptions = (isUnitHr)=>{
     }
 }
 
-const createData = (totalScreenTimeWeekly, weekDayNum, isUnitHr)=>{
+const createData = (weeklyData, weekDayNum, isUnitHr, dataType)=>{
     const backgroundColor = ["#497676", "#497676","#497676","#497676","#497676", "#497676", "#497676"]
     backgroundColor[weekDayNum] = "#95fbff"
+
+    let graphData
+    if (dataType === 'screen-time'){
+        graphData = weeklyData.map((mins)=> isUnitHr ? Math.round(mins/60) : mins)
+    } else if (dataType === 'opens'){
+        graphData = weeklyData
+    }
 
     return {
         labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
@@ -71,7 +89,7 @@ const createData = (totalScreenTimeWeekly, weekDayNum, isUnitHr)=>{
         {
             label: "Total Screen Time, Today",
             backgroundColor,
-            data: totalScreenTimeWeekly.map((mins)=> isUnitHr ? Math.round(mins/60) : mins),
+            data: graphData,
             borderRadius: 5,
             datalabels: {
                 display: true
@@ -82,9 +100,9 @@ const createData = (totalScreenTimeWeekly, weekDayNum, isUnitHr)=>{
     }
 } 
 
-const Graph = ({totalScreenTimeWeekly, weekDayNum, day, setDay})=>{
+const Graph = ({weeklyData, dataType, weekDayNum, day, setDay})=>{
     const graphRef = useRef()
-    const isUnitHr = Math.max(...totalScreenTimeWeekly) > 100
+    const isUnitHr = Math.max(...weeklyData) > 100
 
     const handleOnclick = (event)=>{
         const elem = getElementAtEvent(graphRef.current, event)
@@ -96,8 +114,8 @@ const Graph = ({totalScreenTimeWeekly, weekDayNum, day, setDay})=>{
     <div className="screen-time-graph-cnt">
         <div className="screen-time-graph-inner-cnt">
             <Bar 
-                data={createData(totalScreenTimeWeekly, weekDayNum, isUnitHr)}
-                options={createOptions(isUnitHr)}
+                data={createData(weeklyData, weekDayNum, isUnitHr, dataType)}
+                options={createOptions(dataType, isUnitHr)}
                 onClick={(event)=>handleOnclick(event)}
                 ref={graphRef}
             />

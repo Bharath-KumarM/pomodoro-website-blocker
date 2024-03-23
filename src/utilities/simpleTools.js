@@ -62,9 +62,16 @@ export function isValidUrl(urlString){
 }
 
 export function getHost(url){
+    if (!isValidUrl(url)){
+        return ''
+    }
     let tempUrl = url
     if (!url.startsWith('http')){
         tempUrl = 'https://' + url
     }
     return (new URL(tempUrl)).hostname
+}
+
+export function getFavIconUrlFromGoogleApi(hostname){
+    return `http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`
 }

@@ -4,12 +4,13 @@ import AddRestrictedSites from './AddRestrictedSites';
 import { ImCheckboxUnchecked as UncheckedIcon, ImCheckboxChecked as CheckedIcon } from "react-icons/im"
 import { TbBarrierBlock } from "react-icons/tb"
 import { BiMemoryCard as SaveIcon } from "react-icons/bi"
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { getCurrTab, getRecentHostnames } from '../../../utilities/chrome-tools/chromeApiTools';
-import { getHost, isValidUrl } from '../../../utilities/simpleTools';
+import { getFavIconUrlFromGoogleApi, getHost, isValidUrl } from '../../../utilities/simpleTools';
 import Loader from '../../../utilities/Loader';
 import { getRestrictedSites as  getLocalRestrictedSites, handleRestrictUnRestrictSite} from '../../../localStorage/localSiteTagging';
 import { getLocalSettingsData } from '../../../localStorage/localSettingsData';
+import { LocalFavIconUrlDataContext } from '../../context';
 
 
 
@@ -23,6 +24,11 @@ const RestrictedSites = ({setToastData})=>{
         restrictedSites: false,
         recentSites: false
     })
+
+    const localFavIconUrlData = useContext(LocalFavIconUrlDataContext)
+    const getFavIcon = (hostname)=>{
+        return localFavIconUrlData[hostname] || getFavIconUrlFromGoogleApi(hostname)
+    }
 
     const getRestrictedSites = async ()=>{
         const tempRestrictedSites = await getLocalRestrictedSites()
@@ -74,7 +80,6 @@ const RestrictedSites = ({setToastData})=>{
                 <div className="restricted-site-table">
                     {
                         restrictedSites.map((tempHostname, index)=>{
-                            const tempFavIconUrl = null
                             return (
                             <div key={tempHostname} className="item flex-center">
                                 <RestrictedCheckBox 
@@ -84,7 +89,7 @@ const RestrictedSites = ({setToastData})=>{
                                     setToastData={setToastData}
                                 />
                                 <div className='site-icon'>
-                                    <img src={tempFavIconUrl ? tempFavIconUrl : `http://www.google.com/s2/favicons?domain=${tempHostname}&sz=${128}`} alt="icon" />
+                                    <img src={getFavIcon(tempHostname)} alt="icon" />
                                 </div>
                                 <div className="site"> {tempHostname} </div>
                             </div>
@@ -114,7 +119,7 @@ const RestrictedSites = ({setToastData})=>{
                                         setToastData={setToastData}
                                     />
                                     <div className='site-icon'>
-                                        <img src={`http://www.google.com/s2/favicons?domain=${tempHostname}&sz=${128}`} alt="icon" />
+                                        <img src={getFavIcon(tempHostname)} alt="icon" />
                                     </div>
                                     <div className="site"> {tempHostname} </div>
                                 </div>
@@ -137,6 +142,11 @@ export default RestrictedSites
 
 const AddCurrSiteToRestrictedSite = ({restrictedSites, getRestrictedSites, setToastData})=>{
     const [currSite, setCurrSite] = useState(null)
+
+    const localFavIconUrlData = useContext(LocalFavIconUrlDataContext)
+    const getFavIcon = (hostname)=>{
+        return localFavIconUrlData[hostname] || getFavIconUrlFromGoogleApi(hostname)
+    }
 
     useEffect(()=>{
         getCurrTab().then(async (currTab)=>{
@@ -173,7 +183,7 @@ const AddCurrSiteToRestrictedSite = ({restrictedSites, getRestrictedSites, setTo
     return (
         <div className='add-curr-site-to-restrited-site'>
             <div className="icon-cnt">
-                <img src={`http://www.google.com/s2/favicons?domain=${currSite}&sz=${128}`} alt="icon" />
+                <img src={getFavIcon(currSite)} alt="icon" />
             </div>
             <div className="site-cnt">
                 <div className="site" 

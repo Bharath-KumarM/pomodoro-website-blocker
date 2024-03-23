@@ -10,22 +10,29 @@ import { getCurrTab } from '../../utilities/chrome-tools/chromeApiTools'
  import { checkLocalBlockedScreenDataByTabId } from '../../localStorage/localBlockedScreenData';
  import { checkLocalRestrictedScreenDataByTabId } from '../../localStorage/localRestrictedScreenData';
  import { checkLocalTimeLimitScreenDataByTabId } from '../../localStorage/localTimeLimitScreenData';
-import { BodyClickContext } from '../context'
+import { BodyClickContext, LocalFavIconUrlDataContext } from '../context'
+import { getLocalFavIconUrlData } from '../../localStorage/localFavIconUrlData'
 
 
 function App() {
-
-  const [navSelect, setNavSelect] = useState('') // '' || 'block-site' || 'focus-mode' || 'screen-time' || 'setting'
+  // const [navSelect, setNavSelect] = useState('dashboard') // '' || 'block-site' || 'focus-mode' || 'screen-time' || 'setting'
+  const [navSelect, setNavSelect] = useState('screen-time') // '' || 'block-site' || 'focus-mode' || 'screen-time' || 'setting'
   const [bodyClickCount, setBodyClickCount] = useState(0)
 
+  const [localFavIconUrlData, setLocalFavIconUrlData] = useState(null)
+
   useEffect(()=>{
+    const getData = async ()=>{
+
+      setLocalFavIconUrlData(await getLocalFavIconUrlData())
+    }
     const getNavSelect = async ()=>{
-      
+
       // todo: check this query behaviour
       const {id: tabId} = await getCurrTab()
 
       if (!tabId){
-        setNavSelect('block-site')
+        setNavSelect('dashboard')
       }
       
       // *Blocked Site
@@ -50,8 +57,9 @@ function App() {
       // * Default Nav select
       setNavSelect('block-site')
     }
+
+    getData()
     if (navSelect === ''){
-      setNavSelect('screen-time')
       // getNavSelect()
     }
 
@@ -60,21 +68,26 @@ function App() {
 
   return (
     <BodyClickContext.Provider value={bodyClickCount}>
-      <div className={style.App}
-        onClick={()=>{
-          setBodyClickCount(b=>b+1)
-        }}
-      > 
-        <Header 
-          setNavSelect={setNavSelect}
-        />
-        <Content 
-          navSelect={navSelect}
-          setNavSelect={setNavSelect}
-        />
-        <Footer />
-      </div>
-    </BodyClickContext.Provider>
+    {
+        localFavIconUrlData ?
+        <LocalFavIconUrlDataContext.Provider value={localFavIconUrlData}>
+          <div className={style.App}
+            onClick={()=>{
+              setBodyClickCount(b=>b+1)
+            }}
+          > 
+            <Header 
+              setNavSelect={setNavSelect}
+            />
+            <Content 
+              navSelect={navSelect}
+              setNavSelect={setNavSelect}
+            />
+            <Footer />
+          </div>
+        </LocalFavIconUrlDataContext.Provider> : <div>Loading...</div>
+      }
+    </BodyClickContext.Provider> 
   )
 }
 

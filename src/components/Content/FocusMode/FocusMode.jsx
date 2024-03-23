@@ -110,7 +110,7 @@ const FocusMode = ({setNavSelect})=>{
         <>
             <NavBar 
                 setNavSelect={setNavSelect}
-                navDetailsArr={[['Focus Mode', 'focus-mode']]}
+                navDetailsArr={[['Focus Mode', ()=>setNavSelect('focus-mode')]]}
             />
             <div className="focus-mode-outer-cnt">
                 <div className="focus-mode-cnt">

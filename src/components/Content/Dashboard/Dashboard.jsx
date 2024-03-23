@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 
 import {ImCheckboxUnchecked as BlockIcon} from "react-icons/im"
 import {SlFire as FireIcon} from "react-icons/sl"
@@ -17,6 +17,8 @@ import { getLocalTimeLimitScreenDataByTabId } from '../../../localStorage/localT
 import { checkSiteTagging, getScreenTimeLimit, handleBlockUnblockSite } from "../../../localStorage/localSiteTagging"
 import { getLocalSettingsData } from "../../../localStorage/localSettingsData"
 import PopupScreenTime from "./PopupScreenTime"
+import { LocalFavIconUrlDataContext } from "../../context"
+import { getFavIconUrlFromGoogleApi } from "../../../utilities/simpleTools"
 
 // In popup screen, it creates the UI to block current website.
 const Dashboard = ()=>{
@@ -168,6 +170,10 @@ const Dashboard = ()=>{
 
 function SiteDetails({isBlocked, currTab, handleBlockBtnClick, setPopupScreenData}){
     const [count , setCount] = useState(30) // wait time to unblock site
+    const localFavIconUrlData = useContext(LocalFavIconUrlDataContext)
+    const getFavIcon = (hostname)=>{
+        return localFavIconUrlData[hostname] || getFavIconUrlFromGoogleApi(hostname)
+    }
 
     useEffect(()=>{
         if (isBlocked && count > 0){
@@ -185,7 +191,7 @@ function SiteDetails({isBlocked, currTab, handleBlockBtnClick, setPopupScreenDat
             >
                 <div className="icon">
                     <img 
-                        src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} 
+                        src={getFavIcon(hostname)} 
                         alt="icon" 
                         className={isBlocked ? 'block' : null}
                     />

@@ -3,15 +3,21 @@ import './AddRestrictedSites.scss'
 // Icons
 import { FiPlus } from "react-icons/fi"
 import { MdOutlineSubdirectoryArrowLeft as ArrowIcon } from "react-icons/md"
-import { useEffect, useRef, useState } from 'react'
-import { getHost, isValidUrl } from '../../../utilities/simpleTools'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { getFavIconUrlFromGoogleApi, getHost, isValidUrl } from '../../../utilities/simpleTools'
 
 import { handleRestrictUnRestrictSite } from '../../../localStorage/localSiteTagging'
+import { LocalFavIconUrlDataContext } from '../../context'
 
 const AddRestrictedSites = ({setToastData, getRestrictedSites, recentSites})=>{
     const [userInput, setUserInput] = useState('')
     const [optionSelectIndex, setOptionSelectIndex] = useState(0)
     const [validRecentSites, setValidRecentSites] = useState([])
+
+    const localFavIconUrlData = useContext(LocalFavIconUrlDataContext)
+    const getFavIcon = (hostname)=>{
+        return localFavIconUrlData[hostname] || getFavIconUrlFromGoogleApi(hostname)
+    }
 
     const optionCntRef = useRef(null)
     const inputRef = useRef(null)
@@ -66,7 +72,7 @@ const AddRestrictedSites = ({setToastData, getRestrictedSites, recentSites})=>{
                         <div className='cell site-icon flex-center'>
                             {
                                 isUserInputValidUrl ?
-                                <img src={`http://www.google.com/s2/favicons?domain=${getHost(userInput)}&sz=${128}`} alt="icon" />
+                                <img src={getFavIcon(getHost(userInput))} alt="icon" />
                                 : null
                             }
                         </div>
@@ -152,7 +158,7 @@ const AddRestrictedSites = ({setToastData, getRestrictedSites, recentSites})=>{
                                 >
                                     <img 
                                         className='option-icon'
-                                        src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} 
+                                        src={getFavIcon(hostname)} 
                                         alt="icon" 
                                     />
                                     <span

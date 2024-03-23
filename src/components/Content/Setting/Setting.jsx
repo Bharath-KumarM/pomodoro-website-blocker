@@ -2,18 +2,18 @@ import { useContext, useEffect, useRef, useState } from "react"
 import styles from "./Setting.module.scss"
 import { getLocalSettingsData, setLocalSettingsData, updateLocalSettingsData } from "../../../localStorage/localSettingsData"
 import { PopupFull, PopupToast } from "../../../utilities/PopupScreens"
-import { getHost, isValidUrl } from "../../../utilities/simpleTools"
+import { getFavIconUrlFromGoogleApi, getHost, isValidUrl } from "../../../utilities/simpleTools"
 
 import { BsThreeDotsVertical } from "react-icons/bs"
 import { MdClose } from "react-icons/md"
 import { GrCircleInformation } from "react-icons/gr"
 import { getRecentHostnames } from "../../../utilities/chrome-tools/chromeApiTools"
-import { FaHourglass, FaRegHourglass } from "react-icons/fa"
-import { BodyClickContext } from '../../context'
+
+import { BodyClickContext, LocalFavIconUrlDataContext } from '../../context'
 import { checkHostnameArrReference, delHostnameReference } from "../../../utilities/localStorageRelatedUtilities"
 import { getBlockedSites, getRestrictedSites, getTimelimitedSites, handleBlockUnblockSite, handleRestrictUnRestrictSite, updateLocalSiteTagging } from "../../../localStorage/localSiteTagging"
-import TimeLimitInput from "../ScreenTime/TimeLimitInput"
-import SiteTimeLimitScreen from "../ScreenTime/SitesTimeLimitScreen"
+
+import SiteTimeLimitScreen from "../ScreenTime/RecentSitesTimeLimitScreen"
 import NavBar from "../NavBar/NavBar"
 
 
@@ -334,6 +334,11 @@ function AddOption({optionData, popupScreenData, setPopupScreenData, setToastDat
 
     const [addedItems, setAddedItems] = useState([])
     const bodyClickCount = useContext(BodyClickContext)
+    const localFavIconUrlData = useContext(LocalFavIconUrlDataContext)
+    const getFavIcon = (hostname)=>{
+        return localFavIconUrlData[hostname] || getFavIconUrlFromGoogleApi(hostname)
+    }
+
     const [optionActiveArr, setOptionActive] = useState(addedItems.map(s=>false))
 
     useEffect(()=>{
@@ -380,7 +385,7 @@ function AddOption({optionData, popupScreenData, setPopupScreenData, setToastDat
                 return (
                     <li key={item}> 
                         <div className={styles.HostIconCnt}>
-                            <img src={`http://www.google.com/s2/favicons?domain=${item}&sz=${128}`} alt="icon" />
+                            <img src={getFavIcon(item)} alt="icon" />
                         </div>
                         <div className={styles.Hostsite}>
                             {item}
@@ -519,6 +524,11 @@ const CheckListPopup = ({
     const [checkedSites, setCheckedSites] = useState([])
     const [hostnameReferenceArr, setHostnameReferenceArr] = useState([])
 
+    const localFavIconUrlData = useContext(LocalFavIconUrlDataContext)
+    const getFavIcon = (hostname)=>{
+        return localFavIconUrlData[hostname] || getFavIconUrlFromGoogleApi(hostname)
+    }
+
     
     useEffect(()=>{
         getData()
@@ -626,7 +636,7 @@ const CheckListPopup = ({
                                 />
                             </div>
                             <img className={styles.SiteItemIcon}
-                                src={`http://www.google.com/s2/favicons?domain=${serachTextToValidHostName}&sz=${128}`} 
+                                src={getFavIcon(serachTextToValidHostName)} 
                                 alt="icon" 
                             />
                             <span className={styles.HostName}>
@@ -660,7 +670,7 @@ const CheckListPopup = ({
                                         />
                                     </div>
                                     <img className={styles.SiteItemIcon}
-                                        src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} 
+                                        src={getFavIcon(hostname)} 
                                         alt="icon" 
                                     />
                                     <div className={styles.TextCnt}>
@@ -740,7 +750,7 @@ const CheckListPopup = ({
                                         />
                                     </div>
                                     <img className={styles.SiteItemIcon}
-                                        src={`http://www.google.com/s2/favicons?domain=${hostname}&sz=${128}`} 
+                                        src={getFavIcon(hostname)} 
                                         alt="icon" 
                                     />
                                     <span className={styles.HostName}>
