@@ -26,7 +26,8 @@ if (isBuildTest){
   manifest["content_security_policy"] = {
     // "extension_pages": "script-src 'self' 'wasm-unsafe-eval' 'inline-speculation-rules' http://localhost:* http://127.0.0.1:*"
     // "extension_pages": "script-src 'self'; object-src 'self'; script-src-elem 'self' 'unsafe-inline' http://localhost:8097;"
-    "extension_pages": "script-src 'self'; object-src 'self'; script-src-elem 'self' 'unsafe-inline' http://localhost:8097;"
+    // "extension_pages": "script-src 'self'; object-src 'self'; script-src-elem 'self' 'unsafe-inline' http://localhost:5173;"
+    "extension_pages": "script-src 'self'; object-src 'self'; script-src-elem 'self' 'unsafe-inline' http://localhost:5000;"
   }
 
 }
@@ -34,6 +35,9 @@ if (isBuildTest){
 
 export default defineConfig({
   resolve: configResolve,
+  server: {
+    port: 5000,
+  },
   build: {
     rollupOptions: {
       input: {
@@ -45,7 +49,6 @@ export default defineConfig({
       },
     },
     ...testBuild,
-    watch: {}
   },
   plugins: [
     react(),
