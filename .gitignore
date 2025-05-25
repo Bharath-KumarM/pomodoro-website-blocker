@@ -24,7 +24,5 @@ dist-ssr
 *.sw?
 
 # Rough work and notes
-note.md
-rough.js
-daily-notes.md
+rough_work/
 build_backup
