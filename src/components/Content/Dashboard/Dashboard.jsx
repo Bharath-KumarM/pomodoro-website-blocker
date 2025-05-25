@@ -147,7 +147,10 @@ const Dashboard = ()=>{
                         /> : null
                     }
                 </PopupFull> 
-            }
+            }  
+            <LoadingImg 
+                favIconUrl={currTab.favIconUrl}
+            />
             <div className='block-site-cnt'>
                 {
                     invalidSiteMessage ? 
@@ -245,6 +248,28 @@ function InvalidSiteDetails({message}){
         </div>
     </div>  
     // This site cannot be blocked 
+    )
+}
+
+const LoadingImg = ({favIconUrl}) => {
+    const [show, setShow] = useState(true)
+    if (!favIconUrl || !show){
+        return null
+    }
+
+    return (
+    <div class='loading-bg flex-center'
+        onAnimationEnd={()=>{
+            setShow(false)
+        }}
+    >
+        <div className="loading-cnt">
+            <img className="loading-img"
+                src={favIconUrl} 
+                alt="tab_fav_icon" 
+            />
+        </div>
+    </div>
     )
 }
 export default Dashboard
