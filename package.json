@@ -31,7 +31,7 @@
     "@vitejs/plugin-react": "^3.0.0",
     "react-devtools": "^4.28.0",
     "sass": "^1.57.1",
-    "vite": "^4.3.1"
+    "vite": "^4.2.2"
   },
   "main": "vite.config.js",
   "author": "",
