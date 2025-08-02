@@ -16,7 +16,7 @@ import { getLocalFavIconUrlData } from '../../localStorage/localFavIconUrlData'
 
 function App() {
   // const [navSelect, setNavSelect] = useState('dashboard') // '' || 'block-site' || 'focus-mode' || 'screen-time' || 'setting'
-  const [navSelect, setNavSelect] = useState('screen-time') // '' || 'block-site' || 'focus-mode' || 'screen-time' || 'setting'
+  const [navSelect, setNavSelect] = useState('') // '' || 'block-site' || 'focus-mode' || 'screen-time' || 'setting'
   const [bodyClickCount, setBodyClickCount] = useState(0)
 
   const [localFavIconUrlData, setLocalFavIconUrlData] = useState(null)
@@ -60,7 +60,7 @@ function App() {
 
     getData()
     if (navSelect === ''){
-      // getNavSelect()
+      getNavSelect()
     }
 
   }, [])
