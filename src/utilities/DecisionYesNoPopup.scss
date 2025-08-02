@@ -1,4 +1,4 @@
-@import './variables';
+@use './variables' as variables;
 
 .descision-yes-no-popup-cnt{
     position: absolute;
