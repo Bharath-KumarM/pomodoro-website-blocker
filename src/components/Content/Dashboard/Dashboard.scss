@@ -8,13 +8,13 @@
     position: absolute;
     z-index: 2;
 
-    animation: fade-out 0.7s ease ;
+    animation: fade-out 1.75s ease-in-out;
 
     opacity: 0;
 
     @keyframes fade-out {
-        0% {opacity: 1;} 
-        50% {opacity: 0.70;} 
+        0% {opacity: 100%;}
+        75% {opacity: 0%;} 
     }
 
     .loading-cnt{
@@ -23,12 +23,12 @@
             height: 50px;
         }
 
-        transform: scale(1.5);
+        transform: scale(0);
         
-        animation: loading 0.7s ease ;
+        animation: loading 1s ease ;
 
         @keyframes loading {
-            50% {transform: scale(0.5);}  
+            50% {transform: scale(1);}  
         }
 
     }
