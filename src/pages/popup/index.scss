@@ -11,7 +11,7 @@
 *, *::before, *::after {
   box-sizing: border-box;
   
-  color: $font-color1;
+  color: variables.$font-color1;
   font-family: 'Rubik', sans-serif;
 
   margin: 0;
@@ -31,18 +31,20 @@ body {
   display: flex;
   justify-content: center;
 
-  background-color: $bg-color1;
+  background-color: variables.$bg-color1;
 }
-
+h3{
+  font-size: 14px;
+}
 button{
   border: 0;
-  background-color: $bg-color1;
-  color: $font-color1;
+  background-color: variables.$bg-color1;
+  color: variables.$font-color1;
 }
 
 a{
   text-decoration: none;
-  color: $font-color1;
+  color: variables.$font-color1;
 }
 
 ul{
@@ -62,19 +64,19 @@ input[type=number]::-webkit-outer-spin-button {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: $bg-color1; 
+  background: variables.$bg-color1; 
   background: transparent; 
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background: $font-color2; 
+  background: variables.$font-color2; 
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: $font-color1; 
+  background: variables.$font-color1; 
 }
 
 .flex-center{

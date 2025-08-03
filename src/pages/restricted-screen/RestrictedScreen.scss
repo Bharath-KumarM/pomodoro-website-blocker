@@ -13,9 +13,9 @@
     height: 100%;
     // gap: 50px;
 
-    background-color: $bg-color2;
+    background-color: variables.$bg-color2;
 
-    color: $font-color0;
+    color: variables.$font-color0;
 
     .heading{
         
@@ -91,12 +91,12 @@
                 }
     
                 ul li ul li {
-                    background-color: $bg-color3;
+                    background-color: variables.$bg-color3;
                     padding: 15px 5px;
-                    border-bottom: solid 1px $bg-color3;
+                    border-bottom: solid 1px variables.$bg-color3;
                     
                     &:hover{
-                        background-color: $bg-color4;
+                        background-color: variables.$bg-color4;
     
                     }
                 }
@@ -105,7 +105,8 @@
                 ul ul {
                     display: none;
                     position: absolute; 
-                    top: 35px; /* the height of the main nav */
+                    // top: 35px; /* the height of the main nav */
+                    top: 0px; /* the height of the main nav */
                     left: 0;
     
                 }
@@ -125,9 +126,9 @@
             }
     
             .btn{
-                color: $font-color0;
+                color: variables.$font-color0;
                 padding: 10px;
-                background-color: $bg-color4;
+                background-color: variables.$bg-color4;
                 border: 0;
     
                 border-radius: 10px;
@@ -136,34 +137,34 @@
                 width: 200px;
         
                 &:hover{
-                    background-color: $bg-color3;
+                    background-color: variables.$bg-color3;
                 }
                 
                 &.close-tab{
-                    background-color: $accent-color1;
-                    color: $font-color4;
+                    background-color: variables.$accent-color1;
+                    color: variables.$font-color4;
                     
                     &:hover{
-                        background-color: $accent-color2;
+                        background-color: variables.$accent-color2;
                     }
     
                 }
     
                 &.active{
-                    background-color: $bg-color2;
-                    border: solid 2px $icon-red1;
-                    color: $icon-red2;
+                    background-color: variables.$bg-color2;
+                    border: solid 2px variables.$icon-red1;
+                    color: variables.$icon-red2;
                     
                     &:hover{
-                        background-color: $bg-color3;
+                        background-color: variables.$bg-color3;
                     }
                 }
     
                 &.not-active{
                     width: 250px;
-                    background-color: $bg-color3;
-                    border: solid 2px $font-color2;
-                    color: $font-color3;
+                    background-color: variables.$bg-color3;
+                    border: solid 2px variables.$font-color2;
+                    color: variables.$font-color3;
                     cursor: not-allowed;
     
                 }

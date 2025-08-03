@@ -15,7 +15,7 @@
         align-items: center;
         width: min(90%, 450px);
         height: 75%;
-        background-color: $bg-color3;
+        background-color: variables.$bg-color3;
     
         border-radius: 10px;
     
@@ -30,19 +30,19 @@
     
             margin: 5px;
             padding: 5px;
-            background-color: $bg-color4;
+            background-color: variables.$bg-color4;
     
             z-index: 2;
     
             &:hover{
-                background-color: $bg-color2;
+                background-color: variables.$bg-color2;
             }
     
             svg{
                 width: 20px;
                 height: 20px;
                 path{
-                    color: $icon-red2;
+                    color: variables.$icon-red2;
                 }
             }
         }
@@ -79,11 +79,11 @@
                         width: 100%;
                         height: 35px;
                         font-size: 16px;
-                        color: $font-color1;
+                        color: variables.$font-color1;
                         padding: 5px;
                         border: 0;
     
-                        background-color: $bg-color4;
+                        background-color: variables.$bg-color4;
         
                         &:focus{
                             outline: none;
@@ -106,7 +106,7 @@
                     padding: 10px;
                     margin-bottom: 10px;
                     
-                    background-color: $bg-color2;
+                    background-color: variables.$bg-color2;
                     
                     display: flex;
                     justify-content: flex-start;
@@ -119,14 +119,14 @@
                             width: 20px;
                             height: 20px;
                             path{
-                                stroke: $font-color2;
+                                stroke: variables.$font-color2;
                             }
     
                         }
                     }
                     .Header{
                         font-size: 14px;
-                        color: $font-color2;
+                        color: variables.$font-color2;
     
                         padding-bottom: 5px;
                     }
@@ -144,7 +144,7 @@
                     min-width: 0;
     
                     height: 60px;
-                    color: $font-color2;
+                    color: variables.$font-color2;
                 }
                 .SiteItem{
                     width: 100%;
@@ -176,7 +176,7 @@
                                 width: 20px;
                                 height: 20px;
 
-                                accent-color: $accent-color0;
+                                accent-color: variables.$accent-color0;
                             }
                         }
     
@@ -201,7 +201,7 @@
                             }
                             .RemoveDesc{
                                 font-size: 12px;
-                                color: $icon-red2;
+                                color: variables.$icon-red2;
 
                                 &:hover{
                                     text-decoration: underline;
@@ -211,7 +211,7 @@
                             }
                             .RemovedDesc{
                                 font-size: 12px;
-                                color: $font-color2;
+                                color: variables.$font-color2;
 
                                 &:hover{
                                     text-decoration: underline;
@@ -222,7 +222,7 @@
     
                     }
                     .icon-btn{
-                            border-left: solid 2px $font-color1;
+                            border-left: solid 2px variables.$font-color1;
                             display: flex;
                             justify-content: center;
                             align-items: center;
@@ -231,7 +231,7 @@
                             height: 40px;
     
                             &:hover{
-                                background-color: $bg-color4;
+                                background-color: variables.$bg-color4;
                             }
                             svg{
                                 width: 15px;
@@ -289,7 +289,7 @@
         
         
         .OptionHeading{
-            color: $font-color1;
+            color: variables.$font-color1;
 
             margin: 10px 0;
             
@@ -305,12 +305,12 @@
     
             border-radius: 5px;
 
-            background-color: $bg-color1;
+            background-color: variables.$bg-color1;
             padding: 5px;
             gap: 10px;
 
             .ToggleOptionCnt{
-                border-bottom: solid 1px $bg-color4;
+                border-bottom: solid 1px variables.$bg-color4;
 
                 display: flex;
                 justify-content: flex-start;
@@ -329,13 +329,13 @@
                     gap: 10px;
 
                     .OptionSubHeading{
-                        color: $font-color1;
+                        color: variables.$font-color1;
                         font-size: 14px;
                         
                     }
                     .OptionDescText{
                         font-size: 13px;
-                        color: $font-color2;
+                        color: variables.$font-color2;
         
                     }
                 }
@@ -351,13 +351,13 @@
                     .Bar{
                             width: 30px;
                             height: 13px;
-                            background-color: $bg-color4;
+                            background-color: variables.$bg-color4;
                             
                             border-radius: 10px;
                             transition: background-color 0.3s ease-in-out;
                             
                             &.Active{
-                                background-color: $bg-color7;
+                                background-color: variables.$bg-color7;
                             }
 
                         .Knob{
@@ -365,13 +365,13 @@
                             height: 20px;
                             border-radius: 100%;
 
-                            background-color: $accent-color2;
+                            background-color: variables.$accent-color2;
 
                             transform: translate(-5px, -3px);
                             transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
 
                             &.Active{
-                                background-color: $accent-color0;
+                                background-color: variables.$accent-color0;
                                 transform: translate(15px, -3px);
                             }
                         }
@@ -381,7 +381,7 @@
     
             }
             .AddOptionCnt{
-                border-bottom: solid 1px $bg-color4;
+                border-bottom: solid 1px variables.$bg-color4;
 
                 display: flex;
                 flex-direction: column;
@@ -407,13 +407,13 @@
                         gap: 10px;
     
                         .OptionSubHeading{
-                            color: $font-color1;
+                            color: variables.$font-color1;
                             font-size: 14px;
                             
                         }
                         .OptionDescText{
                             font-size: 13px;
-                            color: $font-color2;
+                            color: variables.$font-color2;
             
                         }
                     }
@@ -433,17 +433,17 @@
                             justify-content: center;
                             align-items: center;
         
-                            background-color: $bg-color4;
+                            background-color: variables.$bg-color4;
         
                             border-radius: 5px;
                             border: 0;
     
                             font-weight: bold;
                             font-size: 13px;
-                            color: $accent-color0;
+                            color: variables.$accent-color0;
     
                             &:hover{
-                                background-color: $bg-color5;
+                                background-color: variables.$bg-color5;
                             }
                         }
     
@@ -519,7 +519,7 @@
                             border-radius: 100%;
 
                             &:hover{
-                                background-color: $bg-color5;
+                                background-color: variables.$bg-color5;
                             }
                         }
                         position: relative;
@@ -533,7 +533,7 @@
                             flex-direction: column;
                             z-index: 2;
 
-                            background-color: $bg-color2;
+                            background-color: variables.$bg-color2;
 
                             border-radius: 5px;
 
@@ -543,10 +543,10 @@
                                 font-size: 13px;
 
                                 &:hover{
-                                    background-color: $bg-color1;
+                                    background-color: variables.$bg-color1;
                                 }
 
-                                border: 1px solid $bg-color5;
+                                border: 1px solid variables.$bg-color5;
                             }
                             
                         }

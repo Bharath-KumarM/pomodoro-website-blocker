@@ -3,12 +3,12 @@
 
 .NavBarCnt{
     width: 100%;
-    position: sticky;
-    top: 0;
-    background-color: $bg-color2;
-    z-index: 2;
-
-    padding: 10px 5px;
+    // position: sticky;
+    // top: 0;
+    // z-index: 2;
+    
+    background-color: variables.$bg-color2;
+    padding: 10px 5px;  
     // margin: 0 0 10px 0;
     
     .NavBar{
@@ -30,7 +30,7 @@
     
     .Line{
         width: 95%;
-        border: 1px solid $bg-color5;
+        border: 1px solid variables.$bg-color5;
         align-self: center;
         margin: 5px 0 0 0;
     }

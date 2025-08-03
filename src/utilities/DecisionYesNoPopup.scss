@@ -4,7 +4,7 @@
     position: absolute;
     top: 200px;
     width: min(90%, 500px);
-    background-color: $bg-color2;
+    background-color: variables.$bg-color2;
     padding: 20px;
 
     display: flex;
@@ -28,19 +28,19 @@
         button.btn{
             width: 40%;
             padding: 10px;
-            background-color: $bg-color3;
+            background-color: variables.$bg-color3;
             border: 0;
             border-radius: 10px;
 
             &:hover{
-                background-color: $bg-color4;
+                background-color: variables.$bg-color4;
             }
 
             &.yes{
-                color: $accent-green-color1;
+                color: variables.$accent-green-color1;
             }
             &.no{
-                color: $font-red1;
+                color: variables.$font-red1;
             }
         }
     }

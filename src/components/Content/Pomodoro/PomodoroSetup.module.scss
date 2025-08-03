@@ -16,7 +16,7 @@
     align-items: center;
     justify-content: space-evenly;
     align-self: center;
-    background-color: $accent-bg-dark-color1;
+    background-color: variables.$accent-bg-dark-color1;
     border-radius: 3px;
 
     width: min(300px, 95%);
@@ -30,7 +30,7 @@
 
 .descText{
     font-size: 16px;
-    color: $accent-color1;
+    color: variables.$accent-color1;
     
     //Small Screen
     @media only screen and (max-width: 650px) {
@@ -51,7 +51,7 @@
     justify-content: space-between;
 
     padding: 25px 0;
-    border-bottom: solid $font-color2 2px;
+    border-bottom: solid variables.$font-color2 2px;
     
     @media only screen and (max-width: 650px) {
         padding: 15px 0;
@@ -109,7 +109,7 @@
 .inputUnit{
     width: 60%;
     font-size: 14px;
-    color: $font-color2;
+    color: variables.$font-color2;
     
     //Small Screen
     @media only screen and (max-width: 650px) {
@@ -118,9 +118,9 @@
 }
 
 button.btnStart{
-    background-color: $accent-bg-light-color1; 
-    color: $font-color1;
+    background-color: variables.$accent-bg-light-color1; 
+    color: variables.$font-color1;
     &:hover{
-        background-color: $accent-bg-dark-color1;
+        background-color: variables.$accent-bg-dark-color1;
     }
 }

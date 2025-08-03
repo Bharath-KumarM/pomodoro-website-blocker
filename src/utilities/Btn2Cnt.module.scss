@@ -34,8 +34,8 @@
 
 
 .btn{
-    background-color: $bg-color3;
-    color: $font-color1;
+    background-color: variables.$bg-color3;
+    color: variables.$font-color1;
     width: min(90%, 350px);
     margin-bottom: 10px;
     
@@ -55,7 +55,7 @@
     }
 
     &:hover{
-        background-color: $bg-color3;
-        border: solid 2px $bg-color4;
+        background-color: variables.$bg-color3;
+        border: solid 2px variables.$bg-color4;
     }
 }

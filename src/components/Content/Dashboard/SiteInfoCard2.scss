@@ -32,13 +32,13 @@
     }
     
     .flip-card-front {
-        background-color: $bg-color3;
+        background-color: variables.$bg-color3;
         padding: 10px;
         border-radius: 10px;
     }
     
     .flip-card-back {
-        background-color: $bg-color3;
+        background-color: variables.$bg-color3;
         padding: 10px;
         border-radius: 10px;
         transform: rotateY(180deg);
@@ -68,7 +68,7 @@
     }
     .site-info-line{
         width: 50%;
-        border: solid $bg-color4 1px;
+        border: solid variables.$bg-color4 1px;
     }
     .site-info-data{
         margin-top: 10px;

@@ -3,7 +3,7 @@
 .time-limit-input-popup-cnt{
     position: relative;
     width: min(80%, 450px);
-    background-color: $bg-color2;
+    background-color: variables.$bg-color2;
     padding: 25px;
 
     display: flex;
@@ -30,11 +30,11 @@
         border-radius: 5px;
         
         &:hover{
-            background-color: $bg-color3;
+            background-color: variables.$bg-color3;
 
             svg{
                 path{
-                    color: $bg-color-red1;
+                    color: variables.$bg-color-red1;
                 }
             }
         }
@@ -54,7 +54,7 @@
         
         font-size: 16px;
         
-        color: $font-color1;
+        color: variables.$font-color1;
     }
     .site-info{
         display: flex;
@@ -67,7 +67,7 @@
             height: 25px;
         }
         .hostname{
-            color: $font-color2;
+            color: variables.$font-color2;
             font-size: 16px;
         }
         margin-bottom: 20px;
@@ -77,7 +77,7 @@
         justify-content: center;
         align-items: center;
         padding: 5px;
-        border: solid $font-color2 2px;
+        border: solid variables.$font-color2 2px;
 
         border-radius: 5px;
 
@@ -91,12 +91,12 @@
             padding: 5px;
             
             option{
-                background-color: $bg-color3;
-                color: $font-color1;
+                background-color: variables.$bg-color3;
+                color: variables.$font-color1;
 
 
                 &:hover{
-                    color: $font-color4;  
+                    color: variables.$font-color4;  
                 }
             }
         }
@@ -117,18 +117,18 @@
     // .set-cnt{
     .set-input{
         width: 60%;
-        color: $font-color4;
+        color: variables.$font-color4;
         padding: 10px;
         font-size: 16px;
         font-weight: bold;
-        background-color: $bg-color4;
+        background-color: variables.$bg-color4;
 
         margin-bottom: 20px;
 
         &.active{
-            background-color: $accent-color2;
+            background-color: variables.$accent-color2;
             &:hover {
-                background-color: $accent-color1;
+                background-color: variables.$accent-color1;
             }
         }
 
@@ -142,8 +142,8 @@
 
         border-radius: 10px;
 
-        background-color: $accent-red-color1;
-        color: $bg-color-red1;
+        background-color: variables.$accent-red-color1;
+        color: variables.$bg-color-red1;
 
         text-decoration: underline;
         cursor: pointer;
@@ -154,7 +154,7 @@
     
     .cancel-cnt{
         font-size: 14px;
-        color: $font-color1;
+        color: variables.$font-color1;
         text-decoration: underline;
         cursor: pointer;
 

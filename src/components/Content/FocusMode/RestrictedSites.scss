@@ -11,17 +11,18 @@
     flex-direction: column;
     
     .sticky {
-        background-color: $bg-color2;
+        background-color: variables.$bg-color2;
         width: 100%;
         position: sticky;
-        top: 35px;
+        // top: 35px;
+        top: 0px;
         z-index: 1;
     }
     .heading{
         margin: 5px 0;
         // margin: 10px auto;
         width: 100%;
-        background-color: $bg-color2;
+        background-color: variables.$bg-color2;
         padding: 5px 0;
 
         display: flex;
@@ -44,11 +45,11 @@
         align-items: center;
 
         // padding: 10px;
-        background-color: $accent-bg-dark-color1;
+        background-color: variables.$accent-bg-dark-color1;
 
         > div{
             padding: 10px;
-            color: $font-color0;
+            color: variables.$font-color0;
         }
 
         .icon-cnt{
@@ -69,8 +70,8 @@
             overflow: hidden;
 
             .site{
-                color: $font-color0;
-                font-size: 14px;
+                color: variables.$font-color0;
+                font-size: 13px;
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 overflow: hidden;
@@ -78,7 +79,7 @@
 
             }
             .desc{
-                color: $font-color1;
+                color: variables.$font-color1;
                 font-size: 12px;
                 text-decoration: underline;
                 cursor: pointer;
@@ -92,14 +93,14 @@
     .no-restricted-sites-cnt{
         width: min(90%, 500px);
         height: 100px;
-        color: $font-color1;
+        color: variables.$font-color1;
 
     }
     .site-table-heading{
         margin: 5px 0;
         padding: 10px 0;
-        color: $accent-color1;
-        font-size: 16px;
+        color: variables.$accent-color1;
+        // font-size: 16px;
     }
     .restricted-site-table{     
         width: min(90%, 500px);
@@ -112,14 +113,14 @@
         .item{
             width: 100%;
             justify-content: flex-start;
-            border-bottom: 1px solid $font-color2;
+            border-bottom: 1px solid variables.$font-color4;
 
             div{
                 padding: 10px;
                 input[type="checkbox"] {
-                    width: 20px;
-                    height: 20px;
-                    accent-color: $accent-color1;
+                    width: 12px;
+                    height: 12px;
+                    accent-color: variables.$accent-color1;
                 }
                 img{
                     width: 25px;
@@ -127,8 +128,8 @@
                 }
             }
             .site{
-                color: $font-color0;
-                font-size: 14px;
+                color: variables.$font-color0;
+                font-size: 13px;
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 overflow: hidden;

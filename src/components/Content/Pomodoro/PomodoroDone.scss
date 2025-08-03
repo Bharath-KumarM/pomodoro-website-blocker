@@ -42,28 +42,28 @@
                 }
                 hr{
                     width: 50%;
-                    border-color: $font-color2;
+                    border-color: variables.$font-color2;
                     
                 }
             }
             .start-btn{
-                background-color: $accent-bg-light-color1;
+                background-color: variables.$accent-bg-light-color1;
                 height: 50px;
                 width: min(60% , 200px);
                 border: 0;
                 border-radius: 10px;
-                color: $font-color1;
+                color: variables.$font-color1;
                 font-size: 16px;
                 transition: background 250ms;
                 &:hover{
-                    background-color: $accent-bg-dark-color1;
+                    background-color: variables.$accent-bg-dark-color1;
                 }
         
             }
             .short-desc{
                 font-style: italic;
                 font-size: 14px;
-                color: $font-color2;
+                color: variables.$font-color2;
                 cursor: pointer;
             }
             .skip-btn{
@@ -85,7 +85,7 @@
                 font-size: 15px;
             }
             hr{
-                border-color: $font-color2;
+                border-color: variables.$font-color2;
                 width: 40%;
             }
 

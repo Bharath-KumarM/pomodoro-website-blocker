@@ -57,7 +57,7 @@
                 }
                 .unit{
                     font-size: 12px;
-                    color: $font-color2;
+                    color: variables.$font-color2;
                     word-spacing: 30px;
                     @media only screen and (max-width: 650px) {
                         word-spacing: 10px;
@@ -68,14 +68,14 @@
             .note{
                 font-size: 14px;
                 margin-top: 20px;
-                color: $font-color2;
+                color: variables.$font-color2;
             }
             .skip-break-btn{
                 margin-top: 20px;
                 text-decoration: underline;
                 font-style: italic;
                 font-size: 14px;
-                color: $font-color2;
+                color: variables.$font-color2;
                 cursor: pointer;
             }
         }
@@ -83,10 +83,10 @@
     }
 
     button.btn-resume{
-        background-color: $accent-bg-light-color1; 
-        color: $font-color0;
+        background-color: variables.$accent-bg-light-color1; 
+        color: variables.$font-color0;
         &:hover{
-            background-color: $accent-bg-dark-color1;
+            background-color: variables.$accent-bg-dark-color1;
         }
     }
     

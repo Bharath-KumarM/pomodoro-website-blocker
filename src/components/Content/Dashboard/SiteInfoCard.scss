@@ -12,21 +12,21 @@
         height: 75px;
 
         &.first{
-            border-bottom: solid $font-color3 1px;
-            border-right: solid $font-color3 1px;
+            border-bottom: solid variables.$font-color3 1px;
+            border-right: solid variables.$font-color3 1px;
         }
         &.second{
-            // border-bottom: solid $font-color3 1px;
-            border-left: solid $font-color3 1px;
+            // border-bottom: solid variables.$font-color3 1px;
+            border-left: solid variables.$font-color3 1px;
         }
         &.third{
-            border-top: solid $font-color3 1px;
-            // border-right: solid $font-color3 1px;
+            border-top: solid variables.$font-color3 1px;
+            // border-right: solid variables.$font-color3 1px;
 
         }
         &.fourth{
-            border-top: solid $font-color3 1px;
-            border-left: solid $font-color3 1px;
+            border-top: solid variables.$font-color3 1px;
+            border-left: solid variables.$font-color3 1px;
         }
 
         display: flex;
@@ -43,19 +43,19 @@
             height: 50%;
             font-size: 18px;
 
-            color: $font-color1;
+            color: variables.$font-color1;
 
         }
         .line{
             border: 0;
-            border-top: solid $font-color3 1px;
+            border-top: solid variables.$font-color3 1px;
             width: 100%;
         }
         .bar.title{
             height: 50%;
 
             font-size: 14px;
-            color: $font-color2;
+            color: variables.$font-color2;
 
         }
     }

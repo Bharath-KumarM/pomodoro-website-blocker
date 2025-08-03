@@ -35,24 +35,24 @@
                     width: 100%;
                     padding: 5px;
                     font-size: 16px;
-                    background-color: $accent-bg-light-color1;
+                    background-color: variables.$accent-bg-light-color1;
                     height: 35px;
                     border-radius: 5px;
                     border: 0;
                     transition: background-color 200ms ease-in;
-                    color: $font-color1;
+                    color: variables.$font-color1;
         
                     &:hover{
-                        background-color: $accent-bg-dark-color1;
+                        background-color: variables.$accent-bg-dark-color1;
                         
                     }
                     &.focus-break-active{
-                        background-color: $bg-color4;
+                        background-color: variables.$bg-color4;
                     }
                     
                     &.focused{
-                        background-color: $accent-bg-dark-color1;
-                        box-shadow: 0 0 15px -2px $accent-bg-bright-color2;
+                        background-color: variables.$accent-bg-dark-color1;
+                        box-shadow: 0 0 15px -2px variables.$accent-bg-bright-color2;
                     }
                 }
 
@@ -67,12 +67,12 @@
                         width: 20px;
                         height: 20px;
                         path{
-                            color: $font-color2;
+                            color: variables.$font-color2;
                         }
                     }
                 }
                 .desc{
-                    color: $font-color2;
+                    color: variables.$font-color2;
                     font-size: 14px;
                 }
             }
@@ -88,12 +88,12 @@
                 
                 width: 75%;
 
-                border-bottom: solid 1px $bg-color5;
-                border-top: solid 1px $bg-color5;
+                border-bottom: solid 1px variables.$bg-color5;
+                border-top: solid 1px variables.$bg-color5;
                 .resume-cnt{
-                    color: $accent-bg-bright-color2;
+                    color: variables.$accent-bg-bright-color2;
                     &:hover{
-                        color: $accent-bg-bright-color3;
+                        color: variables.$accent-bg-bright-color3;
                         text-decoration: underline;
                     }
                     font-size: 14px;
@@ -103,13 +103,13 @@
                     width: 60%;
                     border: none;
                     height: 1px;
-                    background-color: $bg-color4;
+                    background-color: variables.$bg-color4;
                 }
                 .wait-cnt{
 
-                    color: $accent-bg-bright-color2;
+                    color: variables.$accent-bg-bright-color2;
                     &:hover{
-                        color: $accent-bg-bright-color3;
+                        color: variables.$accent-bg-bright-color3;
                         text-decoration: underline;
                     }
                     font-size: 14px;
@@ -133,7 +133,7 @@
             position: relative; 
             .heading{
                 width: min(90%,600px);
-                background-color: $bg-color2;
+                background-color: variables.$bg-color2;
                 padding: 10px;
     
                 display: flex;
@@ -145,10 +145,11 @@
                     height: 20px;
                 }
                 &.sticky {
-                    background-color: $bg-color2;
+                    background-color: variables.$bg-color2;
                     width: 100%;
                     position: sticky;
-                    top: 35px;
+                    // top: 35px;
+                    top: 0px;
                     z-index: 1;
                   }
             }
@@ -160,9 +161,9 @@
                 width: min(90%,600px);
                 padding: 2px 5px;
     
-                background-color: $bg-color3;
+                background-color: variables.$bg-color3;
                 &:hover{
-                    background-color: $bg-color4;
+                    background-color: variables.$bg-color4;
     
                 }
                 border-radius: 5px;
@@ -186,10 +187,10 @@
                     width: min(90%,600px);
                     padding: 10px 5px;
                     border-radius: 10px;
-                    background-color: $bg-color3;
+                    background-color: variables.$bg-color3;
     
                     &:hover{
-                        background-color: $bg-color4;
+                        background-color: variables.$bg-color4;
                     }
                     &.active{
                         animation: glow2 1s ease-in-out infinite;
@@ -198,7 +199,7 @@
 
                 @keyframes glow2 {
                     50%{
-                        box-shadow: 0 0 10px -2px $bg-color7;
+                        box-shadow: 0 0 10px -2px variables.$bg-color7;
                     }
                 }
                 .schedule-item.compact{
@@ -219,7 +220,7 @@
                     .content{
                         flex: 0 0 70%;
                         padding-right: 10px;
-                        border-right: solid 2px $font-color2;
+                        border-right: solid 2px variables.$font-color2;
 
                         .content-heading-cnt{
                             display: flex;
@@ -230,7 +231,7 @@
 
                             h3.content-heading{
                                 font-size: 14px;
-                                color: $font-color1;
+                                color: variables.$font-color1;
         
                             }
 
@@ -241,7 +242,7 @@
                         
                                 // padding: 5px;
                         
-                                background-color: $accent-green-color1;
+                                background-color: variables.$accent-green-color1;
                                 border-radius: 100%;
                         
                                 width: 5px;
@@ -269,19 +270,19 @@
                     }
                     .delete-icon-cnt{
                         flex: 0 0 15%;
-                        // border-left: solid $font-color1 2px;
+                        // border-left: solid variables.$font-color1 2px;
     
                         svg{
                             width: 20px;
                             height: 20px;
                             path{
-                                color: $icon-red1;
+                                color: variables.$icon-red1;
                             }
                         }
     
                         &:hover{
                             path{
-                                color: $icon-red2;
+                                color: variables.$icon-red2;
                             }
                         }
                     }

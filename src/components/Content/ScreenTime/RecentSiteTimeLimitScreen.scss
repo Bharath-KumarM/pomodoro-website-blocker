@@ -6,7 +6,7 @@
     align-items: center;
     width: min(90%, 450px);
     height: 75%;
-    background-color: $bg-color3;
+    background-color: variables.$bg-color3;
 
     border-radius: 10px;
 
@@ -21,19 +21,19 @@
 
         margin: 5px;
         padding: 5px;
-        background-color: $bg-color4;
+        background-color: variables.$bg-color4;
 
         z-index: 2;
 
         &:hover{
-            background-color: $bg-color2;
+            background-color: variables.$bg-color2;
         }
 
         svg{
             width: 20px;
             height: 20px;
             path{
-                color: $icon-red2;
+                color: variables.$icon-red2;
             }
         }
     }
@@ -70,11 +70,11 @@
                     width: 100%;
                     height: 35px;
                     font-size: 16px;
-                    color: $font-color1;
+                    color: variables.$font-color1;
                     padding: 5px;
                     border: 0;
 
-                    background-color: $bg-color4;
+                    background-color: variables.$bg-color4;
     
                     &:focus{
                         outline: none;
@@ -94,14 +94,14 @@
             }
             li.no-recent-site{
                 padding: 20px 0;
-                color: $font-color2;
+                color: variables.$font-color2;
             }
             .header-cnt{
                 width: 100%;
                 padding: 10px;
                 margin-bottom: 10px;
                 
-                background-color: $bg-color2;
+                background-color: variables.$bg-color2;
                 
                 display: flex;
                 justify-content: flex-start;
@@ -114,14 +114,14 @@
                         width: 20px;
                         height: 20px;
                         path{
-                            stroke: $font-color2;
+                            stroke: variables.$font-color2;
                         }
 
                     }
                 }
                 .header{
                     font-size: 14px;
-                    color: $font-color2;
+                    color: variables.$font-color2;
 
                     padding-bottom: 5px;
                 }
@@ -158,7 +158,7 @@
                     }
                 }
                 .icon-btn{
-                        border-left: solid 2px $font-color1;
+                        border-left: solid 2px variables.$font-color1;
                         display: flex;
                         justify-content: center;
                         align-items: center;
@@ -167,7 +167,7 @@
                         height: 40px;
 
                         &:hover{
-                            background-color: $bg-color4;
+                            background-color: variables.$bg-color4;
                         }
                         svg{
                             width: 15px;

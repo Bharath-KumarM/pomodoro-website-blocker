@@ -18,10 +18,10 @@
         justify-content: flex-start;
 
         padding: 10px 0;
-        // border-bottom: 1px solid $font-color2;
+        // border-bottom: 1px solid variables.$font-color2;
         border-radius: 10px;
 
-        background-color: $bg-color3;
+        background-color: variables.$bg-color3;
 
         // .cell:nth-child(1){
         .plus-btn-cnt{   
@@ -33,21 +33,21 @@
             height: 35px;
 
 
-            background-color: $bg-color4;
+            background-color: variables.$bg-color4;
             cursor: not-allowed;
 
-            border: solid 1px $font-color1;
+            border: solid 1px variables.$font-color1;
             
             &:hover{
-                background-color: $bg-color4;
+                background-color: variables.$bg-color4;
             }
             &.active{
                 cursor: pointer;
-                background-color: $accent-color1;
+                background-color: variables.$accent-color1;
                 .inner-cnt{
                     svg{
                         line{
-                            color: $bg-color2;
+                            color: variables.$bg-color2;
                         }
                     }
                 }
@@ -77,10 +77,10 @@
                 width: 100%;
                 height: 40px;
         
-                background-color: $bg-color3;
-                color: $font-color0;
+                background-color: variables.$bg-color3;
+                color: variables.$font-color0;
         
-                border: solid 2px $font-color2;
+                border: solid 2px variables.$font-color2;
                 border-radius: 5px;
         
                 font-size: 14px;
@@ -95,7 +95,7 @@
 
         width: 100%;
 
-        background-color: $bg-color3;
+        background-color: variables.$bg-color3;
         margin-top: 5px;
         border-radius: 5px;
 
@@ -109,7 +109,7 @@
         .option-heading{
             font-size: 14px;
             padding: 10px;
-            color: $font-color2;
+            color: variables.$font-color2;
         }
         
         li.option{
@@ -125,20 +125,20 @@
             cursor: pointer;
 
             &:hover{
-                background-color: $bg-color4;
+                background-color: variables.$bg-color4;
                 &.ignored {
-                    background-color: $accent-red-color2;
+                    background-color: variables.$accent-red-color2;
                 }
             }
             
             &.select{
-                background-color: $bg-color4;
+                background-color: variables.$bg-color4;
                 &.ignored {
-                    background-color: $accent-red-color2;
+                    background-color: variables.$accent-red-color2;
                 }
             }
             &.ignored {
-                background-color: $accent-red-color1;
+                background-color: variables.$accent-red-color1;
             }
 
             .option-icon{
@@ -152,7 +152,7 @@
                 text-overflow: ellipsis;
 
                 &.ignored{
-                    color: $bg-color-red1;
+                    color: variables.$bg-color-red1;
                     text-decoration: line-through;
                 }
 
@@ -167,7 +167,7 @@
                     width: 15px;
                 }
 
-                border: solid 2px $bg-color5;
+                border: solid 2px variables.$bg-color5;
                 border-radius: 5px;
 
             }

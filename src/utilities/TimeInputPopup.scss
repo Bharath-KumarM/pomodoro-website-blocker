@@ -3,7 +3,7 @@
 .time-input-popup-cnt{
     position: relative;
     width: min(80%, 450px);
-    background-color: $bg-color2;
+    background-color: variables.$bg-color2;
     padding: 10px;
 
     display: flex;
@@ -31,11 +31,11 @@
         border-radius: 5px;
         
         &:hover{
-            background-color: $bg-color3;
+            background-color: variables.$bg-color3;
 
             svg{
                 path{
-                    color: $bg-color-red1;
+                    color: variables.$bg-color-red1;
                 }
             }
         }
@@ -52,14 +52,14 @@
         justify-self: flex-start;
         font-size: 16px;
 
-        color: $font-color1;
+        color: variables.$font-color1;
     }
     .time-input-cnt{
         display: flex;
         justify-content: center;
         align-items: center;
         padding: 5px;
-        border: solid $font-color2 2px;
+        border: solid variables.$font-color2 2px;
 
         border-radius: 5px;
 
@@ -73,12 +73,12 @@
             padding: 5px;
             
             option{
-                background-color: $bg-color3;
-                color: $font-color1;
+                background-color: variables.$bg-color3;
+                color: variables.$font-color1;
 
 
                 &:hover{
-                    color: $font-color4;  
+                    color: variables.$font-color4;  
                 }
             }
         }
@@ -110,15 +110,15 @@
 
             border-radius: 100%;
 
-            border: solid 2px $bg-color4;
+            border: solid 2px variables.$bg-color4;
             font-size: 12px;
             font-weight: bold;
 
             cursor: pointer;
 
             &.active{
-                background-color: $accent-bg-bright-color3;
-                color: $font-color4;
+                background-color: variables.$accent-bg-bright-color3;
+                color: variables.$font-color4;
             }
         }
     }
@@ -137,10 +137,10 @@
         p{
             font-size: 13px;
             font-style: italic;
-            color: $font-color2;
+            color: variables.$font-color2;
 
             &.user-input-valid{
-                color: $font-red1;
+                color: variables.$font-red1;
             }
         }
     }
@@ -148,18 +148,18 @@
     // .set-cnt{
     .set-input{
         width: 60%;
-        color: $font-color4;
+        color: variables.$font-color4;
         padding: 10px;
         font-size: 16px;
         font-weight: bold;
-        background-color: $bg-color4;
+        background-color: variables.$bg-color4;
 
         margin-bottom: 10px;
 
         &.active{
-            background-color: $accent-color2;
+            background-color: variables.$accent-color2;
             &:hover {
-                background-color: $accent-color1;
+                background-color: variables.$accent-color1;
             }
         }
 
@@ -169,7 +169,7 @@
 
     .cancel-cnt{
         font-size: 14px;
-        color: $font-color1;
+        color: variables.$font-color1;
         text-decoration: underline;
         cursor: pointer;
 

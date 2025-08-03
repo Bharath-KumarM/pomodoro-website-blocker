@@ -3,17 +3,19 @@
 
 .block-site-cnt{
     .block-site-list-cnt{
-
-        &.clicked{
-            height: auto;
-            min-height: 100%;
-        }
+        position: relative; 
         width: 100%;
 
         display: flex;
         // justify-content: center;
         align-items: center;
         flex-direction: column;
+
+
+        &.clicked{
+            height: auto;
+            min-height: 100%;
+        }
 
         .block-site-show-btn{
             display: flex;
@@ -22,7 +24,7 @@
     
             height: 100%;
             width: 100%;
-            background-color:  $bg-color3;
+            background-color:  variables.$bg-color3;
             border-radius: 0 0 5px 5px;
 
             .inner-cnt{
@@ -35,7 +37,7 @@
 
             &:hover{
                 .inner-cnt{
-                    background-color:  $bg-color5;
+                    background-color:  variables.$bg-color5;
                     animation: expand 1s ease-in;
              
                     @keyframes expand {
@@ -70,7 +72,7 @@
         }
         .hr-line{
             width: min(500px, 60%);
-            border-color: $font-color2;
+            border-color: variables.$font-color2;
 
         }
         .heading {
@@ -89,13 +91,13 @@
                 }
             }
         }
-        position: relative; 
 
         .sticky-ele {
             width: min(90%, 600px);
             position: sticky;
-            top: 35px;
-            background-color: $bg-color2;
+            // top: 35px;
+            top: 0px;
+            background-color: variables.$bg-color2;
             z-index: 1;
           }
         &:has(.block-site-list-table){
@@ -112,11 +114,11 @@
     
             border-radius: 10px;
             // padding: 10px;
-            background-color: $accent-bg-dark-color1;
+            background-color: variables.$accent-bg-dark-color1;
     
             > div{
                 padding: 10px;
-                color: $font-color0;
+                color: variables.$font-color0;
             }
     
             .icon-cnt{
@@ -132,11 +134,11 @@
                 align-items: flex-start;
                 justify-content: flex-start;
                 .site{
-                    color: $font-color0;
-                    font-size: 14px;
+                    color: variables.$font-color0;
+                    font-size: 13px;
                 }
                 .desc{
-                    color: $font-color1;
+                    color: variables.$font-color1;
                     font-size: 12px;
                     text-decoration: underline;
                     cursor: pointer;
@@ -161,10 +163,10 @@
                 justify-content: flex-start;
         
                 padding: 10px 0;
-                // border-bottom: 1px solid $font-color2;
+                // border-bottom: 1px solid variables.$font-color2;
                 border-radius: 10px;
         
-                background-color: $bg-color3;
+                background-color: variables.$bg-color3;
         
                 .cell:nth-child(1){
                     flex-grow: 0;     
@@ -172,17 +174,17 @@
                     flex-basis: 25px; 
                     height: 25px;
         
-                    background-color: $bg-color4;
+                    background-color: variables.$bg-color4;
         
                     &:hover{
-                        background-color: $bg-color4;
+                        background-color: variables.$bg-color4;
                     }
                     &.active{
-                        background-color: $accent-color1;
+                        background-color: variables.$accent-color1;
                         .inner-cnt{
                             svg{
                                 line{
-                                    color: $bg-color2;
+                                    color: variables.$bg-color2;
                                 }
                             }
                         }
@@ -212,10 +214,10 @@
                         width: 100%;
                         height: 30px;
                 
-                        background-color: $bg-color3;
-                        color: $font-color0;
+                        background-color: variables.$bg-color3;
+                        color: variables.$font-color0;
                 
-                        border: solid 2px $font-color2;
+                        border: solid 2px variables.$font-color2;
                         border-radius: 5px;
                 
                         font-size: 12px;
@@ -226,8 +228,8 @@
         }
         .site-table-heading{
             padding: 10px 0;
-            color: $accent-color1;
-            font-size: 16px;
+            color: variables.$accent-color1;
+            // font-size: 16px;
         }
         .restricted-site-table{     
             width: min(90%, 500px);
@@ -240,14 +242,14 @@
             .item{
                 width: 100%;
                 justify-content: flex-start;
-                border-bottom: 1px solid $font-color2;
+                border-bottom: 1px solid variables.$font-color4;
     
                 div{
                     padding: 10px;
                     input[type="checkbox"] {
-                        width: 20px;
-                        height: 20px;
-                        accent-color: $accent-color1;
+                        width: 12px;
+                        height: 12px;
+                        accent-color: variables.$accent-color1;
                     }
                     img{
                         width: 25px;
@@ -255,8 +257,8 @@
                     }
                 }
                 .site{
-                    color: $font-color0;
-                    font-size: 14px;
+                    color: variables.$font-color0;
+                    font-size: 13px;
                     text-overflow: ellipsis;
                     white-space: nowrap;
                     overflow: hidden;
@@ -269,7 +271,7 @@
     .no-restricted-sites-cnt{
         width: min(90%, 500px);
         height: 100px;
-        color: $font-color1;
+        color: variables.$font-color1;
 
     }
 }

@@ -13,7 +13,7 @@
         position: fixed;
         height: 100%;
         width: 100%;
-        background-color: $bg-transparant;
+        background-color: variables.$bg-transparant;
         top: 0;
         left: 0;
     }
@@ -26,8 +26,8 @@
         position: fixed;
         align-items: center;
 
-        background-color: $accent-color1;
-        color: $font-color5;
+        background-color: variables.$accent-color1;
+        color: variables.$font-color5;
         bottom: 125px;
 
         max-width: min(300px, 80%);
@@ -44,7 +44,7 @@
         cursor: default;
 
         &.red{
-            background-color: $font-red1;
+            background-color: variables.$font-red1;
         }
 
         &.green{

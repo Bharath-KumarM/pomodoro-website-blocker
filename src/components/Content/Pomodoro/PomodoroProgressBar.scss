@@ -23,12 +23,12 @@
 
             height: 5px;
             margin: 0 6px;
-            background-color: $bg-color1;
+            background-color: variables.$bg-color1;
 
             
             .progress{
                 border-radius: 2px;
-                background-color: $accent-color1;
+                background-color: variables.$accent-color1;
                 height: 100%;
                 animation: slide 500ms ease-in;
                 

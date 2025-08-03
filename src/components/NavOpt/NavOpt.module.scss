@@ -7,10 +7,10 @@
     justify-content: center;
     align-items: center;
 
-    padding: 5px 2px;
+    padding: 5px;
     gap: 10px;
 
-    margin: 5px;
+    margin: 2px;
 
     width: 100px;
 
@@ -20,37 +20,37 @@
     transition: background-color 175ms;
 
     &:hover{
-        background-color: $bg-color4;
+        background-color: variables.$bg-color4;
     }
     
     &.active{
-        border-color: $accent-bg-light-color1;
-        background-color: $bg-color3;
+        border-color: variables.$accent-bg-light-color1;
+        background-color: variables.$bg-color3;
 
         svg{
-            fill: $font-accent-color1;
+            fill: variables.$font-accent-color1;
         }
 
         @keyframes expand {
             0%{
-                background-color: $bg-color2;
+                background-color: variables.$bg-color2;
             }
             100%{
-                background-color: $bg-color3;
+                background-color: variables.$bg-color3;
             }
             
         }
     }
 
     svg{
-        width: 25px;
-        height: 25px;
+        width: 20px;
+        height: 20px;
     }
     
     @media only screen and (max-width: 650px) {        
         svg{
-            width: 20px;
-            height: 20px;
+            width: 15px;
+            height: 15px;
         }
     }
 }
