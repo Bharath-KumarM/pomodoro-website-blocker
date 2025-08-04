@@ -69,7 +69,6 @@ const EditTimeLimit = ({hostname, setScreenTimeLimit, setToastData, setClosePopu
                         <select 
                             id="time-hr" 
                             className='time-input hr'
-                            defaultValue={'00'}
                             value={hours}
                             onChange={(e)=> {
                                 setHours(e.target.value)
@@ -87,7 +86,6 @@ const EditTimeLimit = ({hostname, setScreenTimeLimit, setToastData, setClosePopu
                         <select 
                             id="time-min" 
                             className='time-input min'
-                            defaultValue={'30'}
                             value={minutes}
                             onChange={(e)=> {
                                 setMinutes(e.target.value)
