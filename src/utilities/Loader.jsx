@@ -5,8 +5,8 @@ const Loader = ()=>{
 
     return (
         <div className={style.LoaderCnt}>
-            Loading...
-            {/* <LoaderIcon /> */}
+            {/* Loading... */}
+            <LoaderIcon />
         </div>
     )
 }

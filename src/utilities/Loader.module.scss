@@ -11,12 +11,12 @@
     
     svg{
         animation: rotate360 1s infinite;
+        width: 100px;
+        height: 100px;
         
         @keyframes rotate360 {
             100% {transform: rotate(360deg);}
         }
 
-        width: 100px;
-        height: 100px;
     }
 }

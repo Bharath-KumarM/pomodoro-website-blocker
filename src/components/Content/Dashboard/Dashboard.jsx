@@ -19,6 +19,7 @@ import { getLocalSettingsData } from "../../../localStorage/localSettingsData"
 import PopupScreenTime from "./PopupScreenTime"
 import { LocalFavIconUrlDataContext } from "../../context"
 import { getFavIconUrlFromGoogleApi } from "../../../utilities/simpleTools"
+import Loader from "../../../utilities/Loader"
 
 // In popup screen, it creates the UI to block current website.
 const Dashboard = ()=>{
@@ -98,7 +99,7 @@ const Dashboard = ()=>{
     }, [])
 
     // *waits for current tab details
-    if (!currTab) return <div>Loading...</div>
+    if (!currTab) return <Loader />
 
     const [toastMsg, toasColorCode] = toastData
 
