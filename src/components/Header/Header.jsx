@@ -1,6 +1,6 @@
 import { createHelpScreenTab } from '../../utilities/chrome-tools/forceTabs';
 import style from './Header.module.scss'
-import extensionIcon from '../../../logo_3.png'
+import extensionIcon from '../../assets/logo_3.png'
 
 import {MdSettings as SettingsIcon} from "react-icons/md"
 import { IoHelp } from "react-icons/io5";

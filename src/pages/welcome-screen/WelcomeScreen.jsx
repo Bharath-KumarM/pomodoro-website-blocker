@@ -1,5 +1,5 @@
 import './WelcomeScreen.scss';
-import extensionIcon from '../../../logo_3.png'
+import extensionIcon from '../../assets/logo_3.png'
 
 const WelcomeScreen = ()=>{
     

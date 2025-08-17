@@ -1,6 +1,6 @@
 
 import { HiPuzzle as PuzzleIcon} from 'react-icons/hi';
-import extensionIcon from '../../logo_3.png';
+import extensionIcon from '../assets/logo_3.png';
 
 const style = {
     endNote: {

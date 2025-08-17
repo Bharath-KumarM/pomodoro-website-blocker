@@ -22,10 +22,10 @@
   },
   "options_page": "src/pages/popup/popup.html",
   "icons": {
-    "16": "logo_3.png",
-    "32": "logo_3.png",
-    "48": "logo_3.png",
-    "128": "logo_3.png"
+    "16": "src/assets/logo_3.png",
+    "32": "src/assets/logo_3.png",
+    "48": "src/assets/logo_3.png",
+    "128": "src/assets/logo_3.png"
   }
 
 }
