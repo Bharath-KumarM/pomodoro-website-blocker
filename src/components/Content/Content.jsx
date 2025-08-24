@@ -16,7 +16,7 @@ import FocusMode from "./FocusMode/FocusMode"
 import Setting from "./Setting/Setting"
 import Loader from "../../utilities/Loader"
 import Dashboard from "./Dashboard/Dashboard"
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ContentScrollCntEleRefContext } from "../context";
 
 
@@ -30,7 +30,7 @@ const navOptionData = [
 
 const Content = ({navSelect, setNavSelect})=>{
     const scrollCntEleRef = useRef(null)
-
+    const [searchText, setSearchText] = useState(null)
 
     const navOptElements = navOptionData.map((details, index)=>{
         return (
@@ -54,15 +54,51 @@ const Content = ({navSelect, setNavSelect})=>{
                         {
                             navSelect.startsWith('dashboard') ? <Dashboard /> :
                             // navSelect === 'pomodoro' ? <Pomodoro /> :
-                            navSelect.startsWith('focus-mode') ? <FocusMode setNavSelect={setNavSelect}  /> :
-                            navSelect.startsWith('screen-time') ? <ScreenTime setNavSelect={setNavSelect} /> : 
-                            navSelect.startsWith('setting') ? <Setting setNavSelect={setNavSelect} /> :
-                            navSelect.startsWith('block-site') ? <BlockSites setNavSelect={setNavSelect} /> : 
+                            navSelect.startsWith('focus-mode') ?
+                            <FocusMode 
+                                setNavSelect={setNavSelect}  
+                                searchText={searchText}
+                                setSearchText={setSearchText}
+                            /> :
+                            navSelect.startsWith('screen-time') ? 
+                            <ScreenTime 
+                                setNavSelect={setNavSelect}
+                                searchText={searchText}
+                                setSearchText={setSearchText}
+                            /> : 
+                            navSelect.startsWith('setting') ? 
+                                <Setting 
+                                    setNavSelect={setNavSelect}
+                                /> :
+                            navSelect.startsWith('block-site') ? 
+                                <BlockSites 
+                                    setNavSelect={setNavSelect} 
+                                    searchText={searchText}  
+                                    setSearchText={setSearchText}
+                                /> : 
 
                             <Loader />
                         }
                     </ContentScrollCntEleRefContext.Provider>
                 </div>
+                <input 
+                    type="text" 
+                    className={styles.SitesSearch}
+                    placeholder={'Search sites🔍'}
+                    onChange={(e)=>{
+                        setSearchText(e.target.value?.toLocaleLowerCase())
+                        // scrollCntEleRefContext.current.scrollTo(0, 0)
+                        scrollCntEleRef.current.scrollTo(0, 0)
+                    }}
+                    value={searchText && searchText.toLocaleLowerCase()}
+                    onFocus={()=>{
+                        setSearchText('')
+                        // listEleRef.current.scrollIntoView()
+                    }}        
+                    onBlur={()=>{
+                        setSearchText('')
+                    }}
+                />
             </div>
             <nav className={styles.Nav}>
                 {navOptElements}

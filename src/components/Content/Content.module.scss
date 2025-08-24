@@ -23,7 +23,7 @@
     
     padding: 10px;
     gap: 30px;
-    margin-right: 10px;
+    margin-right: 5px;
     
     background-color: variables.$bg-color2;
     
@@ -38,34 +38,48 @@
     //small screen
     @media only screen and (max-width: 650px) {
         width: 100%;
+
         height: auto;
+        &.shrink{
+            height: 60px;
+        }
+
         flex-direction: row;
+
         gap: 0;
         margin-right: 0px;
-        margin-top: 10px;
+        margin-top: 5px;
+
         justify-content: space-evenly;
     }
 }
 .ContentCnt{
     height: 100%;
 
-    background-color: $bg-color2;
-
+    width: 100%;
+    
+    background-color: variables.$bg-color2;
+    
     display: flex;
     align-items: center;
     justify-content: center;
+
+    flex-direction: column;
     
     position: relative;
     
     min-height: 0;
     flex-grow: 1;
 
+    padding-bottom: 25px;
 
 
 }
 .ContentScrollCnt{
     height: 100%;
-    width: min(400px, 90%);
+    // width: min(400px, 90%);
+    max-width: 500px;
+    width: 100%;
 
 
 
@@ -76,6 +90,8 @@
 
     align-items: center;
 
+    overflow-y: scroll;
+    scroll-behavior: smooth;
     
     .Heading{
         align-self: flex-start;
@@ -87,14 +103,41 @@
         }
     }
 
-
-    overflow-y: scroll;
-    scroll-behavior: smooth;
-
     &::-webkit-scrollbar {
-        width: 2px;
+        width: 3px;
       }
+}
+
+.SitesSearch{
+    position: absolute;
+    bottom: 0;
     
+    // width: min(400px, 100%);
+    width: 100%;
+
+    border-radius: 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: left;
+
+    padding: 10px;
+    font-size: 14px;
+    
+    height: 25px;
+    background-color: variables.$bg-color3;
+
+    bottom: 0px;
+
+    outline: none;
+    border: 0;
+
+    z-index: 2;
+
+    &:focus{
+        height: auto;
+    }
+
 
 }
 
