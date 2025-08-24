@@ -71,7 +71,7 @@
             }
             
         }
-        .helpIconCnt{
+        .leftIconCnt{ //Settings Icon 
             display: flex;
             align-items: center;
             justify-content: center;
@@ -89,15 +89,15 @@
     
                 }
             }
-            // -webkit-transition: transform 0.3s;
-            // transition: transform 0.3s ease-in;
+            -webkit-transition: transform 1s;
 
             &:hover{
                 cursor: pointer;
-                // transform: rotateZ(360deg);
+                transition: transform 1s ease-in;
+                transform: rotateZ(360deg);
             }
         }
-        .settingIconCnt{
+        .rightIconCnt{ //Open new tab icon or help ico
             display: flex;
             align-items: center;
             justify-content: center;
@@ -114,13 +114,6 @@
                 path{
     
                 }
-            }
-            -webkit-transition: transform 1s;
-
-            &:hover{
-                cursor: pointer;
-                transition: transform 1s ease-in;
-                transform: rotateZ(360deg);
             }
         }
     }
