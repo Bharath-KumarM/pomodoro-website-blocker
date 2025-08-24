@@ -1,7 +1,7 @@
 import notificationCardStyle from './NotificationCard.scss?inline'; 
 import {IoMdClose} from "react-icons/io"
 
-import extensionIcon from './logo_3.png'
+import extensionIcon from '../../assets/logo_3.png'
 import { useEffect, useRef, useState } from 'react';
 import { updateLocalSettingsData } from '../../localStorage/localSettingsData';
 
