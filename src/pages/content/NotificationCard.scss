@@ -26,6 +26,12 @@
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     
     animation: fadein 2s ease;
+    margin: 15px;
+    width: 300px;
+
+    border-radius: 5px;
+    background-color: variables.$bg-color3;
+
     @keyframes fadein {
         0%{
             opacity: 1; 
@@ -54,11 +60,6 @@
         }
     }
     
-    margin: 15px;
-    width: 300px;
-
-    border-radius: 5px;
-    background-color: $bg-color3;
 
     .cnt {
         padding: 10px;
